@@ -24,11 +24,11 @@ public class OrderDetail {
      Order order;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "ProductID", referencedColumnName = "productID", columnDefinition = "UNIQUEIDENTIFIER")
+    @JoinColumn(name = "ProductID", referencedColumnName = "productID", columnDefinition = "NVARCHAR(255)")
      Products product;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "variant_id", referencedColumnName = "variant_id", columnDefinition = "UNIQUEIDENTIFIER")
+    @JoinColumn(name = "variant_id", referencedColumnName = "variant_id", columnDefinition = "nvarchar(255)")
      ProductVariant variant;
 
     @Column(name = "Quantity", nullable = false)

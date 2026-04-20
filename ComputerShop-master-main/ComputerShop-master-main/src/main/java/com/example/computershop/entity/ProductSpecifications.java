@@ -13,7 +13,7 @@ import lombok.experimental.FieldDefaults;
 @Table(name = "Product_Specifications")
 public class ProductSpecifications {
     @Id
-    @Column(name = "productID", columnDefinition = "UNIQUEIDENTIFIER")
+    @Column(name = "productID", columnDefinition = "NVARCHAR(255)")
     String productID;
     
     @Column(name = "cpu", columnDefinition = "NVARCHAR(255)")
@@ -42,6 +42,6 @@ public class ProductSpecifications {
     
     @OneToOne
     @MapsId
-    @JoinColumn(name = "productID", referencedColumnName = "productID", columnDefinition = "UNIQUEIDENTIFIER")
+    @JoinColumn(name = "productID", referencedColumnName = "productID", columnDefinition = "NVARCHAR(255)")
     private Products product;
 }

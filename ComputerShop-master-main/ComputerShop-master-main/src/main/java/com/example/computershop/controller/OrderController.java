@@ -67,7 +67,7 @@ public class OrderController {
             model.addAttribute("totalOrders", orderList.size());
             return ORDER_VIEW;
         } catch (Exception e) {
-            model.addAttribute(ERROR, "Có lỗi xảy ra khi tải danh sách đơn hàng: " + e.getMessage());
+            model.addAttribute(ERROR, "An error occurred while loading order list: " + e.getMessage());
             model.addAttribute(ORDERS, List.of());
             model.addAttribute(STATUS_OPTIONS, ALL_STATUSES);
             return ORDER_VIEW;
@@ -79,7 +79,7 @@ public class OrderController {
         try {
             Order order = orderService.getOrderByIdWithDetails(orderId);
             if (order == null) {
-                redirectAttributes.addFlashAttribute(ERROR, "Không tìm thấy đơn hàng với ID: " + orderId);
+                redirectAttributes.addFlashAttribute(ERROR, "Order not found with ID: " + orderId);
                 return ORDER_VIEW_REDIRECT;
             }
             
@@ -88,7 +88,7 @@ public class OrderController {
             model.addAttribute(STATUS_OPTIONS, ALL_STATUSES);
             return ORDER_DETAIL_VIEW;
         } catch (Exception e) {
-            redirectAttributes.addFlashAttribute(ERROR, "Có lỗi xảy ra khi tải chi tiết đơn hàng: " + e.getMessage());
+            redirectAttributes.addFlashAttribute(ERROR, "An error occurred while loading order details: " + e.getMessage());
             return ORDER_VIEW_REDIRECT;
         }
     }
@@ -102,23 +102,23 @@ public class OrderController {
                                    RedirectAttributes redirectAttributes) {
         try {
             if (orderId == null || orderId.trim().isEmpty()) {
-                redirectAttributes.addFlashAttribute(ERROR, "ID đơn hàng không được để trống!");
+                redirectAttributes.addFlashAttribute(ERROR, "Order ID cannot be empty!");
                 return ORDER_VIEW_REDIRECT;
             }
             
             if (newStatus == null || newStatus.trim().isEmpty()) {
-                redirectAttributes.addFlashAttribute(ERROR, "Vui lòng chọn trạng thái mới!");
+                redirectAttributes.addFlashAttribute(ERROR, "Please select a new status!");
                 return "redirect:/admin/orders/" + orderId;
             }
 
             if (!ALL_STATUSES.contains(newStatus)) {
-                redirectAttributes.addFlashAttribute(ERROR, "Trạng thái không hợp lệ: " + newStatus);
+                redirectAttributes.addFlashAttribute(ERROR, "Invalid status: " + newStatus);
                 return "redirect:/admin/orders/" + orderId;
             }
 
             Order order = orderService.getOrderById(orderId);
             if (order == null) {
-                redirectAttributes.addFlashAttribute(ERROR, "Không tìm thấy đơn hàng với ID: " + orderId);
+                redirectAttributes.addFlashAttribute(ERROR, "Order not found with ID: " + orderId);
                 return ORDER_VIEW_REDIRECT;
             }
             String oldStatus = order.getStatus();
@@ -129,13 +129,13 @@ public class OrderController {
             if (updatedOrder != null) {
                 String newStatusDisplay = getStatusDisplayName(newStatus);
                 redirectAttributes.addFlashAttribute(SUCCESS, 
-                    String.format("✅ Đã cập nhật trạng thái đơn hàng thành %s thành công! Thông báo đã được gửi đến khách hàng.", newStatusDisplay));
+                    String.format("✅ Order status updated to %s successfully! Notification has been sent to the customer.", newStatusDisplay));
             } else {
-                redirectAttributes.addFlashAttribute(ERROR, "Không thể cập nhật trạng thái đơn hàng");
+                redirectAttributes.addFlashAttribute(ERROR, "Cannot update order status");
             }
             
         } catch (Exception e) {
-            redirectAttributes.addFlashAttribute(ERROR, "Có lỗi xảy ra khi cập nhật trạng thái: " + e.getMessage());
+            redirectAttributes.addFlashAttribute(ERROR, "An error occurred while updating status: " + e.getMessage());
         }
         
 
@@ -276,27 +276,27 @@ public class OrderController {
     
 
     private String getStatusDisplayName(String status) {
-        if (status == null) return "Không xác định";
+        if (status == null) return "Unspecified";
 
         switch (status) {
             case "PENDING":
-                return "⏳ Chờ xác nhận";
+                return "⏳ Pending";
             case "PAYMENT_PENDING":
-                return "💳 Chờ thanh toán";
-            case "CONFIRMED":
-                return "✅ Đã xác nhận";
+                return "💳 Payment Pending";
+            case "CONFIRMED":   
+                return "✅ Confirmed";
             case "PROCESSING":
-                return "🔄 Đang xử lý";
+                return "🔄 Processing";
             case "SHIPPED":
-                return "🚚 Đang giao hàng";
+                return "🚚 Shipping";
             case "DELIVERED":
-                return "📦 Đã giao hàng";
+                return "📦 Delivered";
             case "USER_CONFIRMED":
-                return "✅ Khách đã nhận";
+                return "✅ Received by Customer";
             case "CANCELLED":
-                return "❌ Đã hủy";
+                return "❌ Cancelled";
             default:
-                return "❓ Không xác định";
+                return "❓ Unspecified";
         }
     }
 

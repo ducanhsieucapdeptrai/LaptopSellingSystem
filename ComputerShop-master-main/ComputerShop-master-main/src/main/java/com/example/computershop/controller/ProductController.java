@@ -86,10 +86,10 @@ public class ProductController {
                            Model model) {
         if (!product.getBrand().matches("^[a-zA-Z\\s]+$")||product.getPrice().compareTo(BigInteger.ZERO) <= 0|| product.getQuantity() < 0 ||
                 !product.getName().matches("^[\\-\\p{L}\\p{N}\\s]+$")) {
-            return handleInvalidProduct(product, file, model, "Thông tin sản phẩm không hợp lệ.", null, false);
+            return handleInvalidProduct(product, file, model, "Product information is invalid.", null, false);
         }
         if (productService.existsByName(product.getName())) {
-            return handleInvalidProduct(product, file, model, "Sản phẩm đã tồn tại.", null, false);
+            return handleInvalidProduct(product, file, model, "Product already exists.", null, false);
         }
         this.storageService.store(file);
         String fileName = file.getOriginalFilename();
@@ -116,11 +116,11 @@ public class ProductController {
         Products existingProduct = this.productService.findById(product.getProductID());
         if (!product.getBrand().matches("^[a-zA-Z\\s]+$")||product.getPrice().compareTo(BigInteger.ZERO) <= 0|| product.getQuantity() < 0 ||
                !product.getName().matches("^[\\-\\p{L}\\p{N}\\s]+$")) {
-            return handleInvalidProduct(product, file, model, "Thông tin sản phẩm không hợp lệ.", existingProduct, true);
+            return handleInvalidProduct(product, file, model, "Product information is invalid.", existingProduct, true);
         }
         if (!existingProduct.getName().equals(product.getName()) && 
             productService.existsByName(product.getName())) {
-            return handleInvalidProduct(product, file, model, "Sản phẩm đã tồn tại.", existingProduct, true);
+            return handleInvalidProduct(product, file, model, "Product already exists.", existingProduct, true);
         }
 
         String fileName;

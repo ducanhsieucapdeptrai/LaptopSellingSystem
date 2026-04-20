@@ -34,16 +34,16 @@ public class AuthenticationService {
     public void createUser(@NotNull UserCreationRequest request) {
         try {
             if (userRepository.existsByUsername(request.getUsername())) {
-                throw new AuthenticationException("Tên đăng nhập đã được sử dụng!");
+                throw new AuthenticationException("Username already exists!");
             }
             if (userRepository.existsByEmail(request.getEmail())) {
-                throw new AuthenticationException("Email đã được đăng ký!");
+                throw new AuthenticationException("Email already exists!");
             }
             if (userRepository.existsByPhoneNumber(request.getPhoneNumber())) {
-                throw new AuthenticationException("Số điện thoại đã được đăng ký!");
+                throw new AuthenticationException("Phone number already exists!");
             }
             if (!request.getPassword().equals(request.getPasswordConfirm())) {
-                throw new AuthenticationException("Mật khẩu xác nhận không khớp!");
+                throw new AuthenticationException("Password confirmation does not match!");
             }
 
             PasswordEncoder encoder = new BCryptPasswordEncoder();
@@ -66,8 +66,10 @@ public class AuthenticationService {
             user.setVerificationExpiration(LocalDateTime.now().plusMinutes(15));
             sendVerificationEmail(user);
             userRepository.save(user);
+        } catch (AuthenticationException e) {
+            throw e;
         } catch (Exception e) {
-            throw new AuthenticationException("Lỗi khi tạo người dùng: " + e.getMessage(), e);
+            throw new AuthenticationException("Error creating user: " + e.getMessage(), e);
         }
     }
 
@@ -77,17 +79,17 @@ public class AuthenticationService {
             if (optuser.isPresent()) {
                 User user = optuser.get();
                 if (user.getVerificationExpiration().isBefore(LocalDateTime.now())) {
-                    throw new AuthenticationException("Mã xác thực đã hết hạn.");
+                    throw new AuthenticationException("Verification code has expired.");
                 }
                 user.setIsActive(true);
                 user.setVerificationCode(null);
                 user.setVerificationExpiration(null);
                 userRepository.save(user);
             } else {
-                throw new AuthenticationException("Không tìm thấy người dùng.");
+                throw new AuthenticationException("User not found.");
             }
         } catch (Exception e) {
-            throw new AuthenticationException("Lỗi khi xác thực người dùng: " + e.getMessage(), e);
+            throw new AuthenticationException("Error verifying user: " + e.getMessage(), e);
         }
     }
 
@@ -97,23 +99,23 @@ public class AuthenticationService {
             if (optuser.isPresent()) {
                 User user = optuser.get();
                 if (user.getIsActive() != null && user.getIsActive()) {
-                    throw new AuthenticationException("Tài khoản đã được kích hoạt.");
+                    throw new AuthenticationException("Account is already activated.");
                 }
                 user.setVerificationCode(generateVerificationCode());
                 user.setVerificationExpiration(LocalDateTime.now().plusHours(1));
                 sendVerificationEmail(user);
                 userRepository.save(user);
             } else {
-                throw new AuthenticationException("Không tìm thấy người dùng.");
+                throw new AuthenticationException("User not found.");
             }
         } catch (Exception e) {
-            throw new AuthenticationException("Lỗi khi gửi lại email xác thực: " + e.getMessage(), e);
+            throw new AuthenticationException("Error resending verification email: " + e.getMessage(), e);
         }
     }
 
     private void sendVerificationEmail(User user) {
         try {
-            String subject = "Xác thực tài khoản Computer Shop";
+            String subject = "Verify Account - Computer Shop";
             String verificationCode = user.getVerificationCode();
             String verificationLink = "http://localhost:8080/auth/verify?email=" + user.getEmail() + "&code=" + verificationCode;
             String manualverificationLink = "http://localhost:8080/auth/manual-verify";
@@ -121,25 +123,24 @@ public class AuthenticationService {
                     + "<head><meta charset=\"UTF-8\"></head>"
                     + "<body style=\"font-family: Arial, sans-serif;\">"
                     + "<div style=\"background-color: #f5f5f5; padding: 20px;\">"
-                    + "<h2 style=\"color: #333;\">Chào mừng bạn đến với Computer Shop!</h2>"
-                    + "<p style=\"font-size: 16px;\">Vui lòng nhấn vào nút bên dưới để xác thực tài khoản của bạn:</p>"
+                    + "<h2 style=\"color: #333;\">Welcome to Computer Shop!</h2>"
+                    + "<p style=\"font-size: 16px;\">Please click the button below to verify your account:</p>"
                     + "<div style=\"background-color: #fff; padding: 20px; border-radius: 5px; box-shadow: 0 0 10px rgba(0,0,0,0.1);\">"
-                    + "<a href=\"" + verificationLink + "\" style=\"display: inline-block; background-color: #007bff; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; font-weight: bold;\">Xác thực tài khoản</a>"
-                    + "<p style=\"margin-top: 20px; font-size: 14px; color: #666;\">Nếu nút không hoạt động, bạn có thể:</p>"
-                    + "<p style=\"font-size: 14px; color: #666;\">1. Truy cập link này: <a href=\"" + manualverificationLink + "\" style=\"color: #007bff;\">" + manualverificationLink + "</a></p>"
-                    + "<p style=\"font-size: 14px; color: #666;\">2. Nhập thông tin xác thực:</p>"
+                    + "<a href=\"" + verificationLink + "\" style=\"display: inline-block; background-color: #007bff; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; font-weight: bold;\">Verify Account</a>"
+                    + "<p style=\"margin-top: 20px; font-size: 14px; color: #666;\">If the button does not work, you can:</p>"
+                    + "<p style=\"font-size: 14px; color: #666;\">1. Access this link: <a href=\"" + manualverificationLink + "\" style=\"color: #007bff;\">" + manualverificationLink + "</a></p>"
+                    + "<p style=\"font-size: 14px; color: #666;\">2. Enter verification information:</p>"
                     + "<ul style=\"font-size: 14px; color: #666;\">"
                     + "<li>Email: <span style=\"font-weight: bold;\">" + user.getEmail() + "</span></li>"
-                    + "<li>Mã xác thực: <span style=\"font-weight: bold;\">" + verificationCode + "</span></li>"
+                    + "<li>Verification code: <span style=\"font-weight: bold;\">" + verificationCode + "</span></li>"
                     + "</ul>"
                     + "</div>"
                     + "</div>"
                     + "</body>"
                     + "</html>";
-
             emailService.sendEmail(user.getEmail(), subject, htmlMessage);
         } catch (MessagingException e) {
-            throw new AuthenticationException("Lỗi khi gửi email xác thực: " + e.getMessage(), e);
+            throw new AuthenticationException("Error sending verification email: " + e.getMessage(), e);
         }
     }
 
@@ -151,7 +152,7 @@ public class AuthenticationService {
         try {
             Optional<User> userOpt = userRepository.findByUsernameOrEmail(username, username);
             if (userOpt.isEmpty()) {
-                throw new AuthenticationException("Không tìm thấy tài khoản với thông tin này.");
+                throw new AuthenticationException("Account not found with this information.");
             }
 
             User user = userOpt.get();
@@ -160,18 +161,18 @@ public class AuthenticationService {
             user.setVerificationExpiration(LocalDateTime.now().plusMinutes(15));
             userRepository.save(user);
 
-            String subject = "Đặt lại mật khẩu - Computer Shop";
+            String subject = "Reset Password - Computer Shop";
             String resetLink = "http://localhost:8080/auth/reset-password?email=" + user.getEmail() + "&token=" + resetToken;
             String htmlMessage = "<html>"
                     + "<head><meta charset=\"UTF-8\"></head>"
                     + "<body style=\"font-family: Arial, sans-serif;\">"
                     + "<div style=\"background-color: #f5f5f5; padding: 20px;\">"
-                    + "<h2 style=\"color: #333;\">Yêu cầu đặt lại mật khẩu</h2>"
-                    + "<p style=\"font-size: 16px;\">Bạn đã yêu cầu đặt lại mật khẩu. Vui lòng nhấn vào nút bên dưới để tiếp tục:</p>"
+                    + "<h2 style=\"color: #333;\">Reset Password Request</h2>"
+                    + "<p style=\"font-size: 16px;\">You have requested to reset your password. Please click the button below to continue:</p>"
                     + "<div style=\"background-color: #fff; padding: 20px; border-radius: 5px; box-shadow: 0 0 10px rgba(0,0,0,0.1);\">"
-                    + "<a href=\"" + resetLink + "\" style=\"display: inline-block; background-color: #007bff; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; font-weight: bold;\">Đặt lại mật khẩu</a>"
-                    + "<p style=\"margin-top: 20px; font-size: 14px; color: #666;\">Link này sẽ hết hạn sau 15 phút.</p>"
-                    + "<p style=\"font-size: 14px; color: #666;\">Nếu bạn không yêu cầu đặt lại mật khẩu, vui lòng bỏ qua email này.</p>"
+                    + "<a href=\"" + resetLink + "\" style=\"display: inline-block; background-color: #007bff; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; font-weight: bold;\">Reset Password</a>"
+                    + "<p style=\"margin-top: 20px; font-size: 14px; color: #666;\">This link will expire in 15 minutes.</p>"
+                    + "<p style=\"font-size: 14px; color: #666;\">If you did not request a password reset, please ignore this email.</p>"
                     + "</div>"
                     + "</div>"
                     + "</body>"
@@ -179,7 +180,7 @@ public class AuthenticationService {
 
             emailService.sendEmail(user.getEmail(), subject, htmlMessage);
         } catch (MessagingException e) {
-            throw new AuthenticationException("Lỗi khi gửi email đặt lại mật khẩu: " + e.getMessage(), e);
+            throw new AuthenticationException("Error sending reset password email: " + e.getMessage(), e);
         }
     }
 
@@ -199,12 +200,12 @@ public class AuthenticationService {
     public void resetPassword(String email, String token, String newPassword) {
         Optional<User> userOpt = userRepository.findByEmail(email);
         if (userOpt.isEmpty()) {
-            throw new AuthenticationException("Không tìm thấy tài khoản.");
+            throw new AuthenticationException("Account not found.");
         }
 
         User user = userOpt.get();
         if (!validatePasswordResetToken(email, token)) {
-            throw new AuthenticationException("Token không hợp lệ hoặc đã hết hạn.");
+            throw new AuthenticationException("Invalid or expired token.");
         }
 
         PasswordEncoder encoder = new BCryptPasswordEncoder();

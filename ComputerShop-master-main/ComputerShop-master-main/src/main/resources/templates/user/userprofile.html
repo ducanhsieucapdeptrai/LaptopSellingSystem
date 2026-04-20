@@ -192,19 +192,13 @@
                                                     <small class="text-muted"
                                                            th:text="${#temporals.format(order.orderDate, 'HH:mm')}"></small>
                                                 </td>
-                                                <td>
-                                                            <span class="badge"
-                                                                  th:classappend="${order.status == 'PENDING' ? 'bg-warning' :
-                                                                          (order.status == 'CONFIRMED' ? 'bg-info' :
-                                                                          (order.status == 'SHIPPING' ? 'bg-primary' :
-                                                                          (order.status == 'DELIVERED' ? 'bg-success' :
-                                                                          (order.status == 'USER_CONFIRMED' ? 'bg-success' : 'bg-danger'))))}"
-                                                                  th:text="${order.status == 'PENDING' ? 'Processing' :
-                                                                   (order.status == 'CONFIRMED' ? 'Confirmed' :
-                                                                   (order.status == 'SHIPPING' ? 'Shipping' :
-                                                                   (order.status == 'DELIVERED' ? 'Delivered' :
-                                                                   (order.status == 'USER_CONFIRMED' ? 'Received' : 'Cancelled'))))}}">
-                                                            </span>
+                                                <td th:switch="${order.status}">
+                                                    <span th:case="'PENDING'" class="badge bg-warning">Processing</span>
+                                                    <span th:case="'CONFIRMED'" class="badge bg-info">Confirmed</span>
+                                                    <span th:case="'SHIPPING'" class="badge bg-primary">Shipping</span>
+                                                    <span th:case="'DELIVERED'" class="badge bg-success">Delivered</span>
+                                                    <span th:case="'USER_CONFIRMED'" class="badge bg-success">Received</span>
+                                                    <span th:case="*" class="badge bg-danger">Cancelled</span>
                                                 </td>
                                                 <td>
                                                     <strong class="text-primary"

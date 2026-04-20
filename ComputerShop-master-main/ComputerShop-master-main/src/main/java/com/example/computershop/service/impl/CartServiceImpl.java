@@ -100,23 +100,23 @@ public class CartServiceImpl implements CartService {
         try {
            
             if (productId == null || productId.trim().isEmpty()) {
-                return createErrorResponse("Product ID không được để trống", HttpStatus.BAD_REQUEST.value());
+                return createErrorResponse("Product ID cannot be empty", HttpStatus.BAD_REQUEST.value());
             }
             
             if (quantity == null || quantity <= 0 || quantity > 10) {
-                return createErrorResponse("Số lượng phải từ 1 đến 10", HttpStatus.BAD_REQUEST.value());
+                return createErrorResponse("Quantity must be between 1 and 10", HttpStatus.BAD_REQUEST.value());
             }
 
             
             User user = getUserFromPrincipal(principal);
             if (user == null) {
-                return createErrorResponse("Vui lòng đăng nhập để thêm sản phẩm vào giỏ hàng", HttpStatus.UNAUTHORIZED.value());
+                return createErrorResponse("Please login to add product to cart", HttpStatus.UNAUTHORIZED.value());
             }
 
            
             Products product = productRepository.findById(productId).orElse(null);
             if (product == null) {
-                return createErrorResponse("Sản phẩm không tồn tại", HttpStatus.NOT_FOUND.value());
+                return createErrorResponse("Product not found", HttpStatus.NOT_FOUND.value());
             }
 
           
@@ -124,7 +124,7 @@ public class CartServiceImpl implements CartService {
             if (variantId != null && !variantId.trim().isEmpty()) {
                 variant = productVariantService.findById(variantId);
                 if (variant == null) {
-                    return createErrorResponse("Variant không tồn tại", HttpStatus.NOT_FOUND.value());
+                    return createErrorResponse("Variant not found", HttpStatus.NOT_FOUND.value());
                 }
             }
 
@@ -134,7 +134,7 @@ public class CartServiceImpl implements CartService {
                 (product.getQuantity() != null ? product.getQuantity() : 0);
 
             if (availableStock < quantity) {
-                return createErrorResponse("Không đủ hàng trong kho. Còn lại: " + availableStock, HttpStatus.BAD_REQUEST.value());
+                return createErrorResponse("Not enough stock in stock. Remaining: " + availableStock, HttpStatus.BAD_REQUEST.value());
             }
 
          
@@ -150,11 +150,11 @@ public class CartServiceImpl implements CartService {
                 int newQuantity = cartItem.getQuantity() + quantity;
                 
                 if (newQuantity > 10) {
-                    return createErrorResponse("Không thể thêm. Tối đa 10 sản phẩm mỗi loại", HttpStatus.BAD_REQUEST.value());
+                    return createErrorResponse("Cannot add. Maximum 10 products per type", HttpStatus.BAD_REQUEST.value());
                 }
                 
                 if (newQuantity > availableStock) {
-                    return createErrorResponse("Không đủ hàng trong kho. Còn lại: " + availableStock, HttpStatus.BAD_REQUEST.value());
+                    return createErrorResponse("Not enough stock in stock. Remaining: " + availableStock, HttpStatus.BAD_REQUEST.value());
                 }
                 
                 cartItem.setQuantity(newQuantity);
@@ -176,12 +176,12 @@ public class CartServiceImpl implements CartService {
 
             Map<String, Object> data = new HashMap<>();
             data.put("cartCount", cartCount);
-            data.put("message", "Đã thêm sản phẩm vào giỏ hàng thành công");
+            data.put("message", "Product added to cart successfully");
 
             return createSuccessResponse(data);
 
         } catch (Exception e) {
-            return createErrorResponse("Có lỗi xảy ra: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR.value());
+            return createErrorResponse("An error occurred: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR.value());
         }
     }
 
@@ -189,17 +189,17 @@ public class CartServiceImpl implements CartService {
     public ResponseEntity<Map<String, Object>> updateCartItem(String productId, String variantId, Integer quantity, Principal principal) {
         try {
             if (quantity == null || quantity <= 0 || quantity > 10) {
-                return createErrorResponse("Số lượng phải từ 1 đến 10", HttpStatus.BAD_REQUEST.value());
+                return createErrorResponse("Quantity must be between 1 and 10", HttpStatus.BAD_REQUEST.value());
             }
 
             User user = getUserFromPrincipal(principal);
             if (user == null) {
-                return createErrorResponse("Vui lòng đăng nhập", HttpStatus.UNAUTHORIZED.value());
+                return createErrorResponse("Please login", HttpStatus.UNAUTHORIZED.value());
             }
 
             Products product = productRepository.findById(productId).orElse(null);
             if (product == null) {
-                return createErrorResponse("Sản phẩm không tồn tại", HttpStatus.NOT_FOUND.value());
+                return createErrorResponse("Product not found", HttpStatus.NOT_FOUND.value());
             }
 
             ProductVariant variant = null;
@@ -216,7 +216,7 @@ public class CartServiceImpl implements CartService {
             }
 
             if (!cartItemOpt.isPresent()) {
-                return createErrorResponse("Sản phẩm không có trong giỏ hàng", HttpStatus.NOT_FOUND.value());
+                return createErrorResponse("Product not in cart", HttpStatus.NOT_FOUND.value());
             }
 
             Cart cartItem = cartItemOpt.get();
@@ -227,18 +227,18 @@ public class CartServiceImpl implements CartService {
                 (product.getQuantity() != null ? product.getQuantity() : 0);
 
             if (availableStock < quantity) {
-                return createErrorResponse("Không đủ hàng trong kho. Còn lại: " + availableStock, HttpStatus.BAD_REQUEST.value());
+                return createErrorResponse("Not enough stock in stock. Remaining: " + availableStock, HttpStatus.BAD_REQUEST.value());
             }
 
             cartItem.setQuantity(quantity);
             cartRepository.save(cartItem);
 
             Map<String, Object> data = new HashMap<>();
-            data.put("message", "Đã cập nhật số lượng thành công");
+            data.put("message", "Quantity updated successfully");
             return createSuccessResponse(data);
 
         } catch (Exception e) {
-            return createErrorResponse("Có lỗi xảy ra: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR.value());
+            return createErrorResponse("An error occurred: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR.value());
         }
     }
 
@@ -247,12 +247,12 @@ public class CartServiceImpl implements CartService {
         try {
             User user = getUserFromPrincipal(principal);
             if (user == null) {
-                return createErrorResponse("Vui lòng đăng nhập", HttpStatus.UNAUTHORIZED.value());
+                return createErrorResponse("Please login", HttpStatus.UNAUTHORIZED.value());
             }
 
             Products product = productRepository.findById(productId).orElse(null);
             if (product == null) {
-                return createErrorResponse("Sản phẩm không tồn tại", HttpStatus.NOT_FOUND.value());
+                return createErrorResponse("Product not found", HttpStatus.NOT_FOUND.value());
             }
 
             ProductVariant variant = null;
@@ -272,14 +272,14 @@ public class CartServiceImpl implements CartService {
                 cartRepository.delete(cartItemOpt.get());
                 
                 Map<String, Object> data = new HashMap<>();
-                data.put("message", "Đã xóa sản phẩm khỏi giỏ hàng");
+                data.put("message", "Product removed from cart");
                 return createSuccessResponse(data);
             } else {
-                return createErrorResponse("Sản phẩm không có trong giỏ hàng", HttpStatus.NOT_FOUND.value());
+                return createErrorResponse("Product not in cart", HttpStatus.NOT_FOUND.value());
             }
 
         } catch (Exception e) {
-            return createErrorResponse("Có lỗi xảy ra: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR.value());
+            return createErrorResponse("An error occurred: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR.value());
         }
     }
 
@@ -300,7 +300,7 @@ public class CartServiceImpl implements CartService {
             return createSuccessResponse(data);
 
         } catch (Exception e) {
-            return createErrorResponse("Có lỗi xảy ra: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR.value());
+            return createErrorResponse("An error occurred: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR.value());
         }
     }
 
@@ -309,24 +309,24 @@ public class CartServiceImpl implements CartService {
         try {
             User user = getUserFromPrincipal(principal);
             if (user == null) {
-                return createErrorResponse("Vui lòng đăng nhập", HttpStatus.UNAUTHORIZED.value());
+                return createErrorResponse("Please login", HttpStatus.UNAUTHORIZED.value());
             }
 
             if (voucherCode == null || voucherCode.trim().isEmpty()) {
-                return createErrorResponse("Vui lòng nhập mã voucher", HttpStatus.BAD_REQUEST.value());
+                return createErrorResponse("Please enter voucher code", HttpStatus.BAD_REQUEST.value());
             }
 
     
             Optional<Voucher> voucherOpt = voucherService.getValidVoucherByCode(voucherCode.trim());
             if (!voucherOpt.isPresent()) {
-                return createErrorResponse("Mã voucher không tồn tại hoặc đã hết hạn", HttpStatus.NOT_FOUND.value());
+                return createErrorResponse("Voucher code not found or expired", HttpStatus.NOT_FOUND.value());
             }
             
             Voucher voucher = voucherOpt.get();
 
             List<Cart> cartItems = cartRepository.findByUser(user);
             if (cartItems.isEmpty()) {
-                return createErrorResponse("Giỏ hàng trống", HttpStatus.BAD_REQUEST.value());
+                return createErrorResponse("Cart is empty", HttpStatus.BAD_REQUEST.value());
             }
 
             Long subtotal = cartItems.stream()
@@ -363,13 +363,13 @@ public class CartServiceImpl implements CartService {
             }
             
             Map<String, Object> data = new HashMap<>();
-            data.put("message", "Áp dụng voucher thành công");
+            data.put("message", "Voucher applied successfully");
             data.put("discountAmount", discountAmount);
             data.put("voucherCode", voucherCode.trim());
             return createSuccessResponse(data);
 
         } catch (Exception e) {
-            return createErrorResponse("Có lỗi xảy ra: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR.value());
+            return createErrorResponse("An error occurred: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR.value());
         }
     }
 
@@ -378,7 +378,7 @@ public class CartServiceImpl implements CartService {
         try {
             User user = getUserFromPrincipal(principal);
             if (user == null) {
-                return createErrorResponse("Vui lòng đăng nhập", HttpStatus.UNAUTHORIZED.value());
+                return createErrorResponse("Please login", HttpStatus.UNAUTHORIZED.value());
             }
 
             List<Cart> cartItems = cartRepository.findByUser(user);
@@ -389,11 +389,11 @@ public class CartServiceImpl implements CartService {
             }
 
             Map<String, Object> data = new HashMap<>();
-            data.put("message", "Đã gỡ voucher thành công");
+            data.put("message", "Voucher removed successfully");
             return createSuccessResponse(data);
 
         } catch (Exception e) {
-            return createErrorResponse("Có lỗi xảy ra: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR.value());
+            return createErrorResponse("An error occurred: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR.value());
         }
     }
 
@@ -478,7 +478,7 @@ public class CartServiceImpl implements CartService {
         try {
             // Validate quantity
             if (quantity <= 0) {
-                return "error:Số lượng phải lớn hơn 0!";
+                return "error:Quantity must be greater than 0!";
             }
 
             // Validate product
@@ -502,7 +502,7 @@ public class CartServiceImpl implements CartService {
             return CartConstants.REDIRECT_CART_VIEW;
 
         } catch (Exception e) {
-            return "error:Có lỗi xảy ra khi thêm vào giỏ hàng: " + e.getMessage();
+            return "error:An error occurred when adding to cart: " + e.getMessage();
         }
     }
     
@@ -511,23 +511,23 @@ public class CartServiceImpl implements CartService {
         try {
             // Validate quantity
             if (quantity <= 0) {
-                return "error:Số lượng phải lớn hơn 0!";
+                return "error:Quantity must be greater than 0!";
             }
 
             // Validate user
             User user = getUserFromPrincipal(principal);
             if (user == null) {
-                return "error:Vui lòng đăng nhập để cập nhật giỏ hàng!";
+                return "error:Please login to update cart!";
             }
 
             // Validate product and stock
             Products product = productRepository.findById(productId).orElse(null);
             if (product == null) {
-                return "error:Không tìm thấy sản phẩm!";
+                return "error:Product not found!";
             }
 
             if (quantity > product.getQuantity()) {
-                return "error:Không đủ hàng trong kho! Chỉ còn " + product.getQuantity() + " sản phẩm.";
+                return "error:Not enough stock in stock! Only " + product.getQuantity() + " products remaining.";
             }
 
             // Update cart
@@ -543,12 +543,12 @@ public class CartServiceImpl implements CartService {
             }
 
             if (!updated) {
-                return "error:Sản phẩm không có trong giỏ hàng!";
+                return "error:Product not in cart!";
             }
 
             return "success";
         } catch (Exception e) {
-            return "error:Có lỗi xảy ra khi cập nhật giỏ hàng: " + e.getMessage();
+            return "error:An error occurred when updating cart: " + e.getMessage();
         }
     }
     
@@ -557,7 +557,7 @@ public class CartServiceImpl implements CartService {
         try {
             User user = getUserFromPrincipal(principal);
             if (user == null) {
-                return "error:Vui lòng đăng nhập!";
+                return "error:Please login!";
             }
 
             List<Cart> userCart = cartRepository.findByUser(user);
@@ -575,7 +575,7 @@ public class CartServiceImpl implements CartService {
 
             return "success";
         } catch (Exception e) {
-            return "error:Có lỗi xảy ra khi xóa sản phẩm: " + e.getMessage();
+            return "error:An error occurred when removing product: " + e.getMessage();
         }
     }
     
@@ -589,7 +589,7 @@ public class CartServiceImpl implements CartService {
             }
             return "success";
         } catch (Exception e) {
-            return "error:Có lỗi xảy ra khi xóa giỏ hàng: " + e.getMessage();
+            return "error:An error occurred when clearing cart: " + e.getMessage();
         }
     }
     
@@ -597,10 +597,10 @@ public class CartServiceImpl implements CartService {
     public String validateProductAvailability(String productId) {
         Products product = productRepository.findById(productId).orElse(null);
         if (product == null) {
-            return "Không tìm thấy sản phẩm!";
+            return "Product not found!";
         }
         if (product.getIsActive() == null || !product.getIsActive()) {
-            return "Sản phẩm hiện không còn bán!";
+            return "Product is not available!";
         }
         return null;
     }
@@ -611,7 +611,7 @@ public class CartServiceImpl implements CartService {
         Products product = productRepository.findById(productId).orElse(null);
         
         if (product == null) {
-            String errorMsg = "Không tìm thấy sản phẩm!";
+            String errorMsg = "Product not found!";
             if (isAjax) {
                 return createErrorResponse(errorMsg, 400);
             }
@@ -631,7 +631,7 @@ public class CartServiceImpl implements CartService {
         // Check stock
         int totalRequestedQuantity = currentCartQuantity + quantity;
         if (totalRequestedQuantity > product.getQuantity()) {
-            String errorMsg = String.format("Không đủ hàng trong kho! Hiện tại chỉ còn %d sản phẩm, bạn đã có %d trong giỏ hàng.",
+            String errorMsg = String.format("Not enough stock in stock! Currently only %d products, you have %d in cart.",
                     product.getQuantity(), currentCartQuantity);
             if (isAjax) {
                 return createErrorResponse(errorMsg, 400);
@@ -655,7 +655,7 @@ public class CartServiceImpl implements CartService {
         // Return response
         if (isAjax) {
             Map<String, Object> responseData = new HashMap<>();
-            responseData.put(CartConstants.MESSAGE, String.format("Đã thêm %s vào giỏ hàng!", product.getName()));
+            responseData.put(CartConstants.MESSAGE, String.format("Added %s to cart!", product.getName()));
             int cartCount = cartRepository.findByUser(user).stream()
                     .mapToInt(Cart::getQuantity)
                     .sum();
@@ -672,18 +672,18 @@ public class CartServiceImpl implements CartService {
         try {
             User user = getUserFromPrincipal(principal);
             if (user == null) {
-                return "error:Vui lòng đăng nhập để sử dụng voucher";
+                return "error:Please login to use voucher";
             }
 
             List<Cart> userCart = cartRepository.findByUser(user);
             if (userCart.isEmpty()) {
-                return "error:Giỏ hàng trống";
+                return "error:Cart is empty";
             }
 
             // Validate voucher
             Optional<Voucher> voucherOpt = voucherService.getValidVoucherByCode(voucherCode);
             if (!voucherOpt.isPresent()) {
-                return "error:Mã voucher không hợp lệ hoặc đã hết hạn";
+                return "error:Voucher code is not valid or expired";
             }
 
             Voucher voucher = voucherOpt.get();
@@ -711,10 +711,10 @@ public class CartServiceImpl implements CartService {
                
             }
 
-            return "success:Áp dụng voucher " + voucherCode + " thành công! Giảm " + formatCurrency(discountAmount) + " VND";
+            return "success:Applied voucher " + voucherCode + " successfully! Discount " + formatCurrency(discountAmount) + " VND";
 
         } catch (Exception e) {
-            return "error:Có lỗi xảy ra khi áp dụng voucher: " + e.getMessage();
+            return "error:An error occurred when applying voucher: " + e.getMessage();
         }
     }
     
@@ -723,16 +723,16 @@ public class CartServiceImpl implements CartService {
         try {
             User user = getUserFromPrincipal(principal);
             if (user == null) {
-                return "error:Vui lòng đăng nhập!";
+                return "error:Please login!";
             }
 
             List<Cart> userCart = cartRepository.findByUser(user);
             removeVoucherFromAllCartItems(userCart);
 
-            return "success:Đã xóa voucher khỏi giỏ hàng";
+            return "success:Removed voucher from cart";
 
         } catch (Exception e) {
-            return "error:Có lỗi xảy ra khi xóa voucher";
+            return "error:An error occurred when removing voucher: " + e.getMessage();
         }
     }
     
@@ -875,7 +875,7 @@ public class CartServiceImpl implements CartService {
             viewData.put("isEmpty", userCart.isEmpty());
             
         } catch (Exception e) {
-            viewData.put("error", "Có lỗi xảy ra khi tải giỏ hàng: " + e.getMessage());
+            viewData.put("error", "An error occurred when loading cart: " + e.getMessage());
         }
         
         return viewData;
@@ -923,7 +923,7 @@ public class CartServiceImpl implements CartService {
             reviewData.put("total", finalTotal);
             
         } catch (Exception e) {
-            reviewData.put("error", "Có lỗi xảy ra khi tải cart review: " + e.getMessage());
+            reviewData.put("error", "An error occurred when loading cart review: " + e.getMessage());
         }
         
         return reviewData;

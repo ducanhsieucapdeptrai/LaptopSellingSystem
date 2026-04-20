@@ -12,7 +12,7 @@
 
     <!-- CSS Vendor -->
     <link rel="stylesheet" th:href="@{/assets/css/vendor/bootstrap.min.css}">
-    <link rel="styleshee t" th:href="@{/assets/css/vendor/font-awesome.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/vendor/font-awesome.css}">
     <link rel="stylesheet" th:href="@{/assets/css/vendor/flaticon/flaticon.css}">
     <link rel="stylesheet" th:href="@{/assets/css/vendor/slick.css}">
     <link rel="stylesheet" th:href="@{/assets/css/vendor/slick-theme.css}">
@@ -131,6 +131,11 @@
                                     <ul>
                                         <li sec:authorize="isAuthenticated()">
                                             <a th:href="@{/user/user-profile}">My Account</a>
+                                        </li>
+                                        <li sec:authorize="hasAnyRole('Admin')">
+                                            <a th:href="@{/admin/dashboard}">
+                                                Admin Dashboard
+                                            </a>
                                         </li>
                                         <li sec:authorize="isAuthenticated()">
                                             <a th:href="@{/notifications/user}">

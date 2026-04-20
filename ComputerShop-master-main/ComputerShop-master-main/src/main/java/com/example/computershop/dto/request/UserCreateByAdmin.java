@@ -12,35 +12,35 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class UserCreateByAdmin {
     @NotBlank(message = "Tên đăng nhập không được để trống.")
-    @Size(min = 3, max = 50, message = "Tên đăng nhập phải từ 3 đến 50 ký tự.")
+    @Size(min = 3, max = 50, message = "Username must be between 3 and 50 characters.")
     String username;
 
     @NotBlank(message = "Mật khẩu không được để trống.")
-    @Size(min = 8, message = "Mật khẩu cần ít nhất 8 ký tự.")
+    @Size(min = 8, message = "Password must be at least 8 characters.")
     @Pattern(
         regexp = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=!])(?=\\S+$).{8,}$",
-        message = "Mật khẩu phải chứa ít nhất 1 chữ số, 1 chữ thường, 1 chữ hoa, 1 ký tự đặc biệt và không chứa khoảng trắng."
+        message = "Password must contain at least 1 number, 1 lowercase letter, 1 uppercase letter, 1 special character and no spaces."
     )
     String password;
 
-    @NotBlank(message = "Họ tên không được để trống.")
+    @NotBlank(message = "Full name cannot be empty.")
     String fullName;
 
-    @NotBlank(message = "Email không được để trống.")
-    @Email(message = "Email không hợp lệ.")
+    @NotBlank(message = "Email cannot be empty.")
+    @Email(message = "Email is not valid.")
     String email;
 
-    @NotBlank(message = "Số điện thoại không được để trống.")
-    @Pattern(regexp = "^(0)(\\d{9})$", message = "Số điện thoại phải bắt đầu bằng số 0 và có 10 chữ số.")
+    @NotBlank(message = "Phone number cannot be empty.")
+    @Pattern(regexp = "^(0)(\\d{9})$", message = "Phone number must start with 0 and have 10 digits.")
     String phoneNumber;
 
-    @NotBlank(message = "Địa chỉ không được để trống.")
+    @NotBlank(message = "Address cannot be empty.")
     String address;
 
-    @NotNull(message = "Vai trò không được để trống.")
+    @NotNull(message = "Role cannot be empty.")
     String role;
 
-    @NotNull(message = "Trạng thái không được để trống.")
+    @NotNull(message = "Status cannot be empty.")
     Boolean active;
 
     Boolean isAccountNonLocked;

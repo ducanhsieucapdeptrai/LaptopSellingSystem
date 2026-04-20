@@ -69,7 +69,7 @@ public class CartController {
                 redirectAttributes.addFlashAttribute(CartConstants.ERROR, result.substring(6));
                 return CartConstants.REDIRECT_CART_VIEW;
             } else if (result.startsWith("redirect:")) {
-                return result.substring(9);
+                return result;
             }
             return CartConstants.REDIRECT_CART_VIEW;
         }
@@ -103,7 +103,7 @@ public class CartController {
             if (response.getBody() != null && (Boolean) response.getBody().getOrDefault("success", false)) {
                 result = "success";
             } else {
-                String message = (String) response.getBody().getOrDefault("message", "Có lỗi xảy ra");
+                String message = (String) response.getBody().getOrDefault("message", "An error occurred");
                 result = "error:" + message;
             }
         } else {
@@ -129,7 +129,7 @@ public class CartController {
             if (response.getBody() != null && (Boolean) response.getBody().getOrDefault("success", false)) {
                 result = "success";
             } else {
-                String message = (String) response.getBody().getOrDefault("message", "Có lỗi xảy ra");
+                String message = (String) response.getBody().getOrDefault("message", "An error occurred");
                 result = "error:" + message;
             }
         } else {
@@ -164,10 +164,10 @@ public class CartController {
         String result = cartService.applyVoucherToCart(voucherCode, principal);
 
         if (result.startsWith("error:")) {
-            if (result.contains("đăng nhập")) {
+            if (principal == null) {
                 redirectAttributes.addFlashAttribute("error", result.substring(6));
                 return "redirect:/auth/login";
-            } else if (result.contains("trống")) {
+            } else if ("redirect:/cart/view".equals(getRedirectPath(redirect))) {
                 redirectAttributes.addFlashAttribute("error", result.substring(6));
                 return "redirect:/cart/view";
             } else {
@@ -187,7 +187,7 @@ public class CartController {
         String result = cartService.removeVoucherFromCart(principal);
 
         if (result.startsWith("error:")) {
-            if (result.contains("đăng nhập")) {
+            if (principal == null) {
                 return "redirect:/auth/login";
             } else {
                 redirectAttributes.addFlashAttribute("voucherError", result.substring(6));
@@ -341,7 +341,7 @@ public class CartController {
             model.addAttribute(CartConstants.ORDER, order);
             return "Cart/orderDetails";
         } catch (Exception e) {
-            model.addAttribute(CartConstants.ERROR, "Có lỗi xảy ra khi tải thông tin đơn hàng: " + e.getMessage());
+            model.addAttribute(CartConstants.ERROR, "An error occurred while loading order details: " + e.getMessage());
             return CartConstants.REDIRECT_CART_VIEW;
         }
     }
@@ -362,7 +362,7 @@ public class CartController {
             User user = cartService.getUserFromPrincipal(principal);
             if (user == null) {
                 response.put("success", false);
-                response.put("message", "Bạn cần đăng nhập để thực hiện hành động này");
+                response.put("message", "You need to log in to perform this action.");
                 return ResponseEntity.badRequest().body(response);
             }
             
@@ -370,20 +370,20 @@ public class CartController {
             Order order = orderService.getOrderById(orderId);
             if (order == null) {
                 response.put("success", false);
-                response.put("message", "Không tìm thấy đơn hàng");
+                response.put("message", "Order not found.");
                 return ResponseEntity.badRequest().body(response);
             }
 
             if (!order.getUserId().equals(user.getUserId())) {
                 response.put("success", false);
-                response.put("message", "Bạn không có quyền thao tác với đơn hàng này");
+                response.put("message", "You are not allowed to modify this order.");
                 return ResponseEntity.badRequest().body(response);
             }
             
 
             if (!"SHIPPED".equals(order.getStatus())) {
                 response.put("success", false);
-                response.put("message", "Chỉ có thể xác nhận đơn hàng đang trong trạng thái giao hàng");
+                response.put("message", "Only orders in SHIPPED status can be confirmed.");
                 return ResponseEntity.badRequest().body(response);
             }
             String oldStatus = order.getStatus();
@@ -392,14 +392,14 @@ public class CartController {
             orderService.updateOrder(order, oldStatus);
 
             response.put("success", true);
-            response.put("message", "Đã xác nhận đơn hàng thành công");
+            response.put("message", "Order confirmed successfully.");
             response.put("orderId", orderId);
             
             return ResponseEntity.ok(response);
             
         } catch (Exception e) {
             response.put("success", false);
-            response.put("message", "Có lỗi xảy ra: " + e.getMessage());
+            response.put("message", "An error occurred: " + e.getMessage());
             return ResponseEntity.status(500).body(response);
         }
     }
@@ -428,37 +428,37 @@ public class CartController {
             // Validate input
             if (quantity <= 0) {
                 response.put("success", false);
-                response.put("message", "Số lượng phải lớn hơn 0!");
+                response.put("message", "Quantity must be greater than 0.");
                 return ResponseEntity.badRequest().body(response);
             }
 
-            // Kiểm tra đăng nhập
+            // Validate login status
             if (principal == null) {
                 response.put("success", false);
-                response.put("message", "Vui lòng đăng nhập để thêm vào giỏ hàng!");
+                response.put("message", "Please log in to add items to cart.");
                 return ResponseEntity.status(401).body(response);
             }
 
-            // Lấy thông tin user
+            // Get current user
             User user = cartService.getUserFromPrincipal(principal);
             if (user == null) {
                 response.put("success", false);
-                response.put("message", "Không tìm thấy thông tin người dùng!");
+                response.put("message", "User information not found.");
                 return ResponseEntity.status(401).body(response);
             }
 
-            // Lấy thông tin variant
+            // Get product variant
             ProductVariant variant = productVariantService.findById(variantId);
             if (variant == null) {
                 response.put("success", false);
-                response.put("message", "Không tìm thấy cấu hình sản phẩm!");
+                response.put("message", "Product variant not found.");
                 return ResponseEntity.badRequest().body(response);
             }
 
-            // Kiểm tra variant còn hoạt động
+            // Ensure variant is active
             if (variant.getIsActive() == null || !variant.getIsActive()) {
                 response.put("success", false);
-                response.put("message", "Cấu hình sản phẩm này hiện không còn bán!");
+                response.put("message", "This product variant is no longer available.");
                 return ResponseEntity.badRequest().body(response);
             }
 
@@ -476,14 +476,14 @@ public class CartController {
 
             int totalRequestedQuantity = currentQuantity + quantity;
             if (totalRequestedQuantity > variant.getQuantity()) {
-                String errorMsg = String.format("Không đủ hàng trong kho! Hiện tại chỉ còn %d sản phẩm, bạn đã có %d trong giỏ hàng.",
+                String errorMsg = String.format("Insufficient stock. Only %d item(s) left, and you already have %d in your cart.",
                         variant.getQuantity(), currentQuantity);
                 response.put("success", false);
                 response.put("message", errorMsg);
                 return ResponseEntity.badRequest().body(response);
             }
 
-            // Cập nhật hoặc thêm mới vào giỏ hàng
+            // Update existing cart item or add a new one
             if (existingCartItem != null) {
                 existingCartItem.setQuantity(totalRequestedQuantity);
                 cartRepository.save(existingCartItem);
@@ -497,13 +497,13 @@ public class CartController {
                 cartRepository.save(newItem);
             }
 
-            // Tính lại cart count
+            // Recalculate cart count
             int cartCount = cartRepository.findByUser(user).stream()
                     .mapToInt(Cart::getQuantity)
                     .sum();
 
             response.put("success", true);
-            response.put("message", String.format("Đã thêm %s vào giỏ hàng!", variant.getDisplayName()));
+            response.put("message", String.format("%s has been added to your cart.", variant.getDisplayName()));
             response.put("cartCount", cartCount);
 
             return ResponseEntity.ok()
@@ -512,7 +512,7 @@ public class CartController {
 
         } catch (Exception e) {
             response.put("success", false);
-            response.put("message", "Có lỗi xảy ra: " + e.getMessage());
+            response.put("message", "An error occurred: " + e.getMessage());
             return ResponseEntity.status(500).body(response);
         }
     }

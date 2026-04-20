@@ -40,7 +40,7 @@ public class StatisticsApiController {
             try {
                 userCount = userService.countUsers();
             } catch (Exception e) {
-                System.err.println("Lỗi lấy tổng số người dùng: " + e.getMessage());
+                System.err.println("Error getting total user count: " + e.getMessage());
             }
             statistics.put("userCount", userCount != null ? userCount : 0L);
 
@@ -48,7 +48,7 @@ public class StatisticsApiController {
             try {
                 productCount = productService.countProducts();
             } catch (Exception e) {
-                System.err.println("Lỗi lấy tổng số sản phẩm: " + e.getMessage());
+                System.err.println("Error getting total product count: " + e.getMessage());
             }
             statistics.put("productCount", productCount != null ? productCount : 0L);
 
@@ -56,7 +56,7 @@ public class StatisticsApiController {
             try {
                 orderCount = orderService.countOrders();
             } catch (Exception e) {
-                System.err.println("Lỗi lấy tổng số đơn hàng: " + e.getMessage());
+                System.err.println("Error getting total order count: " + e.getMessage());
             }
             statistics.put("orderCount", orderCount != null ? orderCount : 0L);
 
@@ -64,7 +64,7 @@ public class StatisticsApiController {
             try {
                 revenue = orderService.getTotalRevenue();
             } catch (Exception e) {
-                System.err.println("Lỗi lấy tổng doanh thu: " + e.getMessage());
+                System.err.println("Error getting total revenue: " + e.getMessage());
             }
             statistics.put("revenue", revenue != null ? revenue : 0);
 
@@ -75,7 +75,7 @@ public class StatisticsApiController {
                 List<Object[]> temp = orderService.getMonthlyRevenue(currentYear);
                 if (temp != null) results = temp;
             } catch (Exception e) {
-                System.err.println("Lỗi lấy doanh thu theo tháng: " + e.getMessage());
+                System.err.println("Error getting monthly revenue: " + e.getMessage());
             }
             long[] monthlyRevenue = new long[12];
             for (Object[] row : results) {
@@ -87,14 +87,14 @@ public class StatisticsApiController {
             }
             statistics.put("monthlyRevenue", monthlyRevenue);
 
-            // Số lượng đơn hàng theo tháng
+            // Monthly order count
             long[] orderCountByMonth = new long[12];
             List<Object[]> orderCountResults = new ArrayList<>();
             try {
                 List<Object[]> temp = orderService.getMonthlyOrderCount(currentYear);
                 if (temp != null) orderCountResults = temp;
             } catch (Exception e) {
-                System.err.println("Lỗi lấy số lượng đơn hàng theo tháng: " + e.getMessage());
+                System.err.println("Error getting monthly order count: " + e.getMessage());
             }
             for (Object[] row : orderCountResults) {
                 if (row != null && row.length >= 2 && row[0] != null && row[1] != null) {
@@ -105,14 +105,14 @@ public class StatisticsApiController {
             }
             statistics.put("orderCountByMonth", orderCountByMonth);
 
-            // Số lượng user mới theo tháng
+            // Monthly new users count
             long[] newUsersByMonth = new long[12];
             List<Object[]> newUserResults = new ArrayList<>();
             try {
                 List<Object[]> temp = userService.getMonthlyNewUsers(currentYear);
                 if (temp != null) newUserResults = temp;
             } catch (Exception e) {
-                System.err.println("Lỗi lấy số lượng user mới theo tháng: " + e.getMessage());
+                System.err.println("Error getting monthly new users count: " + e.getMessage());
             }
             for (Object[] row : newUserResults) {
                 if (row != null && row.length >= 2 && row[0] != null && row[1] != null) {
@@ -123,13 +123,13 @@ public class StatisticsApiController {
             }
             statistics.put("newUsersByMonth", newUsersByMonth);
 
-            // Lấy top 5 sản phẩm bán chạy nhất từ DB
+            // Get top 5 best selling products from DB
             List<ProductSalesDTO> topProductDTOs = new ArrayList<>();
             try {
                 List<ProductSalesDTO> temp = productService.findTop5BestSellingProducts();
                 if (temp != null) topProductDTOs = temp;
             } catch (Exception e) {
-                System.err.println("Lỗi lấy top sản phẩm bán chạy: " + e.getMessage());
+                System.err.println("Error getting top best selling products: " + e.getMessage());
             }
             List<Map<String, Object>> topProducts = new ArrayList<>();
             for (ProductSalesDTO dto : topProductDTOs) {
@@ -145,9 +145,9 @@ public class StatisticsApiController {
             }
             statistics.put("topProducts", topProducts);
 
-            // Giá trị đơn hàng trung bình
+            // Average order value
             statistics.put("averageOrderValue", 0);
-            // Số khách hàng đã mua
+            // Purchased customer count
             statistics.put("purchasedCustomerCount", 0);
             // Tỷ lệ chuyển đổi
             statistics.put("conversionRate", 0);

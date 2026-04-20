@@ -69,7 +69,7 @@ public class ShipperController {
             return SHIPPER_DASHBOARD;
         } catch (Exception e) {
             log.error("Error loading shipper dashboard", e);
-            model.addAttribute(ERROR, "Có lỗi xảy ra khi tải dashboard: " + e.getMessage());
+            model.addAttribute(ERROR, "An error occurred while loading dashboard: " + e.getMessage());
             return SHIPPER_DASHBOARD;
         }
     }
@@ -124,7 +124,7 @@ public class ShipperController {
             return SHIPPER_ORDERS_VIEW;
         } catch (Exception e) {
             log.error("Error loading orders for shipper", e);
-            model.addAttribute(ERROR, "Có lỗi xảy ra khi tải danh sách đơn hàng: " + e.getMessage());
+            model.addAttribute(ERROR, "An error occurred while loading orders: " + e.getMessage());
             model.addAttribute(ORDERS, List.of());
             return SHIPPER_ORDERS_VIEW;
         }
@@ -138,13 +138,13 @@ public class ShipperController {
         try {
             Order order = orderService.getOrderByIdWithDetails(orderId);
             if (order == null) {
-                model.addAttribute(ERROR, "Không tìm thấy đơn hàng với ID: " + orderId);
+                model.addAttribute(ERROR, "Order not found with ID: " + orderId);
                 return REDIRECT_SHIPPER_ORDERS;
             }
             
             // Kiểm tra xem đơn hàng có liên quan đến shipper không
             if (!SHIPPER_RELEVANT_STATUSES.contains(order.getStatus())) {
-                model.addAttribute(ERROR, "Bạn không có quyền xem đơn hàng này.");
+                model.addAttribute(ERROR, "You do not have permission to view this order.");
                 return REDIRECT_SHIPPER_ORDERS;
             }
             
@@ -156,7 +156,7 @@ public class ShipperController {
             return SHIPPER_ORDER_DETAIL;
         } catch (Exception e) {
             log.error("Error loading order detail for shipper", e);
-            model.addAttribute(ERROR, "Có lỗi xảy ra khi tải chi tiết đơn hàng: " + e.getMessage());
+            model.addAttribute(ERROR, "An error occurred while loading order detail: " + e.getMessage());
             return REDIRECT_SHIPPER_ORDERS;
         }
     }
@@ -171,7 +171,7 @@ public class ShipperController {
         try {
             Order order = orderService.getOrderById(orderId);
             if (order == null) {
-                redirectAttributes.addFlashAttribute(ERROR, "Không tìm thấy đơn hàng với ID: " + orderId);
+                redirectAttributes.addFlashAttribute(ERROR, "Order not found with ID: " + orderId);
                 return REDIRECT_SHIPPER_ORDERS;
             }
             
@@ -179,14 +179,14 @@ public class ShipperController {
             
             // Kiểm tra quyền thay đổi trạng thái
             if (!SHIPPER_RELEVANT_STATUSES.contains(currentStatus)) {
-                redirectAttributes.addFlashAttribute(ERROR, "Bạn không có quyền thay đổi đơn hàng này.");
+                redirectAttributes.addFlashAttribute(ERROR, "You do not have permission to change the order status.");
                 return REDIRECT_SHIPPER_ORDERS;
             }
             
             // Kiểm tra tính hợp lệ của chuyển đổi trạng thái
             if (!isValidStatusTransition(currentStatus, newStatus)) {
                 redirectAttributes.addFlashAttribute(ERROR, 
-                    "Không thể chuyển từ trạng thái '" + getStatusDisplayName(currentStatus) + 
+                    "Cannot change from status '" + getStatusDisplayName(currentStatus) + 
                     "' sang '" + getStatusDisplayName(newStatus) + "'");
                 return "redirect:/shipper/orders/" + orderId;
             }
@@ -198,12 +198,12 @@ public class ShipperController {
             log.info("Shipper updated order {} status from {} to {}", orderId, currentStatus, newStatus);
             
             redirectAttributes.addFlashAttribute(SUCCESS, 
-                "Đã cập nhật trạng thái đơn hàng thành công: " + getStatusDisplayName(newStatus));
+                "Order status updated successfully: " + getStatusDisplayName(newStatus));
             
             return "redirect:/shipper/orders/" + orderId;
         } catch (Exception e) {
             log.error("Error updating order status", e);
-            redirectAttributes.addFlashAttribute(ERROR, "Có lỗi xảy ra khi cập nhật trạng thái: " + e.getMessage());
+            redirectAttributes.addFlashAttribute(ERROR, "An error occurred while updating order status: " + e.getMessage());
             return REDIRECT_SHIPPER_ORDERS;
         }
     }
@@ -215,8 +215,7 @@ public class ShipperController {
         return switch (currentStatus) {
             case "PROCESSING" -> Arrays.asList("SHIPPED", "CANCELLED");
             case "SHIPPED" -> Arrays.asList("DELIVERED", "CANCELLED");
-            case "DELIVERED" -> List.of(); // Không thể chuyển đổi từ DELIVERED
-            case "CANCELLED" -> List.of(); // Không thể chuyển đổi từ CANCELLED
+            case "DELIVERED" -> List.of(); // Cannot change
             default -> List.of();
         };
     }
@@ -233,14 +232,14 @@ public class ShipperController {
      * Chuyển đổi status code thành tên hiển thị tiếng Việt
      */
     private String getStatusDisplayName(String status) {
-        if (status == null) return "Không xác định";
+        if (status == null) return "Unspecified";
         
         return switch (status) {
-            case "PROCESSING" -> "Đang xử lý";
-            case "SHIPPED" -> "Đang giao hàng";
-            case "DELIVERED" -> "Đã giao hàng";
-            case "CANCELLED" -> "Đã hủy";
-            default -> "Không xác định";
+            case "PROCESSING" -> "Processing";
+            case "SHIPPED" -> "Shipping";
+            case "DELIVERED" -> "Delivered";
+            case "CANCELLED" -> "Cancelled";
+            default -> "Unspecified";
         };
     }
 
@@ -249,7 +248,7 @@ public class ShipperController {
      */
     private User getCurrentUser(Principal principal) {
         if (principal == null) {
-            throw new IllegalStateException("Người dùng chưa đăng nhập");
+            throw new IllegalStateException("User is not logged in");
         }
         
         UserProfileData userProfileData = userService.getCurrentUser();
@@ -258,7 +257,7 @@ public class ShipperController {
         if (user.getRole() == Role.Shipper || user.getRole() == Role.Admin) {
             return user;
         }else{
-            throw new IllegalStateException("Quản trị viên hoặc Nhân viên vận chuyển mới có thể truy cập trang này");
+            throw new IllegalStateException("Only Admin or Shipper can access this page");
         }
     }
 } 

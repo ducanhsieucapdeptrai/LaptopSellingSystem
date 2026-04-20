@@ -44,6 +44,7 @@ public class UserProfileController {
     private final UserService userService;
     private final OrderService orderService;
     private final ReviewService reviewService;
+    private static final long MAX_AVATAR_SIZE_BYTES = 5L * 1024 * 1024; // 5MB
     
     @GetMapping("/user-profile")
     public String showUserProfile(Model model) {
@@ -81,7 +82,7 @@ public class UserProfileController {
             return "user/userprofile";
         } catch (Exception e) {
             log.error("Unexpected error loading user profile", e);
-            model.addAttribute("error", "Đã xảy ra lỗi không mong muốn. Vui lòng thử lại.");
+            model.addAttribute("error", "An unexpected error occurred. Please try again.");
             return "user/userprofile";
         }
     }
@@ -99,17 +100,17 @@ public class UserProfileController {
                 result = userService.updateUserInfo(userInfoRequest);
                 
                 if (result.equals("SUCCESS")) {
-                    redirectAttributes.addFlashAttribute("success", "Cập nhật thông tin cá nhân thành công!");
+                    redirectAttributes.addFlashAttribute("success", "Profile information updated successfully.");
                     log.info("User info updated successfully");
                 } else {
-                    redirectAttributes.addFlashAttribute("error", result);
+                    redirectAttributes.addFlashAttribute("error", translateServiceMessage(result));
                     log.warn("User info update failed: {}", result);
                 }
                 
             } else if ("change-password".equals(action)) {
                 // Validate password confirmation
                 if (!passwordRequest.isPasswordConfirmed()) {
-                    redirectAttributes.addFlashAttribute("error", "Mật khẩu xác nhận không khớp.");
+                    redirectAttributes.addFlashAttribute("error", "Password confirmation does not match!");
                     return "redirect:/user/user-profile";
                 }
                 
@@ -117,15 +118,15 @@ public class UserProfileController {
                 result = userService.changePassword(passwordRequest);
                 
                 if (result.equals("SUCCESS")) {
-                    redirectAttributes.addFlashAttribute("success", "Đổi mật khẩu thành công!");
+                    redirectAttributes.addFlashAttribute("success", "Password changed successfully.");
                     log.info("Password changed successfully");
                 } else {
-                    redirectAttributes.addFlashAttribute("error", result);
+                    redirectAttributes.addFlashAttribute("error", translateServiceMessage(result));
                     log.warn("Password change failed: {}", result);
                 }
                 
             } else {
-                redirectAttributes.addFlashAttribute("error", "Hành động không hợp lệ.");
+                redirectAttributes.addFlashAttribute("error", "Invalid action!");
                 log.warn("Invalid action: {}", action);
             }
             
@@ -134,7 +135,7 @@ public class UserProfileController {
             redirectAttributes.addFlashAttribute("error", e.getMessage());
         } catch (Exception e) {
             log.error("Unexpected error during profile update", e);
-            redirectAttributes.addFlashAttribute("error", "Đã xảy ra lỗi không mong muốn. Vui lòng thử lại.");
+            redirectAttributes.addFlashAttribute("error", "An unexpected error occurred. Please try again.");
         }
         
         return "redirect:/user/user-profile";
@@ -145,52 +146,70 @@ public class UserProfileController {
                               Principal principal,
                               RedirectAttributes redirectAttributes) {
         try {
-            // Check file size trước khi xử lý
-            if (file.getSize() > 5 * 1024 * 1024) { // 10MB
-                redirectAttributes.addFlashAttribute("error", "File quá lớn! Tối đa 10MB.");
+            // Validate file size before processing
+            if (file.getSize() > MAX_AVATAR_SIZE_BYTES) {
+                redirectAttributes.addFlashAttribute("error", "File is too large. Maximum size is 5MB.");
                 return "redirect:/user/user-profile";
             }
             
             User user = userService.getUserFromPrincipal(principal);
             if (user == null) {
-                redirectAttributes.addFlashAttribute("error", "Không tìm thấy thông tin người dùng!");
+                redirectAttributes.addFlashAttribute("error", "User information was not found.");
                 return "redirect:/user/user-profile";
             }
+            String oldAvatarFileName = user.getImage();
             
             if (file.isEmpty()) {
-                redirectAttributes.addFlashAttribute("error", "Vui lòng chọn ảnh để tải lên!");
+                redirectAttributes.addFlashAttribute("error", "Please select an image to upload.");
                 return "redirect:/user/user-profile";
             }
             
             // Validate file type
             String contentType = file.getContentType();
             if (contentType == null || !contentType.startsWith("image/")) {
-                redirectAttributes.addFlashAttribute("error", "File tải lên phải là ảnh!");
+                redirectAttributes.addFlashAttribute("error", "Only image files are allowed.");
                 return "redirect:/user/user-profile";
             }
             
-            // Delete old avatar
-            userService.deleteOldAvatar(user.getImage());
-            
-            // Save new avatar
+            // Save new avatar first to avoid losing current image when upload fails
             String avatarFileName = userService.saveAvatarFile(file, user.getUserId());
             if (avatarFileName != null) {
                 String result = userService.updateUserAvatar(user.getUserId(), avatarFileName);
                 if ("SUCCESS".equals(result)) {
-                    redirectAttributes.addFlashAttribute("success", "✅ Tải ảnh đại diện thành công!");
+                    // Remove old avatar only after DB update succeeds
+                    userService.deleteOldAvatar(oldAvatarFileName);
+                    redirectAttributes.addFlashAttribute("success", "Avatar uploaded successfully.");
                 } else {
-                    redirectAttributes.addFlashAttribute("error", "Lỗi khi lưu ảnh: " + result);
+                    redirectAttributes.addFlashAttribute("error", "Could not save avatar: " + translateServiceMessage(result));
                 }
             } else {
-                redirectAttributes.addFlashAttribute("error", "Có lỗi xảy ra khi lưu ảnh!");
+                redirectAttributes.addFlashAttribute("error", "Failed to store the uploaded avatar file.");
             }
             
         } catch (Exception e) {
             log.error("Error uploading avatar", e);
-            redirectAttributes.addFlashAttribute("error", "Lỗi upload: " + e.getMessage());
+            redirectAttributes.addFlashAttribute("error", "Upload failed: " + e.getMessage());
         }
         
         return "redirect:/user/user-profile";
+    }
+
+    private String translateServiceMessage(String message) {
+        if (message == null || message.isBlank()) {
+            return "An unexpected error occurred.";
+        }
+        return switch (message) {
+            case "Họ và tên không được để trống" -> "Full name cannot be empty.";
+            case "Số điện thoại đã được sử dụng bởi tài khoản khác" -> "Phone number is already used by another account.";
+            case "Đã xảy ra lỗi không mong muốn. Vui lòng thử lại." -> "An unexpected error occurred. Please try again.";
+            case "Không thể đổi mật khẩu cho tài khoản OAuth2" -> "Password cannot be changed for OAuth2 accounts.";
+            case "Mật khẩu hiện tại không đúng" -> "Current password is incorrect.";
+            case "Mật khẩu xác nhận không khớp" -> "Password confirmation does not match.";
+            case "Lỗi xác thực" -> "Authentication error.";
+            case "Không tìm thấy người dùng" -> "User not found.";
+            case "Lỗi khi cập nhật ảnh đại diện" -> "Error while updating avatar.";
+            default -> message;
+        };
     }
 
     @PostMapping("/remove-avatar")
@@ -201,7 +220,7 @@ public class UserProfileController {
             User user = userService.getUserFromPrincipal(principal);
             if (user == null) {
                 response.put("success", false);
-                response.put("message", "Không tìm thấy thông tin người dùng!");
+                response.put("message", "User information not found!");
                 return ResponseEntity.badRequest().body(response);
             }
             
@@ -328,7 +347,7 @@ public class UserProfileController {
             
             response.put("success", true);
             response.put("message", existingReview.isPresent() ? 
-                "Cập nhật đánh giá thành công!" : "Đánh giá sản phẩm thành công!");
+                "Update review successfully!" : "Review product successfully!");
             response.put("reviewId", review.getReviewId());
             response.put("isUpdate", existingReview.isPresent());
             return ResponseEntity.ok(response);
@@ -340,7 +359,7 @@ public class UserProfileController {
         } catch (Exception e) {
             log.error("Error submitting review", e);
             response.put("success", false);
-            response.put("message", "Có lỗi xảy ra khi gửi đánh giá!");
+            response.put("message", "An error occurred while submitting review!");
             return ResponseEntity.internalServerError().body(response);
         }
     }
@@ -363,7 +382,7 @@ public class UserProfileController {
             String orderId = (String) request.get("orderId");
             if (orderId == null || orderId.trim().isEmpty()) {
                 response.put("success", false);
-                response.put("message", "Thiếu thông tin đơn hàng!");
+                response.put("message", "Missing order information!");
                 return ResponseEntity.badRequest().body(response);
             }
 
@@ -371,21 +390,21 @@ public class UserProfileController {
             Order order = orderService.getOrderById(orderId);
             if (order == null) {
                 response.put("success", false);
-                response.put("message", "Không tìm thấy đơn hàng!");
+                response.put("message", "Order not found!");
                 return ResponseEntity.badRequest().body(response);
             }
 
             // Check if order belongs to user
             if (!order.getUserId().equals(user.getUserId())) {
                 response.put("success", false);
-                response.put("message", "Bạn không có quyền truy cập đơn hàng này!");
+                response.put("message", "You do not have permission to access this order!");
                 return ResponseEntity.badRequest().body(response);
             }
 
             // Check if order status is DELIVERED
             if (!"DELIVERED".equals(order.getStatus())) {
                 response.put("success", false);
-                response.put("message", "Chỉ có thể xác nhận đơn hàng đã được giao!");
+                response.put("message", "Only orders that have been delivered can be confirmed!");
                 return ResponseEntity.badRequest().body(response);
             }
             String oldStatus = order.getStatus();
@@ -394,14 +413,14 @@ public class UserProfileController {
             Order updatedOrder = orderService.updateOrder(order, oldStatus);
 
             response.put("success", true);
-            response.put("message", "Xác nhận đã nhận hàng thành công! Bạn có thể đánh giá sản phẩm.");
+            response.put("message", "Order confirmed successfully! You can now review the product.");
             response.put("orderId", updatedOrder.getId());
             return ResponseEntity.ok(response);
 
         } catch (Exception e) {
             log.error("Error confirming delivery for order", e);
             response.put("success", false);
-            response.put("message", "Có lỗi xảy ra khi xác nhận nhận hàng!");
+            response.put("message", "An error occurred while confirming delivery!");
             return ResponseEntity.internalServerError().body(response);
         }
     }

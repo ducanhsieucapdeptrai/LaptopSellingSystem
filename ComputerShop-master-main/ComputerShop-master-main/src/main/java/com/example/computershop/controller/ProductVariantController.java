@@ -1,7 +1,6 @@
 package com.example.computershop.controller;
 
 import java.math.BigInteger;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -40,7 +39,6 @@ public class ProductVariantController {
 
     private static final String SUCCCESS = "success";
     private static final String ERROR = "error";
-    private static final String LOI = "Lỗi: ";
     private static final String PRODUCT_VARIANTS = "redirect:/admin/product-variants/";
     private static final String PRODUCT = "redirect:/admin/product";
     
@@ -51,7 +49,7 @@ public class ProductVariantController {
      * Validate specification field using the defined pattern
      */
     private boolean isValidSpecification(String value) {
-        return value == null || value.trim().isEmpty() || value.matches(SPEC_PATTERN);
+        return value != null && !value.trim().isEmpty() && !value.matches(SPEC_PATTERN);
     }
     
     @GetMapping("/{productId}")
@@ -81,7 +79,7 @@ public class ProductVariantController {
         try {
             Products product = productService.findById(productId);
             if (product == null) {
-                redirectAttributes.addFlashAttribute(ERROR, "Sản phẩm không tồn tại!");
+                redirectAttributes.addFlashAttribute(ERROR, "Product not found with ID: " + productId);
                 return PRODUCT;
             }
             
@@ -97,28 +95,28 @@ public class ProductVariantController {
             variant.setSku(allParams.get("sku"));
             
             // Validate specification fields
-            if (!isValidSpecification(variant.getCpu())) {
-                redirectAttributes.addFlashAttribute(ERROR, "CPU chỉ được chứa chữ, số, dấu '.', ',', '()', '-', '\"' và dấu cách.");
+            if (isValidSpecification(variant.getCpu())) {
+                redirectAttributes.addFlashAttribute(ERROR, "CPU can only contain letters, numbers, '.', ',', '()', '-', double quotes and spaces.");
                 return PRODUCT_VARIANTS + productId;
             }
             
-            if (!isValidSpecification(variant.getRam())) {
-                redirectAttributes.addFlashAttribute(ERROR, "RAM chỉ được chứa chữ, số, dấu '.', ',', '()', '-', '\"' và dấu cách.");
+            if (isValidSpecification(variant.getRam())) {
+                redirectAttributes.addFlashAttribute(ERROR, "RAM can only contain letters, numbers, '.', ',', '()', '-', double quotes and spaces.");
                 return PRODUCT_VARIANTS + productId;
             }
             
-            if (!isValidSpecification(variant.getStorage())) {
-                redirectAttributes.addFlashAttribute(ERROR, "Storage chỉ được chứa chữ, số, dấu '.', ',', '()', '-', '\"' và dấu cách.");
+            if (isValidSpecification(variant.getStorage())) {
+                redirectAttributes.addFlashAttribute(ERROR, "Storage can only contain letters, numbers, '.', ',', '()', '-', double quotes and spaces.");
                 return PRODUCT_VARIANTS + productId;
             }
             
-            if (!isValidSpecification(variant.getGpu())) {
-                redirectAttributes.addFlashAttribute(ERROR, "GPU chỉ được chứa chữ, số, dấu '.', ',', '()', '-', '\"' và dấu cách.");
+            if (isValidSpecification(variant.getGpu())) {
+                redirectAttributes.addFlashAttribute(ERROR, "GPU can only contain letters, numbers, '.', ',', '()', '-', double quotes and spaces.");
                 return PRODUCT_VARIANTS + productId;
             }
             
-            if (!isValidSpecification(variant.getScreen())) {
-                redirectAttributes.addFlashAttribute(ERROR, "Screen chỉ được chứa chữ, số, dấu '.', ',', '()', '-', '\"' và dấu cách.");
+            if (isValidSpecification(variant.getScreen())) {
+                redirectAttributes.addFlashAttribute(ERROR, "Screen can only contain letters, numbers, '.', ',', '()', '-', double quotes and spaces.");
                 return PRODUCT_VARIANTS + productId;
             }
             
@@ -131,7 +129,7 @@ public class ProductVariantController {
                     variant.setQuantity(Integer.parseInt(allParams.get("quantity")));
                 }
             } catch (NumberFormatException e) {
-                redirectAttributes.addFlashAttribute(ERROR, "Định dạng số không hợp lệ!");
+                redirectAttributes.addFlashAttribute(ERROR, "Invalid number format!");
                 return PRODUCT_VARIANTS + productId;
             }
             
@@ -141,7 +139,7 @@ public class ProductVariantController {
                     String fileName = storageService.store(variantImage);
                     variant.setVariantImageUrl(fileName);
                 } catch (Exception e) {
-                    redirectAttributes.addFlashAttribute(ERROR, "Lỗi upload ảnh chính: " + e.getMessage());
+                    redirectAttributes.addFlashAttribute(ERROR, "Error uploading main image: " + e.getMessage());
                     return PRODUCT_VARIANTS + productId;
                 }
             }
@@ -154,7 +152,7 @@ public class ProductVariantController {
                 if (value != null && !value.trim().isEmpty()) {
                     customAttributes.put(field.getFieldKey(), value.trim());
                 } else if (field.getIsRequired() != null && field.getIsRequired()) {
-                    redirectAttributes.addFlashAttribute(ERROR, "Trường " + field.getFieldName() + " là bắt buộc!");
+                    redirectAttributes.addFlashAttribute(ERROR, "Field " + field.getFieldName() + " is required!");
                     return PRODUCT_VARIANTS + productId;
                 }
             }
@@ -164,7 +162,7 @@ public class ProductVariantController {
             // Check if variant with same specs already exists
             if (productVariantService.existsBySpecs(productId, variant.getCpu(), 
                     variant.getRam(), variant.getStorage())) {
-                redirectAttributes.addFlashAttribute(ERROR, "Cấu hình này đã tồn tại!");
+                redirectAttributes.addFlashAttribute(ERROR, "This configuration already exists!");
                 return PRODUCT_VARIANTS + productId;
             }
             
@@ -177,10 +175,10 @@ public class ProductVariantController {
             }
             
             productVariantService.create(variant);
-            redirectAttributes.addFlashAttribute(SUCCCESS, "Thêm cấu hình thành công!");
+            redirectAttributes.addFlashAttribute(SUCCCESS, "Add configuration successfully!");
             
         } catch (Exception e) {
-            redirectAttributes.addFlashAttribute(ERROR, LOI + e.getMessage());
+            redirectAttributes.addFlashAttribute(ERROR, "An error occurred while adding configuration: " + e.getMessage());
         }
         
         return PRODUCT_VARIANTS + productId;
@@ -212,33 +210,33 @@ public class ProductVariantController {
         try {
             ProductVariant existing = productVariantService.findById(variantId);
             if (existing == null) {
-                redirectAttributes.addFlashAttribute(ERROR, "Cấu hình không tồn tại!");
+                redirectAttributes.addFlashAttribute(ERROR, "Configuration not found with ID: " + variantId);
                 return PRODUCT;
             }
             
             // Validate specification fields in updated variant
-            if (!isValidSpecification(updatedVariant.getCpu())) {
-                redirectAttributes.addFlashAttribute(ERROR, "CPU chỉ được chứa chữ, số, dấu '.', ',', '()', '-', '\"' và dấu cách.");
+            if (isValidSpecification(updatedVariant.getCpu())) {
+                redirectAttributes.addFlashAttribute(ERROR, "CPU can only contain letters, numbers, '.', ',', '()', '-', double quotes and spaces.");
                 return PRODUCT_VARIANTS + existing.getProduct().getProductID();
             }
             
-            if (!isValidSpecification(updatedVariant.getRam())) {
-                redirectAttributes.addFlashAttribute(ERROR, "RAM chỉ được chứa chữ, số, dấu '.', ',', '()', '-', '\"' và dấu cách.");
+            if (isValidSpecification(updatedVariant.getRam())) {
+                redirectAttributes.addFlashAttribute(ERROR, "RAM can only contain letters, numbers, '.', ',', '()', '-', double quotes and spaces.");
                 return PRODUCT_VARIANTS + existing.getProduct().getProductID();
             }
             
-            if (!isValidSpecification(updatedVariant.getStorage())) {
-                redirectAttributes.addFlashAttribute(ERROR, "Storage chỉ được chứa chữ, số, dấu '.', ',', '()', '-', '\"' và dấu cách.");
+            if (isValidSpecification(updatedVariant.getStorage())) {
+                redirectAttributes.addFlashAttribute(ERROR, "Storage can only contain letters, numbers, '.', ',', '()', '-', double quotes and spaces.");
                 return PRODUCT_VARIANTS + existing.getProduct().getProductID();
             }
             
-            if (!isValidSpecification(updatedVariant.getGpu())) {
-                redirectAttributes.addFlashAttribute(ERROR, "GPU chỉ được chứa chữ, số, dấu '.', ',', '()', '-', '\"' và dấu cách.");
+            if (isValidSpecification(updatedVariant.getGpu())) {
+                redirectAttributes.addFlashAttribute(ERROR, "GPU can only contain letters, numbers, '.', ',', '()', '-', double quotes and spaces.");
                 return PRODUCT_VARIANTS + existing.getProduct().getProductID();
             }
             
-            if (!isValidSpecification(updatedVariant.getScreen())) {
-                redirectAttributes.addFlashAttribute(ERROR, "Screen chỉ được chứa chữ, số, dấu '.', ',', '()', '-', '\"' và dấu cách.");
+            if (isValidSpecification(updatedVariant.getScreen())) {
+                redirectAttributes.addFlashAttribute(ERROR, "Screen can only contain letters, numbers, '.', ',', '()', '-', double quotes and spaces.");
                 return PRODUCT_VARIANTS + existing.getProduct().getProductID();
             }
             
@@ -249,7 +247,7 @@ public class ProductVariantController {
                     String fileName = storageService.storeAndCleanup(image, existing.getVariantImageUrl());
                     updatedVariant.setVariantImageUrl(fileName);
                 } catch (Exception e) {
-                    redirectAttributes.addFlashAttribute(ERROR, "Lỗi upload ảnh chính: " + e.getMessage());
+                    redirectAttributes.addFlashAttribute(ERROR, "Error uploading main image: " + e.getMessage());
                     return PRODUCT_VARIANTS + existing.getProduct().getProductID();
                 }
             } else {
@@ -272,14 +270,14 @@ public class ProductVariantController {
             
             ProductVariant updated = productVariantService.update(variantId, updatedVariant);
             if (updated != null) {
-                redirectAttributes.addFlashAttribute(SUCCCESS, "Cập nhật cấu hình thành công!");
+                redirectAttributes.addFlashAttribute(SUCCCESS, "Update configuration successfully!");
                 return PRODUCT_VARIANTS + existing.getProduct().getProductID();
             } else {
-                redirectAttributes.addFlashAttribute(ERROR, "Không thể cập nhật cấu hình!");
+                redirectAttributes.addFlashAttribute(ERROR, "Cannot update configuration!");
             }
             
         } catch (Exception e) {
-            redirectAttributes.addFlashAttribute(ERROR, LOI + e.getMessage());
+            redirectAttributes.addFlashAttribute(ERROR, "An error occurred while updating configuration: " + e.getMessage());
         }
         
         return PRODUCT;
@@ -317,9 +315,9 @@ public class ProductVariantController {
                           RedirectAttributes redirectAttributes) {
         try {
             fieldConfigService.create(fieldConfig);
-            redirectAttributes.addFlashAttribute(SUCCCESS, "Thêm trường thành công!");
+            redirectAttributes.addFlashAttribute(SUCCCESS, "Add field successfully!");
         } catch (Exception e) {
-            redirectAttributes.addFlashAttribute(ERROR, LOI + e.getMessage());
+            redirectAttributes.addFlashAttribute(ERROR, "An error occurred while adding field: " + e.getMessage());
         }
         return "redirect:/admin/product-variants/field-config";
     }
@@ -329,7 +327,7 @@ public class ProductVariantController {
         try {
             VariantFieldConfig field = fieldConfigService.findById(fieldId);
             if (field == null) {
-                redirectAttributes.addFlashAttribute(ERROR, "Trường không tồn tại!");
+                redirectAttributes.addFlashAttribute(ERROR, "Field not found with ID: " + fieldId);
                 return "redirect:/admin/product-variants/field-config";
             }
             
@@ -341,7 +339,7 @@ public class ProductVariantController {
             
             return "admin/product/field-config";
         } catch (Exception e) {
-            redirectAttributes.addFlashAttribute(ERROR, LOI + e.getMessage());
+            redirectAttributes.addFlashAttribute(ERROR, "An error occurred while editing field: " + e.getMessage());
             return "redirect:/admin/product-variants/field-config";
         }
     }
@@ -353,12 +351,12 @@ public class ProductVariantController {
         try {
             VariantFieldConfig updated = fieldConfigService.update(fieldId, fieldConfig);
             if (updated != null) {
-                redirectAttributes.addFlashAttribute(SUCCCESS, "Cập nhật trường thành công!");
+                redirectAttributes.addFlashAttribute(SUCCCESS, "Update field successfully!");
             } else {
-                redirectAttributes.addFlashAttribute(ERROR, "Không thể cập nhật trường!");
+                redirectAttributes.addFlashAttribute(ERROR, "Cannot update field!");
             }
         } catch (Exception e) {
-            redirectAttributes.addFlashAttribute(ERROR, LOI + e.getMessage());
+            redirectAttributes.addFlashAttribute(ERROR, "An error occurred while updating field: " + e.getMessage());
         }
         return "redirect:/admin/product-variants/field-config";
     }
@@ -368,12 +366,12 @@ public class ProductVariantController {
                               RedirectAttributes redirectAttributes) {
         try {
             if (fieldConfigService.delete(fieldId)) {
-                redirectAttributes.addFlashAttribute(SUCCCESS, "Xóa trường thành công!");
+                redirectAttributes.addFlashAttribute(SUCCCESS, "Delete field successfully!");
             } else {
-                redirectAttributes.addFlashAttribute(ERROR, "Không thể xóa trường!");
+                redirectAttributes.addFlashAttribute(ERROR, "Cannot delete field!");
             }
         } catch (Exception e) {
-            redirectAttributes.addFlashAttribute(ERROR, LOI + e.getMessage());
+            redirectAttributes.addFlashAttribute(ERROR, "An error occurred while deleting field: " + e.getMessage());
         }
         return "redirect:/admin/product-variants/field-config";
     }

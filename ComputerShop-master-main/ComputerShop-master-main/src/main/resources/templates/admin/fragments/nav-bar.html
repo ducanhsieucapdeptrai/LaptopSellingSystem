@@ -1,11 +1,14 @@
-<html xmlns:th="http://www.thymeleaf.org"
-      xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="vi">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="vi">
 <nav class="navbar navbar-expand navbar-dark bg-dark static-top" th:fragment="nav-bar">
-    <a class="navbar-brand mr-1" th:href="@{/admin/dashboard}" sec:authorize="hasAnyRole('Admin')">Admin Dashboard</a>
-    <a class="navbar-brand mr-1" th:href="@{/admin/dashboard}" sec:authorize="hasAnyRole('Sales')">Sales Staff Dashboard</a>
-    <a class="navbar-brand mr-1" th:href="@{/shipper/dashboard}" sec:authorize="hasAnyRole('Shipper')">Shipper Dashboard</a>
-    <button class="btn btn-link btn-sm text-white order-1 order-sm-0" id="sidebarToggle" href="#">
-            <i class="fas fa-bars"></i>
+    <div class="dashboard-switcher">
+        <div class="dashboard-switcher-top d-flex align-items-center">
+            <a class="navbar-brand role-badge mr-2" th:href="@{/admin/dashboard}" sec:authorize="hasAnyRole('Admin')">Admin Dashboard</a>
+            <a class="navbar-brand role-badge mr-2" th:href="@{/admin/dashboard}" sec:authorize="hasAnyRole('Sales')">Sales Dashboard</a>
+            <a class="navbar-brand role-badge mr-2" th:href="@{/shipper/dashboard}" sec:authorize="hasAnyRole('Shipper')">Shipper Dashboard</a>
+        </div>
+    </div>
+    <button class="btn btn-link btn-sm text-white order-1 order-sm-0" id="sidebarToggle" type="button">
+        <i class="fas fa-bars"></i>
     </button>
     <!-- Navbar Search -->
     <form class="d-none d-md-inline-block form-inline ml-auto mr-0 mr-md-3 my-2 my-md-0">
@@ -13,31 +16,37 @@
         </div>
     </form>
 
-        <!-- Navbar -->
-        <ul class="navbar-nav ml-auto ml-md-0">
-            <!-- Admin Notification Icon - Only show when authenticated -->
-            <li class="nav-item notifications" sec:authorize="isAuthenticated()">
-                <a th:href="@{/notifications/admin/personal}" class="nav-link notification-btn" title="My Notifications">
-                    <i class="fas fa-bell"></i>
-                    <span class="notification-count" id="adminNotificationCount">0</span>
+    <!-- Navbar -->
+    <ul class="navbar-nav ml-auto ml-md-0">
+        <!-- Admin Notification Icon - Only show when authenticated -->
+        <li class="nav-item notifications" sec:authorize="isAuthenticated()">
+            <a th:href="@{/notifications/admin/personal}" class="nav-link notification-btn" title="My Notifications">
+                <i class="fas fa-bell"></i>
+                <span class="notification-count" id="adminNotificationCount">0</span>
+            </a>
+        </li>
+
+        <li class="nav-item dropdown no-arrow">
+            <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown"
+                aria-haspopup="true" aria-expanded="false">
+                <i class="fas fa-user-circle fa-fw"></i>
+            </a>
+            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userDropdown">
+                <a class="dropdown-item" th:href="@{/}">
+                    <i class="fas fa-home mr-2"></i>
+                    Home Page
                 </a>
-            </li>
-            
-            <li class="nav-item dropdown no-arrow">
-                <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown"
-                   aria-haspopup="true" aria-expanded="false">
-                    <i class="fas fa-user-circle fa-fw"></i>
-                </a>
-                <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userDropdown">
-                    <form th:action="@{/logout}" method="post" style="margin: 0;">
-                        <button type="submit" class="dropdown-item" style="border: none; background: none; width: 100%; text-align: left; cursor: pointer;">
-                            <i class="fas fa-sign-out-alt mr-2"></i>
-                            Logout
-                        </button>
-                    </form>
-                </div>
-            </li>
-        </ul>
+                <div class="dropdown-divider"></div>
+                <form th:action="@{/logout}" method="post" style="margin: 0;">
+                    <button type="submit" class="dropdown-item"
+                        style="border: none; background: none; width: 100%; text-align: left; cursor: pointer;">
+                        <i class="fas fa-sign-out-alt mr-2"></i>
+                        Logout
+                    </button>
+                </form>
+            </div>
+        </li>
+    </ul>
 
 </nav>
 
@@ -46,7 +55,7 @@
     .notifications {
         position: relative;
     }
-    
+
     .notification-btn {
         position: relative;
         color: rgba(255, 255, 255, 0.8) !important;
@@ -55,7 +64,7 @@
         border-radius: 4px;
         transition: all 0.3s ease;
     }
-    
+
     .notification-count {
         position: absolute;
         top: -5px;
@@ -73,10 +82,10 @@
         justify-content: center;
         line-height: 1;
         border: 2px solid #fff;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
         z-index: 10;
     }
-    
+
     .notification-btn:hover {
         color: #ffc107 !important;
         background-color: rgba(255, 255, 255, 0.1);
@@ -85,10 +94,81 @@
     .notification-btn.has-notifications .notification-count {
         display: flex;
     }
-    
+
     @keyframes bellShake {
-        0%, 100% { transform: rotate(0deg); }
-        10%, 30%, 50%, 70%, 90% { transform: rotate(-5deg); }
-        20%, 40%, 60%, 80% { transform: rotate(5deg); }
+
+        0%,
+        100% {
+            transform: rotate(0deg);
+        }
+
+        10%,
+        30%,
+        50%,
+        70%,
+        90% {
+            transform: rotate(-5deg);
+        }
+
+        20%,
+        40%,
+        60%,
+        80% {
+            transform: rotate(5deg);
+        }
+    }
+</style>
+
+<style>
+    .dashboard-switcher {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        line-height: 1.1;
+    }
+
+    .dashboard-switcher-top {
+        margin-bottom: 0.28rem;
+    }
+
+    .dashboard-switcher .role-badge {
+        font-size: 0.86rem;
+        padding: 0.35rem 0.7rem;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.12);
+        color: #fff !important;
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        transition: all 0.2s ease;
+    }
+
+    .dashboard-switcher .role-badge:hover {
+        background: rgba(255, 255, 255, 0.22);
+        text-decoration: none;
+    }
+
+    .dashboard-switcher .user-home-link {
+        font-size: 0.86rem;
+        padding: 0.35rem 0.7rem;
+        border-radius: 999px;
+        color: #fff !important;
+        border: 1px solid rgba(255, 193, 7, 0.55);
+        background: rgba(255, 193, 7, 0.15);
+        transition: all 0.2s ease;
+    }
+
+    .dashboard-switcher .user-home-link:hover {
+        background: rgba(255, 193, 7, 0.28);
+        text-decoration: none;
+    }
+
+    @media (max-width: 992px) {
+        .dashboard-switcher {
+            gap: 0.35rem;
+        }
+
+        .dashboard-switcher .role-badge,
+        .dashboard-switcher .user-home-link {
+            margin-right: 0 !important;
+        }
     }
 </style>

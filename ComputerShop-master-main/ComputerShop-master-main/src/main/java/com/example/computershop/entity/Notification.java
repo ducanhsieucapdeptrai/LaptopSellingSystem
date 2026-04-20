@@ -34,7 +34,7 @@ public class Notification {
     @Column(name = "OrderID", columnDefinition = "UNIQUEIDENTIFIER")
     String orderId;
 
-    @Column(name = "ProductID", columnDefinition = "UNIQUEIDENTIFIER")
+    @Column(name = "ProductID", columnDefinition = "NVARCHAR(255)")
     String productId;
 
     // Relationships

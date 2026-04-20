@@ -10,8 +10,8 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 public class VerifyUserRequest {
-    @NotBlank(message = "Email không được để trống.")
-    @Email(message = "Email không hợp lệ.")
+    @NotBlank(message = "Email cannot be empty.")
+    @Email(message = "Email is not valid.")
     String email;
     String verificationCode;
 }

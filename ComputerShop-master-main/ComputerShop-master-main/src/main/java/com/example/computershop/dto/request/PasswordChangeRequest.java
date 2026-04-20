@@ -7,14 +7,14 @@ import lombok.Data;
 @Data
 public class PasswordChangeRequest {
     
-    @NotBlank(message = "Mật khẩu hiện tại không được để trống")
+    @NotBlank(message = "Current password cannot be empty")
     private String currentPassword;
     
-    @NotBlank(message = "Mật khẩu mới không được để trống")
-    @Size(min = 6, max = 100, message = "Mật khẩu mới phải từ 6-100 ký tự")
+    @NotBlank(message = "New password cannot be empty")
+    @Size(min = 6, max = 100, message = "New password must be between 6 and 100 characters")
     private String newPassword;
     
-    @NotBlank(message = "Xác nhận mật khẩu không được để trống")
+    @NotBlank(message = "Confirm password cannot be empty")
     private String confirmPassword;
     
     // Helper method to validate password confirmation

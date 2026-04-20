@@ -105,13 +105,12 @@ function updateDebtAndStatus() {
     if (status === 'PAID') {
         document.getElementById('debtAmount').value = 0;
         document.getElementById('debtAmount').readOnly = true;
+    } else if (status === 'UNPAID') {
+        document.getElementById('debtAmount').value = total > 0 ? total : 0;
+        document.getElementById('debtAmount').readOnly = true;
     } else {
         document.getElementById('debtAmount').value = debt > 0 ? debt : 0;
         document.getElementById('debtAmount').readOnly = true;
-        if (!document.getElementById('paidAmount').value || paid >= total) {
-            document.getElementById('status').value = 'PAID';
-            document.getElementById('debtAmount').value = 0;
-        }
     }
 }
 document.getElementById('paidAmount').addEventListener('input', updateDebtAndStatus);

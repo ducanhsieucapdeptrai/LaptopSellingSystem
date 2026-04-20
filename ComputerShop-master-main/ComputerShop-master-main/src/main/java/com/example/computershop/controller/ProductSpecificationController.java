@@ -59,14 +59,14 @@ public class ProductSpecificationController {
             
             if (product == null) {
                 log.error("Product not found with ID: {}", productId);
-                redirectAttributes.addFlashAttribute(ERROR, "Không tìm thấy sản phẩm!");
+                redirectAttributes.addFlashAttribute(ERROR, "Product not found with ID: " + productId);
                 return REDIRECT_PRODUCT;
             }
             
             // Validate CPU
             if (specification.getCpu() != null && !specification.getCpu().trim().isEmpty() 
                 && !specification.getCpu().matches(SPEC_PATTERN)) {
-                model.addAttribute(ERROR, "CPU chỉ được chứa chữ, số, dấu '.', ',', '()', '-' , ngoặc kép và dấu cách.");
+                model.addAttribute(ERROR, "CPU can only contain letters, numbers, '.', ',', '()', '-', double quotes and spaces.");
                 model.addAttribute(PRODUCT, product);
                 model.addAttribute(SPECIFICATION, specification);
                 return SPECIFICATION_VIEW;
@@ -75,7 +75,7 @@ public class ProductSpecificationController {
             // Validate RAM
             if (specification.getRam() != null && !specification.getRam().trim().isEmpty() 
                 && !specification.getRam().matches(SPEC_PATTERN)) {
-                model.addAttribute(ERROR, "RAM chỉ được chứa chữ, số, dấu '.', ',', '()', '-', ngoặc kép và dấu cách.");
+                model.addAttribute(ERROR, "RAM can only contain letters, numbers, '.', ',', '()', '-', double quotes and spaces.");
                 model.addAttribute(PRODUCT, product);
                 model.addAttribute(SPECIFICATION, specification);
                 return SPECIFICATION_VIEW;
@@ -84,7 +84,7 @@ public class ProductSpecificationController {
             // Validate SSD
             if (specification.getSsd() != null && !specification.getSsd().trim().isEmpty() 
                 && !specification.getSsd().matches(SPEC_PATTERN)) {
-                model.addAttribute(ERROR, "SSD chỉ được chứa chữ, số, dấu '.', ',', '()', '-', ngoặc kép và dấu cách.");
+                model.addAttribute(ERROR, "SSD can only contain letters, numbers, '.', ',', '()', '-', double quotes and spaces.");
                 model.addAttribute(PRODUCT, product);
                 model.addAttribute(SPECIFICATION, specification);
                 return SPECIFICATION_VIEW;
@@ -93,7 +93,7 @@ public class ProductSpecificationController {
             // Validate VGA
             if (specification.getVga() != null && !specification.getVga().trim().isEmpty() 
                 && !specification.getVga().matches(SPEC_PATTERN)) {
-                model.addAttribute(ERROR, "VGA chỉ được chứa chữ, số, dấu '.', ',', '()', '-', ngoặc kép và dấu cách.");
+                model.addAttribute(ERROR, "VGA can only contain letters, numbers, '.', ',', '()', '-', double quotes and spaces.");
                 model.addAttribute(PRODUCT, product);
                 model.addAttribute(SPECIFICATION, specification);
                 return SPECIFICATION_VIEW;
@@ -102,7 +102,7 @@ public class ProductSpecificationController {
             // Validate Cổng kết nối
             if (specification.getConnect() != null && !specification.getConnect().trim().isEmpty() 
                 && !specification.getConnect().matches(SPEC_PATTERN)) {
-                model.addAttribute(ERROR, "Cổng kết nối chỉ được chứa chữ, số, dấu '.', ',', '()', '-', ngoặc kép và dấu cách.");
+                model.addAttribute(ERROR, "Connect can only contain letters, numbers, '.', ',', '()', '-', double quotes and spaces.");
                 model.addAttribute(PRODUCT, product);
                 model.addAttribute(SPECIFICATION, specification);
                 return SPECIFICATION_VIEW;
@@ -111,7 +111,7 @@ public class ProductSpecificationController {
             // Validate Pin
             if (specification.getBattery() != null && !specification.getBattery().trim().isEmpty() 
                 && !specification.getBattery().matches(SPEC_PATTERN)) {
-                model.addAttribute(ERROR, "Pin chỉ được chứa chữ, số, dấu '.', ',', '()', '-', ngoặc kép và dấu cách.");
+                model.addAttribute(ERROR, "Battery can only contain letters, numbers, '.', ',', '()', '-', double quotes and spaces.");
                 model.addAttribute(PRODUCT, product);
                 model.addAttribute(SPECIFICATION, specification);
                 return SPECIFICATION_VIEW;
@@ -120,7 +120,7 @@ public class ProductSpecificationController {
             // Validate Screen
             if (specification.getScreen() != null && !specification.getScreen().trim().isEmpty()
             && !specification.getScreen().matches(SPEC_PATTERN)) {
-                model.addAttribute(ERROR, "Màn hình chỉ được chứa chữ, số, dấu '.', ',', '()', '-', ngoặc kép và dấu cách.");
+                model.addAttribute(ERROR, "Screen can only contain letters, numbers, '.', ',', '()', '-', double quotes and spaces.");
                 model.addAttribute(PRODUCT, product);
                 model.addAttribute(SPECIFICATION, specification);
                 return SPECIFICATION_VIEW;
@@ -133,10 +133,10 @@ public class ProductSpecificationController {
             specificationService.save(specification);
             log.info("Successfully saved specification for product: {} (ID: {})", product.getName(), productId);
             
-            redirectAttributes.addFlashAttribute(SUCCESS, "Cấu hình sản phẩm đã được cập nhật thành công!");
+            redirectAttributes.addFlashAttribute(SUCCESS, "Product specification updated successfully!");
         } catch (Exception e) {
             log.error("Error saving specification for product ID: {}", productId, e);
-            redirectAttributes.addFlashAttribute(ERROR, "Có lỗi xảy ra khi cập nhật cấu hình sản phẩm: " + e.getMessage());
+            redirectAttributes.addFlashAttribute(ERROR, "An error occurred while updating product specification: " + e.getMessage());
         }
         return REDIRECT_PRODUCT;
     }

@@ -36,6 +36,7 @@ import org.springframework.data.domain.Pageable;
 @Service
 @Slf4j
 public class UserService {
+    private static final Path AVATAR_UPLOAD_DIR = resolveAvatarUploadDir();
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
@@ -50,10 +51,10 @@ public class UserService {
     }
 
     /**
-     * Lấy thông tin user hiện tại từ Security Context
-     * Xử lý cả OAuth2 và Form Authentication
+     * Get current user information from Security Context
+     * Handle both OAuth2 and Form Authentication
      * 
-     * @return UserProfileData chứa user và metadata
+     * @return UserProfileData containing user and metadata
      */
     public UserProfileData getCurrentUser() {
         try {
@@ -61,7 +62,7 @@ public class UserService {
 
             if (authentication == null || !authentication.isAuthenticated() ||
                     authentication.getName().equals("anonymousUser")) {
-                throw new IllegalStateException("Người dùng chưa đăng nhập");
+                throw new IllegalStateException("User not logged in");
             }
 
             if (authentication instanceof OAuth2AuthenticationToken) {
@@ -72,7 +73,7 @@ public class UserService {
 
         } catch (Exception e) {
             log.error("Error getting current user", e);
-            throw new IllegalStateException("Không thể lấy thông tin người dùng: " + e.getMessage(), e);
+            throw new IllegalStateException("Cannot get user information: " + e.getMessage(), e);
         }
     }
 
@@ -97,13 +98,13 @@ public class UserService {
         } else {
             email = (String) oauth2User.getAttributes().get("email");
             if (email == null) {
-                throw new IllegalStateException("Không thể lấy email từ " + provider + " OAuth2");
+                throw new IllegalStateException("Cannot get email from " + provider + " OAuth2");
             }
         }
 
-        // Tìm user trong database bằng email (vì OAuth2 user có username = email)
+            // Find user in database by email (OAuth2 user has username = email)
         User user = userRepository.findByUsername(email)
-                .orElseThrow(() -> new IllegalArgumentException("Không tìm thấy người dùng OAuth2: " + email));
+                .orElseThrow(() -> new IllegalArgumentException("User not found OAuth2: " + email));
 
         return UserProfileData.builder()
                 .user(user)
@@ -119,7 +120,7 @@ public class UserService {
         String username = authentication.getName();
 
         User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new IllegalArgumentException("Không tìm thấy người dùng: " + username));
+                .orElseThrow(() -> new IllegalArgumentException("User not found: " + username));
 
         return UserProfileData.builder()
                 .user(user)
@@ -132,14 +133,14 @@ public class UserService {
     public void createUserByAdmin(@NotNull UserCreateByAdmin request) {
         try {
             if (userRepository.existsByUsername(request.getUsername())) {
-                throw new IllegalArgumentException("Tên đăng nhập đã được sử dụng!");
+                throw new IllegalArgumentException("Username already exists!");
             }
             if (userRepository.existsByEmail(request.getEmail())) {
-                throw new IllegalArgumentException("Email đã được đăng ký!");
+                throw new IllegalArgumentException("Email already exists!");
             }
             if (request.getPhoneNumber() != null && !request.getPhoneNumber().isEmpty() &&
                     userRepository.existsByPhoneNumber(request.getPhoneNumber())) {
-                throw new IllegalArgumentException("Số điện thoại đã được đăng ký!");
+                throw new IllegalArgumentException("Phone number already exists!");
             }
 
             PasswordEncoder encoder = new BCryptPasswordEncoder();
@@ -161,7 +162,7 @@ public class UserService {
 
             userRepository.save(user);
         } catch (IllegalArgumentException e) {
-            throw new IllegalArgumentException("Lỗi khi tạo người dùng: " + e.getMessage(), e);
+            throw new IllegalArgumentException("Error creating user: " + e.getMessage(), e);
         }
     }
 
@@ -184,20 +185,20 @@ public class UserService {
     public void updateByAdmin(@NotNull UserUpdateByAdmin userUpdateByAdmin) {
         try {
             User user = userRepository.findById(userUpdateByAdmin.getUserId())
-                    .orElseThrow(() -> new IllegalArgumentException("Không tìm thấy người dùng"));
+                    .orElseThrow(() -> new IllegalArgumentException("User not found"));
 
             if (!user.getUsername().equals(userUpdateByAdmin.getUsername()) &&
                     userRepository.existsByUsername(userUpdateByAdmin.getUsername())) {
-                throw new IllegalArgumentException("Tên đăng nhập đã tồn tại trong hệ thống");
+                throw new IllegalArgumentException("Username already exists in the system");
             }
             if (!user.getEmail().equals(userUpdateByAdmin.getEmail()) &&
                     userRepository.existsByEmail(userUpdateByAdmin.getEmail())) {
-                throw new IllegalArgumentException("Email đã được sử dụng bởi tài khoản khác");
+                throw new IllegalArgumentException("Email is already used by another account");
             }
             if (userUpdateByAdmin.getPhoneNumber() != null && !userUpdateByAdmin.getPhoneNumber().isEmpty() &&
                     !userUpdateByAdmin.getPhoneNumber().equals(user.getPhoneNumber()) &&
                     userRepository.existsByPhoneNumber(userUpdateByAdmin.getPhoneNumber())) {
-                throw new IllegalArgumentException("Số điện thoại đã được sử dụng bởi tài khoản khác");
+                throw new IllegalArgumentException("Phone number is already used by another account");
             }
 
             user.setUsername(userUpdateByAdmin.getUsername());
@@ -215,15 +216,15 @@ public class UserService {
 
             userRepository.save(user);
         } catch (IllegalArgumentException e) {
-            throw new IllegalArgumentException("Lỗi khi tạo người dùng: " + e.getMessage(), e);
+            throw new IllegalArgumentException("Error creating user: " + e.getMessage(), e);
         }
     }
 
     /**
-     * Cập nhật thông tin cá nhân của user hiện tại (không bao gồm mật khẩu)
+     * Update user's personal information (excluding password)
      * 
-     * @param request UserInfoUpdateRequest chứa thông tin cần cập nhật
-     * @return String message kết quả
+     * @param request UserInfoUpdateRequest containing information to update
+     * @return String message result
      */
     @Transactional
     public String updateUserInfo(@NotNull UserInfoUpdateRequest request) {
@@ -233,14 +234,14 @@ public class UserService {
 
             // Validate dữ liệu đầu vào
             if (request.getFullName() == null || request.getFullName().trim().isEmpty()) {
-                return "Họ và tên không được để trống";
+                return "Full name cannot be empty";
             }
 
             // Kiểm tra số điện thoại trùng
             if (request.getPhoneNumber() != null && !request.getPhoneNumber().trim().isEmpty()) {
                 if (!request.getPhoneNumber().equals(currentUser.getPhoneNumber()) &&
                         userRepository.existsByPhoneNumber(request.getPhoneNumber())) {
-                    return "Số điện thoại đã được sử dụng bởi tài khoản khác";
+                    return "Phone number is already used by another account";
                 }
             }
 
@@ -257,12 +258,12 @@ public class UserService {
 
         } catch (Exception e) {
             log.error("Unexpected error during user info update", e);
-            return "Đã xảy ra lỗi không mong muốn. Vui lòng thử lại.";
+            return "An unexpected error occurred. Please try again.";
         }
     }
 
     /**
-     * Đổi mật khẩu cho user hiện tại (chỉ cho non-OAuth2 users)
+     * Change password for current user (only for non-OAuth2 users)
      * 
      * @param request PasswordChangeRequest chứa thông tin mật khẩu
      * @return String message kết quả
@@ -270,30 +271,30 @@ public class UserService {
     @Transactional
     public String changePassword(@NotNull PasswordChangeRequest request) {
         try {
-            // Lấy thông tin user hiện tại
+            // Get current user information
             UserProfileData currentUserData = getCurrentUser();
             User currentUser = currentUserData.getUser();
 
-            // Kiểm tra user có phải OAuth2 không
+            // Check if user is OAuth2
             if (currentUserData.isOAuth2()) {
-                return "Không thể đổi mật khẩu cho tài khoản OAuth2";
+                return "Cannot change password for OAuth2 account";
             }
 
-            // Kiểm tra mật khẩu hiện tại
+            // Check current password
             if (!passwordEncoder.matches(request.getCurrentPassword(), currentUser.getPassword())) {
-                return "Mật khẩu hiện tại không đúng";
+                return "Current password is incorrect";
             }
 
-            // Kiểm tra xác nhận mật khẩu
+            // Check password confirmation
             if (!request.isPasswordConfirmed()) {
-                return "Mật khẩu xác nhận không khớp";
+                return "Password confirmation does not match";
             }
 
-            // Mã hóa và cập nhật mật khẩu mới
+            // Encode and update new password
             String encodedNewPassword = passwordEncoder.encode(request.getNewPassword());
             currentUser.setPassword(encodedNewPassword);
 
-            // Lưu thay đổi
+            // Save changes
             userRepository.save(currentUser);
 
             log.info("Password changed successfully for user: {}", currentUser.getUsername());
@@ -301,10 +302,10 @@ public class UserService {
 
         } catch (IllegalStateException e) {
             log.error("Authentication error during password change: {}", e.getMessage());
-            return "Lỗi xác thực: " + e.getMessage();
+            return "Authentication error: " + e.getMessage();
         } catch (Exception e) {
             log.error("Unexpected error during password change", e);
-            return "Đã xảy ra lỗi không mong muốn. Vui lòng thử lại.";
+            return "An unexpected error occurred. Please try again.";
         }
     }
 
@@ -322,14 +323,14 @@ public class UserService {
     }
 
     /**
-     * Cập nhật avatar cho user
+     * Update avatar for user
      */
     @Transactional
     public String updateUserAvatar(String userId, String avatarFileName) {
         try {
             User user = userRepository.findById(userId).orElse(null);
             if (user == null) {
-                return "Không tìm thấy người dùng";
+                return "User not found";
             }
 
             user.setImage(avatarFileName);
@@ -340,7 +341,7 @@ public class UserService {
 
         } catch (Exception e) {
             log.error("Error updating user avatar", e);
-            return "Lỗi khi cập nhật ảnh đại diện";
+            return "Error updating user avatar";
         }
     }
 
@@ -415,11 +416,9 @@ public class UserService {
 
     public String saveAvatarFile(MultipartFile file, String userId) {
         try {
-            // Save ở ngoài project
-            String uploadDir = "uploads/avatars/";
-            Path uploadPath = Paths.get(uploadDir);
-            if (!Files.exists(uploadPath)) {
-                Files.createDirectories(uploadPath);
+            // Save avatar directly into static resources folder
+            if (!Files.exists(AVATAR_UPLOAD_DIR)) {
+                Files.createDirectories(AVATAR_UPLOAD_DIR);
             }
             
             String originalFileName = file.getOriginalFilename();
@@ -429,11 +428,11 @@ public class UserService {
             }
             
             String fileName = "avatar_" + userId + "_" + System.currentTimeMillis() + fileExtension;
-            Path filePath = uploadPath.resolve(fileName);
+            Path filePath = AVATAR_UPLOAD_DIR.resolve(fileName);
             
             Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
             
-            log.info("Avatar saved: {}", fileName);
+            log.info("Avatar saved: {} at {}", fileName, filePath);
             return fileName;
             
         } catch (Exception e) {
@@ -447,17 +446,31 @@ public class UserService {
             if (avatarFileName != null && !avatarFileName.isEmpty()) {
                 // Không xóa file OAuth2 avatar vì nó có prefix "oauth2_"
                 if (!avatarFileName.startsWith("oauth2_")) {
-                    String uploadDir = "uploads/avatars/";
-                    Path filePath = Paths.get(uploadDir + avatarFileName);
+                    Path filePath = AVATAR_UPLOAD_DIR.resolve(avatarFileName).normalize();
 
                     if (Files.exists(filePath)) {
                         Files.delete(filePath);
-                        log.info("Old avatar deleted: {}", avatarFileName);
+                        log.info("Old avatar deleted: {} at {}", avatarFileName, filePath);
                     }
                 }
             }
         } catch (Exception e) {
             log.error("Error deleting old avatar: {}", avatarFileName, e);
         }
+    }
+
+    private static Path resolveAvatarUploadDir() {
+        Path directStaticDir = Paths.get("src", "main", "resources", "static");
+        if (Files.exists(directStaticDir)) {
+            return directStaticDir.resolve(Paths.get("uploads", "avatars")).toAbsolutePath().normalize();
+        }
+
+        Path nestedStaticDir = Paths.get("ComputerShop-master-main", "ComputerShop-master-main", "src", "main", "resources", "static");
+        if (Files.exists(nestedStaticDir)) {
+            return nestedStaticDir.resolve(Paths.get("uploads", "avatars")).toAbsolutePath().normalize();
+        }
+
+        // Fallback for unknown runtime locations
+        return directStaticDir.resolve(Paths.get("uploads", "avatars")).toAbsolutePath().normalize();
     }
 }

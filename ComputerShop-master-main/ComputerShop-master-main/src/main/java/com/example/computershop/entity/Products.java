@@ -3,6 +3,7 @@ package com.example.computershop.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+import org.hibernate.Hibernate;
 import java.math.BigInteger;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -58,6 +59,9 @@ public class Products {
     
     // Helper methods để lấy giá min/max từ variants
     public BigInteger getMinPrice() {
+        if (!isVariantsAccessible()) {
+            return this.price;
+        }
         if (variants != null && !variants.isEmpty()) {
             return variants.stream()
                 .filter(v -> v.getIsActive() != null && v.getIsActive())
@@ -69,6 +73,9 @@ public class Products {
     }
     
     public BigInteger getMaxPrice() {
+        if (!isVariantsAccessible()) {
+            return this.price;
+        }
         if (variants != null && !variants.isEmpty()) {
             return variants.stream()
                 .filter(v -> v.getIsActive() != null && v.getIsActive())
@@ -80,11 +87,17 @@ public class Products {
     }
     
     public boolean hasVariants() {
+        if (!isVariantsAccessible()) {
+            return false;
+        }
         return variants != null && !variants.isEmpty();
     }
     
     // Helper method để lấy tổng quantity từ variants
     public Integer getTotalQuantity() {
+        if (!isVariantsAccessible()) {
+            return this.quantity != null ? this.quantity : 0;
+        }
         if (variants != null && !variants.isEmpty()) {
             return variants.stream()
                 .filter(v -> v.getIsActive() != null && v.getIsActive())
@@ -92,5 +105,9 @@ public class Products {
                 .sum();
         }
         return this.quantity != null ? this.quantity : 0;
+    }
+
+    private boolean isVariantsAccessible() {
+        return variants != null && Hibernate.isInitialized(variants);
     }
 }

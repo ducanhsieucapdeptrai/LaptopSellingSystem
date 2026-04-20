@@ -133,6 +133,11 @@
                                     <li sec:authorize="isAuthenticated()">
                                         <a th:href="@{/user/user-profile}">My Account</a>
                                     </li>
+                                    <li sec:authorize="hasAnyRole('Admin')">
+                                        <a th:href="@{/admin/dashboard}">
+                                            Admin Dashboard
+                                        </a>
+                                    </li>
                                     <li sec:authorize="isAuthenticated()">
                                         <a th:href="@{/notifications/user}">
                                             <i class="flaticon-bell me-1"></i>Notifications

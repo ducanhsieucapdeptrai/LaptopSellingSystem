@@ -47,13 +47,13 @@ public class UserController {
     @PostMapping("/add-user")
     public String addUser(@Valid @ModelAttribute("userCreateByAdmin") UserCreateByAdmin user, BindingResult result, Model model) {
         if (result.hasErrors()) {
-            model.addAttribute(ERROR, "Vui lòng kiểm tra lại thông tin đăng ký.");
+            model.addAttribute(ERROR, "Please check the registration information.");
             model.addAttribute(USER_CREATE_BY_ADMIN, user);
             return ADD_USER;
         }
         try {
             userService.createUserByAdmin(user);
-            model.addAttribute(MESSAGE, "Thêm người dùng thành công!");
+            model.addAttribute(MESSAGE, "User added successfully!");
             return USER2;
         } catch (IllegalArgumentException e) {
             model.addAttribute(ERROR, e.getMessage());
@@ -66,7 +66,7 @@ public class UserController {
     public String editUser(@PathVariable("userId") String userId, Model model) {
         try {
             User user = this.userRepository.findById(userId)
-                    .orElseThrow(() -> new IllegalArgumentException("Không tìm thấy người dùng"));
+                    .orElseThrow(() -> new IllegalArgumentException("User not found"));
             UserUpdateByAdmin dto = UserUpdateByAdmin.builder()
                     .userId(user.getUserId())
                     .username(user.getUsername())
@@ -90,14 +90,14 @@ public class UserController {
     public String updateUser(@Valid @ModelAttribute("userUpdateByAdmin") UserUpdateByAdmin user,BindingResult result,Model model) {
         if (result.hasErrors()) {
             String errorMessage = result.getFieldError() != null ? 
-                result.getFieldError().getDefaultMessage() : "Thông tin không hợp lệ";
+                result.getFieldError().getDefaultMessage() : "Invalid information";
             model.addAttribute(ERROR, "Vui lòng kiểm tra lại thông tin. " + errorMessage);
             model.addAttribute(USER_UPDATE_BY_ADMIN, user);
             return EDIT_USER;
         }
         try {
             userService.updateByAdmin(user);
-            model.addAttribute(MESSAGE, "Cập nhật người dùng thành công!");
+            model.addAttribute(MESSAGE, "User updated successfully!");
             return USER2;
         } catch (IllegalArgumentException e) {
             model.addAttribute(ERROR, e.getMessage());

@@ -54,7 +54,7 @@
                                     <td class="product-remove">
                                         <!-- Remove link with variant support -->
                                         <a th:if="${item.hasVariant()}" 
-                                           th:href="@{/cart/remove/{productId}(productId=${item.product.productID}) + '?variantId=' + ${item.variant.variantId}}" 
+                                           th:href="@{/cart/remove/{productId}(productId=${item.product.productID}, variantId=${item.variant.variantId})}" 
                                            class="remove-btn">
                                             <i class="fal fa-times"></i>
                                         </a>

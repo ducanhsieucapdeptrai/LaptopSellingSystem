@@ -37,7 +37,7 @@ public class Review {
     @Column(name = "UserID", columnDefinition = "UNIQUEIDENTIFIER")
     String userId;
     
-    @Column(name = "ProductID", columnDefinition = "UNIQUEIDENTIFIER") 
+    @Column(name = "ProductID", columnDefinition = "NVARCHAR(255)") 
     String productId;
     
     @Column(name = "Rating", nullable = false)

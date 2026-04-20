@@ -22,7 +22,7 @@ public class Cart implements Serializable {
     private String cartId;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", columnDefinition = "nvarchar(255)")
+    @JoinColumn(name = "user_id", columnDefinition = "UNIQUEIDENTIFIER")
     private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)

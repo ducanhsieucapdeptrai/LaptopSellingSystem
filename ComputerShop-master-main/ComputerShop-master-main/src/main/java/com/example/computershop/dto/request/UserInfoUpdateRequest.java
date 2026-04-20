@@ -8,14 +8,14 @@ import lombok.Data;
 @Data
 public class UserInfoUpdateRequest {
     
-    @NotBlank(message = "Họ và tên không được để trống")
-    @Size(min = 2, max = 100, message = "Họ và tên phải từ 2-100 ký tự")
+    @NotBlank(message = "Full name cannot be empty.")
+    @Size(min = 2, max = 100, message = "Full name must be between 2 and 100 characters.")
     private String fullName;
     
-    @Pattern(regexp = "^[0-9+\\-\\s()]*$", message = "Số điện thoại không hợp lệ")
-    @Size(max = 20, message = "Số điện thoại tối đa 20 ký tự")
+    @Pattern(regexp = "^[0-9+\\-\\s()]*$", message = "Phone number is not valid.")
+    @Size(max = 20, message = "Phone number must be at most 20 characters.")
     private String phoneNumber;
     
-    @Size(max = 500, message = "Địa chỉ tối đa 500 ký tự")
+    @Size(max = 500, message = "Address must be at most 500 characters.")
     private String address;
 } 

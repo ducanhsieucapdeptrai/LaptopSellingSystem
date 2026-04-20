@@ -283,6 +283,106 @@ public class NotificationController {
         return relatedInfo;
     }
 
+    @GetMapping("/admin")
+    @PreAuthorize("hasRole('Admin')")
+    public String listNotifications(
+            @RequestParam(value = "search", required = false) String search,
+            @RequestParam(value = "status", required = false) String status,
+            @RequestParam(value = "type", required = false) String type,
+            Model model, Principal principal) {
+
+        User admin = getCurrentUser(principal);
+        if (admin == null) {
+            return "redirect:/auth/login";
+        }
+
+        // Chỉ lấy notifications của admin user hiện tại
+        List<Notification> allUserNotifications = notificationService.getAllNotifications();
+        List<Notification> notifications;
+
+        // Áp dụng search và filter trên notifications của user hiện tại
+        if ((search != null && !search.trim().isEmpty()) ||
+                (status != null && !status.trim().isEmpty()) ||
+                (type != null && !type.trim().isEmpty())) {
+            // Filter trong notifications của user hiện tại
+            notifications = allUserNotifications.stream()
+                    .filter(n -> {
+                        boolean matchesSearch = search == null || search.trim().isEmpty() ||
+                                n.getMessage().toLowerCase().contains(search.toLowerCase()) ||
+                                (n.getUser() != null && n.getUser().getFullName().toLowerCase().contains(search.toLowerCase()));
+
+                        boolean matchesStatus = status == null || status.trim().isEmpty() ||
+                                (status.equals("read") && (n.getIsRead() != null && n.getIsRead())) ||
+                                (status.equals("unread") && (n.getIsRead() == null || !n.getIsRead()));
+
+                        boolean matchesType = type == null || type.trim().isEmpty() ||
+                                (type.equals("order") && n.getOrderId() != null) ||
+                                (type.equals("system") && n.getOrderId() == null && n.getProductId() == null);
+
+                        return matchesSearch && matchesStatus && matchesType;
+                    })
+                    .toList();
+        } else {
+            notifications = allUserNotifications;
+        }
+
+        // Tính statistics từ notifications của user hiện tại
+        long totalNotifications = allUserNotifications.size();
+        long unreadNotifications = allUserNotifications.stream()
+                .mapToLong(n -> (n.getIsRead() == null || !n.getIsRead()) ? 1 : 0)
+                .sum();
+        long readNotifications = totalNotifications - unreadNotifications;
+
+        // Thêm statistics theo type từ notifications của user hiện tại
+        long orderNotifications = allUserNotifications.stream()
+                .mapToLong(n -> n.getOrderId() != null ? 1 : 0)
+                .sum();
+        long systemNotifications = allUserNotifications.stream()
+                .mapToLong(n -> (n.getOrderId() == null && n.getProductId() == null) ? 1 : 0)
+                .sum();
+
+        model.addAttribute("notifications", notifications);
+        model.addAttribute("searchTerm", search);
+        model.addAttribute("selectedStatus", status);
+        model.addAttribute("selectedType", type);
+        model.addAttribute("totalNotifications", totalNotifications);
+        model.addAttribute("unreadNotifications", unreadNotifications);
+        model.addAttribute("readNotifications", readNotifications);
+        model.addAttribute("orderNotifications", orderNotifications);
+        model.addAttribute("systemNotifications", systemNotifications);
+
+        return "admin/notifications/list";
+    }
+
+    @GetMapping("/admin/personal")
+    @PreAuthorize("hasRole('Admin')")
+    public String adminPersonalNotifications(Model model, Principal principal) {
+        User admin = getCurrentUser(principal);
+        if (admin == null) {
+            return "redirect:/auth/login";
+        }
+
+        // Lấy notifications của admin user
+        List<Notification> adminNotifications = notificationService.getNotificationsByUserId(admin.getUserId());
+        long unreadCount = notificationService.countUnreadNotificationsByUserId(admin.getUserId());
+
+        // Tính toán statistics
+        long orderNotifications = adminNotifications.stream()
+                .filter(n -> n.getOrderId() != null)
+                .count();
+
+        long systemNotifications = adminNotifications.stream()
+                .filter(n -> n.getOrderId() == null && n.getProductId() == null)
+                .count();
+
+        model.addAttribute("notifications", adminNotifications);
+        model.addAttribute("unreadCount", unreadCount);
+        model.addAttribute("orderNotifications", orderNotifications);
+        model.addAttribute("systemNotifications", systemNotifications);
+
+        return "admin/notifications";
+    }
+
     private User getCurrentUser(Principal principal) {
         if (principal == null) return null;
         try {

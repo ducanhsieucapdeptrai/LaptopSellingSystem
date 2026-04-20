@@ -39,12 +39,12 @@ public class CategoriesController {
     @PostMapping("/add-categories")
     public String addCategories(@ModelAttribute("categories") Categories categories, Model model) {
         if (!categories.getName().matches("^[\\p{L}\\s]+$")) {
-            model.addAttribute(ERROR, "Tên danh mục không hợp lệ.");
+            model.addAttribute(ERROR, "Category name is invalid.");
             model.addAttribute(CATEGORIES, categories);
             return CATEGORIES_EDIT;
         }
         if (service.existsByName(categories.getName())) {
-            model.addAttribute(ERROR, "Danh mục đã tồn tại.");
+            model.addAttribute(ERROR, "Category already exists.");
             return CATEGORIES_EDIT;
         }
         if (Boolean.TRUE.equals(this.service.create(categories))) {
@@ -65,13 +65,13 @@ public class CategoriesController {
     public String updateCategories(@ModelAttribute("categories") Categories categories, Model model) {
         Categories existingCategory = this.service.findById(categories.getCategoryID());
         if (!categories.getName().matches("^[\\p{L}\\s]+$")) {
-            model.addAttribute(ERROR, "Tên danh mục không hợp lệ.");
+            model.addAttribute(ERROR, "Category name is invalid.");
             model.addAttribute(CATEGORIES, categories);
             return CATEGORIES_EDIT;
         }
         if (!existingCategory.getName().equals(categories.getName()) && 
             service.existsByName(categories.getName())) {
-            model.addAttribute(ERROR, "Danh mục đã tồn tại.");
+            model.addAttribute(ERROR, "Category already exists.");
             model.addAttribute(CATEGORIES, categories);
             return CATEGORIES_EDIT;
         }
