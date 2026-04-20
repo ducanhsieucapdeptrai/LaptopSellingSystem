@@ -1,0 +1,520 @@
+/* ===============================================
+   ADMIN CUSTOM STYLES
+   Shared styles for admin panel
+   =============================================== */
+
+/* ===============================================
+   LOGOUT BUTTON STYLING
+   =============================================== */
+.logout-button, .btn-logout {
+    background: none !important;
+    border: none !important;
+    padding: 0 !important;
+    font: inherit !important;
+    color: inherit !important;
+    text-decoration: none !important;
+    cursor: pointer !important;
+    display: inline !important;
+}
+
+.logout-button:hover, .btn-logout:hover {
+    text-decoration: none !important;
+    color: inherit !important;
+}
+
+/* For modal logout buttons */
+.modal .btn-logout {
+    padding: 0.375rem 0.75rem !important;
+    border: 1px solid transparent !important;
+    border-radius: 0.25rem !important;
+}
+
+/* ===============================================
+   PRODUCT IMAGE STYLING
+   =============================================== */
+.product-image-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 100%;
+}
+
+.image-wrapper {
+    position: relative;
+    width: 100%;
+    height: 280px;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    border: 2px solid #e9ecef;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.product-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.image-info {
+    font-size: 12px;
+    color: #6c757d;
+    font-weight: 500;
+    margin-top: 8px;
+}
+
+/* ===============================================
+   PRODUCT INFO STYLING
+   =============================================== */
+.product-info .info-item {
+    padding: 8px 0;
+    border-bottom: 1px solid #f8f9fa;
+    display: flex;
+    align-items: center;
+}
+
+.product-info .info-item:last-child {
+    border-bottom: none;
+}
+
+.product-info .info-item i {
+    min-width: 20px;
+    margin-right: 8px;
+}
+
+.product-info .badge {
+    font-size: 11px;
+    padding: 4px 8px;
+}
+
+.text-primary {
+    color: #007bff !important;
+    font-weight: 600;
+}
+
+/* ===============================================
+   CARD STYLING ENHANCEMENT
+   =============================================== */
+.card {
+    border: none;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    margin-bottom: 1.5rem;
+}
+
+.card-header {
+    background: linear-gradient(135deg, #47b388 0%, #146136 100%);
+    color: white;
+    border-radius: 8px 8px 0 0 !important;
+    font-weight: 600;
+    padding: 1rem 1.25rem;
+}
+
+.card-header i {
+    margin-right: 8px;
+}
+
+/* ===============================================
+   FORM STYLING
+   =============================================== */
+.form-group label {
+    font-weight: 600;
+    color: #495057;
+    margin-bottom: 0.5rem;
+}
+
+.form-control {
+    border-radius: 6px;
+    border: 1px solid #ced4da;
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.form-control:focus {
+    border-color: #667eea;
+    box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+}
+
+/* ===============================================
+   BUTTON STYLING
+   =============================================== */
+.btn {
+    border-radius: 6px;
+    font-weight: 500;
+    padding: 0.5rem 1rem;
+    transition: all 0.15s ease-in-out;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #eae766 0%, #f10c0c 100%);
+    border: none;
+}
+
+.btn-primary:hover {
+    background: linear-gradient(135deg, #eae766 25%, #ef4e4e 100%);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+.btn-success {
+    background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+    border: none;
+}
+
+.btn-success:hover {
+    background: linear-gradient(135deg, #38a169 0%, #2f855a 100%);
+    transform: translateY(-1px);
+}
+
+.btn-warning {
+    background: linear-gradient(135deg, #ed8936 0%, #dd6b20 100%);
+    border: none;
+}
+
+.btn-warning:hover {
+    background: linear-gradient(135deg, #dd6b20 0%, #c05621 100%);
+    transform: translateY(-1px);
+}
+
+.btn-danger {
+    background: linear-gradient(135deg, #f56565 0%, #e53e3e 100%);
+    border: none;
+}
+
+.btn-danger:hover {
+    background: linear-gradient(135deg, #e53e3e 0%, #c53030 100%);
+    transform: translateY(-1px);
+}
+
+.btn-info {
+    background: linear-gradient(135deg, #4299e1 0%, #3182ce 100%);
+    border: none;
+}
+
+.btn-info:hover {
+    background: linear-gradient(135deg, #3182ce 0%, #2c5282 100%);
+    transform: translateY(-1px);
+}
+
+/* ===============================================
+   TABLE STYLING
+   =============================================== */
+.table {
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.table thead th {
+    background: linear-gradient(135deg, #3aab7d 0%, #329169 100%);
+    color: white;
+    border: none;
+    font-weight: 600;
+    padding: 1rem;
+}
+
+.table tbody td {
+    vertical-align: middle;
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid #f8f9fa;
+}
+
+.table tbody tr:hover {
+    background-color: #f8f9ff;
+}
+
+/* ===============================================
+   BADGE STYLING
+   =============================================== */
+.badge {
+    border-radius: 6px;
+    font-weight: 500;
+    padding: 0.375rem 0.75rem;
+}
+
+.badge-success {
+    background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+}
+
+.badge-danger {
+    background: linear-gradient(135deg, #f56565 0%, #e53e3e 100%);
+}
+
+.badge-warning {
+    background: linear-gradient(135deg, #ed8936 0%, #dd6b20 100%);
+}
+
+.badge-info {
+    background: linear-gradient(135deg, #4299e1 0%, #3182ce 100%);
+}
+
+.badge-light {
+    background: #f8f9fa;
+    color: #495057;
+    border: 1px solid #dee2e6;
+}
+
+/* ===============================================
+   ALERT STYLING
+   =============================================== */
+.alert {
+    border-radius: 8px;
+    border: none;
+    padding: 1rem 1.25rem;
+    margin-bottom: 1.5rem;
+}
+
+.alert-success {
+    background: linear-gradient(135deg, #f0fff4 0%, #c6f6d5 100%);
+    color: #22543d;
+}
+
+.alert-danger {
+    background: linear-gradient(135deg, #fed7d7 0%, #feb2b2 100%);
+    color: #742a2a;
+}
+
+.alert-warning {
+    background: linear-gradient(135deg, #fef5e7 0%, #fbd38d 100%);
+    color: #744210;
+}
+
+.alert-info {
+    background: linear-gradient(135deg, #ebf8ff 0%, #bee3f8 100%);
+    color: #2a4365;
+}
+
+/* ===============================================
+   BREADCRUMB STYLING
+   =============================================== */
+.breadcrumb {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border-radius: 8px;
+    padding: 0.75rem 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.breadcrumb-item + .breadcrumb-item::before {
+    content: ">";
+    color: #6c757d;
+}
+
+.breadcrumb-item.active {
+    color: #667eea;
+    font-weight: 600;
+}
+
+/* ===============================================
+   RESPONSIVE ADJUSTMENTS
+   =============================================== */
+@media (max-width: 768px) {
+    .image-wrapper {
+        height: 200px;
+    }
+    
+    .product-info .info-item {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 6px 0;
+    }
+    
+    .product-info .info-item i {
+        margin-bottom: 4px;
+    }
+    
+    .card-header {
+        padding: 0.75rem 1rem;
+    }
+    
+    .btn {
+        padding: 0.375rem 0.75rem;
+        font-size: 0.875rem;
+    }
+    
+    .table-responsive {
+        border-radius: 8px;
+    }
+}
+
+@media (max-width: 576px) {
+    .image-wrapper {
+        height: 150px;
+    }
+    
+    .card {
+        margin-bottom: 1rem;
+    }
+    
+    .btn-sm {
+        padding: 0.25rem 0.5rem;
+        font-size: 0.75rem;
+    }
+}
+
+/* ===============================================
+   UTILITIES
+   =============================================== */
+.shadow-sm {
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
+}
+
+.shadow {
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1) !important;
+}
+
+.shadow-lg {
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15) !important;
+}
+
+.rounded-lg {
+    border-radius: 12px !important;
+}
+
+.text-gradient {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+/* ===============================================
+   ANIMATION UTILITIES
+   =============================================== */
+.fade-in {
+    animation: fadeIn 0.5s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.hover-lift {
+    transition: transform 0.2s ease-in-out;
+}
+
+.hover-lift:hover {
+    transform: translateY(-2px);
+}
+
+/* Admin Custom Styles */
+
+/* Order Details Specific Styles */
+.icon-circle {
+    height: 2.5rem;
+    width: 2.5rem;
+    border-radius: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.badge-lg {
+    font-size: 1rem;
+    padding: 0.5rem 1rem;
+}
+
+/* Status badges */
+.badge-warning {
+    background-color: #f6c23e !important;
+    color: #fff !important;
+}
+
+.badge-info {
+    background-color: #36b9cc !important;
+    color: #fff !important;
+}
+
+.badge-primary {
+    background-color: #4e73df !important;
+    color: #fff !important;
+}
+
+.badge-secondary {
+    background-color: #858796 !important;
+    color: #fff !important;
+}
+
+.badge-success {
+    background-color: #1cc88a !important;
+    color: #fff !important;
+}
+
+.badge-danger {
+    background-color: #e74a3b !important;
+    color: #fff !important;
+}
+
+/* Form improvements */
+.form-control:focus {
+    border-color: #4e73df;
+    box-shadow: 0 0 0 0.2rem rgba(78, 115, 223, 0.25);
+}
+
+/* Card shadows */
+.card.shadow {
+    box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15) !important;
+}
+
+/* Alert improvements */
+.alert {
+    border: none;
+    border-radius: 0.35rem;
+}
+
+/* Table improvements */
+.table thead th {
+    border-bottom: 2px solid #e3e6f0;
+    font-weight: 600;
+    color: #fffdfd;
+}
+
+.table-active {
+    background-color: #eaecf4 !important;
+}
+
+/* Button loading state */
+.btn:disabled {
+    opacity: 0.65;
+    cursor: not-allowed;
+}
+
+/* Status update panel */
+.sticky-top {
+    top: 1rem;
+}
+
+/* Responsive improvements */
+@media (max-width: 768px) {
+    .d-sm-flex {
+        flex-direction: column;
+    }
+    
+    .d-none.d-sm-inline-block {
+        display: inline-block !important;
+        margin-top: 1rem;
+    }
+    
+    .sticky-top {
+        position: relative !important;
+        top: auto !important;
+    }
+} 
+
+.sidebar {
+    background-color: #2e4759 !important;
+}
+.sidebar .nav-item .nav-link {
+    color: #f6f6f6 !important;
+}
+.bg-dark {
+    background-color: #4e7e89 !important;
+}

@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{admin/fragments/header :: header}">
+	<title>Order Details</title>
+</head>
+
+<body id="page-top">
+
+<nav th:replace="~{admin/fragments/nav-bar :: nav-bar}"></nav>
+
+<div id="wrapper">
+
+	<!-- Sidebar -->
+	<ul th:replace="~{admin/fragments/sidebar :: sidebar}"></ul>
+
+	<div id="content-wrapper">
+
+		<div class="container-fluid">
+
+			<!-- Breadcrumbs -->
+			<ol class="breadcrumb">
+				<li class="breadcrumb-item">
+					<a th:href="@{/admin/dashboard}">Dashboard</a>
+				</li>
+				<li class="breadcrumb-item">
+					<a th:href="@{/admin/orders}">Order Management</a>
+				</li>
+				<li class="breadcrumb-item active">Order Details</li>
+			</ol>
+
+			<!-- Page Heading -->
+			<div class="d-sm-flex align-items-center justify-content-between mb-4">
+				<h1 class="h3 mb-0 text-gray-800">
+					<i class="fas fa-file-invoice mr-2"></i>Order Details
+				</h1>
+				<a th:href="@{/admin/orders}" class="btn btn-secondary">
+					<i class="fas fa-arrow-left mr-1"></i>Back to List
+				</a>
+			</div>
+
+			<!-- Success/Error Messages -->
+			<div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
+				<i class="fas fa-check-circle mr-2"></i>
+				<span th:text="${success}"></span>
+				<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+
+			<div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+				<i class="fas fa-exclamation-triangle mr-2"></i>
+				<span th:text="${error}"></span>
+				<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+
+			<div class="row">
+
+				<!-- Order Information -->
+				<div class="col-lg-8">
+
+					<!-- Order Basic Info -->
+					<div class="card shadow mb-4">
+						<div class="card-header py-3">
+							<h6 class="m-0 font-weight-bold">
+								<i class="fas fa-info-circle mr-2"></i>Order information
+							</h6>
+						</div>
+						<div class="card-body">
+							<div class="row">
+								<div class="col-md-6">
+								<p><strong>Order Code:</strong>
+									<code class="text-primary" th:text="${order?.id ?: 'N/A'}">ORDER123</code>
+								</p>
+								<p><strong>Order Date:</strong>
+									<span th:if="${order?.orderDate}"
+									      th:text="${#temporals.format(order.orderDate, 'dd/MM/yyyy HH:mm:ss')}">
+                                        25/12/2023 14:30:00
+                                    </span>
+									<span th:unless="${order?.orderDate}" class="text-muted">N/A</span>
+								</p>
+								<p><strong>Payment Method:</strong>
+										<span th:text="${order?.paymentMethod ?: 'N/A'}"
+										      class="badge badge-info">COD</span>
+									</p>
+								</div>
+								<div class="col-md-6">
+									<p><strong>Total Amount:</strong>
+										<span class="text-success font-weight-bold" th:if="${order?.totalAmount}">
+                                            <span th:text="${#numbers.formatDecimal(order.totalAmount, 0, 'COMMA', 0, 'POINT')}">
+                                                1,500,000
+                                            </span> VND
+                                        </span>
+										<span th:unless="${order?.totalAmount}" class="text-muted">N/A</span>
+									</p>
+
+									<!-- Voucher Information -->
+									<div th:if="${order?.voucherCode != null}">
+										<p><strong>Voucher Code:</strong>
+											<span class="badge badge-warning"
+											      th:text="${order.voucherCode}">VOUCHER20</span>
+										</p>
+										<p><strong>Discount Amount:</strong>
+											<span class="text-danger font-weight-bold" th:if="${order?.discountAmount}">
+                                                -<span
+													th:text="${#numbers.formatDecimal(order.discountAmount, 0, 'COMMA', 0, 'POINT')}">100,000</span> VND
+                                            </span>
+										</p>
+										<p><strong>Original Price:</strong>
+											<span class="text-muted" th:if="${order?.originalAmount}">
+                                                <span th:text="${#numbers.formatDecimal(order.originalAmount, 0, 'COMMA', 0, 'POINT')}">1,600,000</span> VND
+                                            </span>
+										</p>
+									</div>
+
+									<p><strong>Note:</strong>
+										<span th:text="${order?.note ?: 'No note'}" class="text-muted">
+                                            Morning delivery
+                                        </span>
+									</p>
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<!-- Customer Info -->
+					<div class="card shadow mb-4">
+						<div class="card-header py-3">
+							<h6 class="m-0 font-weight-bold">
+								<i class="fas fa-user mr-2"></i>Customer Information
+							</h6>
+						</div>
+						<div class="card-body">
+							<div class="row">
+								<div class="col-md-6">
+									<p><strong>Name:</strong>
+										<span th:text="${order?.customerName ?: 'N/A'}">
+                                            Nguyễn Văn A
+                                        </span>
+										<small th:if="${order?.alternativeReceiverName}" class="text-muted d-block">
+											(Receiver: <span th:text="${order.alternativeReceiverName}"></span>)
+										</small>
+									</p>
+									<p><strong>Email:</strong>
+										<span th:text="${order?.customerEmail ?: 'N/A'}" class="text-primary">
+                                            nguyenvana@email.com
+                                        </span>
+									</p>
+								</div>
+								<div class="col-md-6">
+									<p><strong>Phone Number:</strong>
+										<span th:text="${order?.customerPhone ?: 'N/A'}" class="text-info">
+                                            0123456789
+                                        </span>
+										<small th:if="${order?.alternativeReceiverPhone}" class="text-muted d-block">
+											(Receiver Phone: <span th:text="${order.alternativeReceiverPhone}"></span>)
+										</small>
+									</p>
+									<p><strong>Customer Address:</strong>
+										<span th:text="${order?.customerAddress ?: 'N/A'}" class="text-muted">
+                                            123 Đường ABC, Quận XYZ, TP.HCM
+                                        </span>
+									</p>
+									<p th:if="${order?.shippingAddress}" class="mt-2">
+										<strong>Shipping Address:</strong>
+										<span th:text="${order.shippingAddress}" class="text-success">
+                                            456 Đường DEF, Quận GHI, TP.HCM
+                                        </span>
+									</p>
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<!-- Order Items -->
+					<div class="card shadow mb-4" th:if="${order?.orderDetails}">
+						<div class="card-header py-3">
+							<h6 class="m-0 font-weight-bold">
+								<i class="fas fa-shopping-cart mr-2"></i>Ordered Products
+							</h6>
+						</div>
+						<div class="card-body">
+							<div class="table-responsive">
+								<table class="table table-bordered">
+									<thead>
+									<tr>
+										<th>Product</th>
+										<th class="text-center">Quantity</th>
+										<th class="text-right">Unit Price</th>
+										<th class="text-right">Total Price</th>
+									</tr>
+									</thead>
+									<tbody>
+									<tr th:each="detail : ${order.orderDetails}">
+										<td>
+											<div class="d-flex align-items-center">
+												<div>
+													<div class="font-weight-bold"
+													     th:text="${detail?.product?.name ?: 'Product does not exist'}">
+														Laptop Dell XPS 13
+													</div>
+													<small class="text-muted"
+													       th:text="'Product Code: ' + (${detail?.product?.productID} ?: 'N/A')">
+														Product code: LAPTOP001
+													</small>
+												</div>
+											</div>
+										</td>
+										<td class="text-center">
+											<span class="badge badge-secondary"
+											      th:text="${detail?.quantity ?: 0}">1</span>
+										</td>
+										<td class="text-right">
+                                                <span th:if="${detail?.unitPrice}">
+                                                    <span th:text="${#numbers.formatDecimal(detail.unitPrice, 0, 'COMMA', 0, 'POINT')}">
+                                                        25,000,000
+                                                    </span> VND
+                                                </span>
+											<span th:unless="${detail?.unitPrice}" class="text-muted">N/A</span>
+										</td>
+										<td class="text-right font-weight-bold text-success">
+                                                <span th:if="${detail?.calculatedTotalPrice != null}">
+                                                    <span th:text="${#numbers.formatDecimal(detail.calculatedTotalPrice, 0, 'COMMA', 0, 'POINT')}">
+                                                        25,000,000
+                                                    </span> VND
+                                                </span>
+											<span th:unless="${detail?.calculatedTotalPrice != null}"
+											      class="text-muted">N/A</span>
+										</td>
+									</tr>
+									</tbody>
+								</table>
+							</div>
+						</div>
+					</div>
+
+				</div>
+
+				<!-- Status Management -->
+				<div class="col-lg-4">
+
+					<!-- Current Status -->
+					<div class="card shadow mb-4">
+						<div class="card-header py-3">
+							<h6 class="m-0 font-weight-bold">
+								<i class="fas fa-tasks mr-2"></i>Status Management
+							</h6>
+						</div>
+						<div class="card-body">
+							<div class="mb-3">
+								<label class="font-weight-bold">Current Status:</label>
+								<div class="mt-2">
+                                    <span th:switch="${order?.status}" class="badge badge-pill p-2">
+                                        <span th:case="'PENDING'" class="badge badge-warning">⏳ Waiting for Confirmation</span>
+                                        <span th:case="'PAYMENT_PENDING'"
+                                              class="badge badge-warning">💳 Waiting for Payment</span>
+                                        <span th:case="'CONFIRMED'" class="badge badge-info">✅ Confirmed</span>
+                                        <span th:case="'PROCESSING'" class="badge badge-primary">🔄 Processing</span>
+                                        <span th:case="'SHIPPED'" class="badge badge-secondary">🚚 Shipping</span>
+                                        <span th:case="'DELIVERED'" class="badge badge-success">📦 Delivered</span>
+                                        <span th:case="'USER_CONFIRMED'"
+                                              class="badge badge-success">✅ Customer Confirmed</span>
+                                        <span th:case="'CANCELLED'" class="badge badge-danger">❌ Cancelled</span>
+                                        <span th:case="*" class="badge badge-light">❓ Unknown</span>
+                                    </span>
+								</div>
+							</div>
+
+							<!-- Update Status Form -->
+							<form method="post" th:action="@{/admin/orders/update-status}" id="updateStatusForm">
+								<input type="hidden" name="orderId" th:value="${order?.id}">
+
+								<div class="form-group">
+									<label for="newStatus" class="font-weight-bold">Update Status:</label>
+									<select class="form-control" id="newStatus" name="status" required>
+										<option value="">-- Select Status --</option>
+										<option value="PENDING" th:selected="${order?.status == 'PENDING'}">⏳ Waiting for Confirmation</option>
+										<option value="CONFIRMED" th:selected="${order?.status == 'CONFIRMED'}">✅ Confirmed</option>
+										<option value="PROCESSING" th:selected="${order?.status == 'PROCESSING'}">🔄 Processing</option>
+										<option value="SHIPPED" th:selected="${order?.status == 'SHIPPED'}">🚚 Shipping</option>
+										<option value="DELIVERED" th:selected="${order?.status == 'DELIVERED'}">📦 Delivered</option>
+										<option value="USER_CONFIRMED"
+										        th:selected="${order?.status == 'USER_CONFIRMED'}">✅ Customer Confirmed</option>
+										<option value="CANCELLED" th:selected="${order?.status == 'CANCELLED'}">❌ Cancelled</option>
+									</select>
+								</div>
+
+								<button type="submit" class="btn btn-primary btn-block" id="submitButton">
+									<i class="fas fa-save mr-1"></i>Update status
+								</button>
+							</form>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<!-- Order Summary -->
+			<div class="card shadow mb-4">
+				<div class="card-header py-3">
+					<h6 class="m-0 font-weight-bold">
+						<i class="fas fa-chart-pie mr-2"></i>Order Summary
+					</h6>
+				</div>
+				<div class="card-body">
+					<div class="mb-2">
+						<strong>Number of Products:</strong>
+						<span class="float-right"
+						      th:text="${order?.orderDetails != null ? #lists.size(order.orderDetails) : 0}">
+                                    2
+                                </span>
+					</div>
+
+					<!-- Voucher Summary (if applied) -->
+					<i class="fas fa-chart-pie mr-2"></i>Order Summary
+				</h6>
+			</div>
+			<div class="card-body">
+				<div class="mb-2">
+					<strong>Number of Products:</strong>
+					<span class="float-right"
+					      th:text="${order?.orderDetails != null ? #lists.size(order.orderDetails) : 0}">
+                                        2
+                                    </span>
+				</div>
+
+				<!-- Voucher Summary (if applied) -->
+				<div th:if="${order?.voucherCode != null}" class="mb-2">
+					<div class="alert alert-info py-2">
+						<small>
+							<i class="fas fa-tag mr-1"></i>
+							<strong>Voucher Applied:</strong> <span
+								th:text="${order.voucherCode}">VOUCHER20</span><br>
+							<strong>Original Price:</strong> <span
+								th:text="${#numbers.formatDecimal(order.originalAmount ?: order.totalAmount, 0, 'COMMA', 0, 'POINT')}">1,600,000</span>
+							VND<br>
+							<strong>Discount:</strong> <span class="text-danger">-<span
+								th:text="${#numbers.formatDecimal(order.discountAmount ?: 0, 0, 'COMMA', 0, 'POINT')}">100,000</span> VND</span>
+						</small>
+					</div>
+				</div>
+
+				<hr>
+				<div class="h5 mb-0">
+					<strong class="text-success">Total Amount:
+						<span th:if="${order?.totalAmount}">
+                                        <span th:text="${#numbers.formatDecimal(order.totalAmount, 0, 'COMMA', 0, 'POINT')}">
+                                            1,500,000
+                                        </span> VND
+                                    </span>
+						<span th:unless="${order?.totalAmount}">0 VND</span>
+</div>
+<!-- /#wrapper -->
+
+<!-- Scroll to Top Button -->
+<a class="scroll-to-top rounded" href="#page-top">
+	<i class="fas fa-angle-up"></i>
+</a>
+
+<!-- Logout Modal -->
+<div th:replace="~{admin/fragments/logout :: logout}"></div>
+
+<!-- Bootstrap core JavaScript -->
+<script th:src="@{/assets2/vendor/jquery/jquery.min.js}"></script>
+<script th:src="@{/assets2/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
+
+<!-- Core plugin JavaScript -->
+<script th:src="@{/assets2/vendor/jquery-easing/jquery.easing.min.js}"></script>
+
+<!-- Custom scripts for all pages -->
+<script th:src="@{/assets2/js/sb-admin.min.js}"></script>
+
+<!-- Custom CSS for better dropdown display -->
+<style>
+    /* Fix dropdown option display */
+    #newStatus, #statusFilter, #sortSelect {
+        min-width: 200px;
+        font-size: 14px;
+        padding: 8px 12px;
+    }
+
+    #newStatus option, #statusFilter option, #sortSelect option {
+        padding: 8px 12px;
+        font-size: 14px;
+        line-height: 1.5;
+        white-space: nowrap;
+        overflow: visible;
+    }
+
+    /* Make sure dropdown is wide enough for content */
+    .form-control {
+        min-height: 38px;
+    }
+
+    /* Better spacing for status badges */
+    .badge {
+        font-size: 14px;
+        padding: 8px 12px;
+        line-height: 1.2;
+    }
+
+</style>
+
+<!-- Page level custom scripts -->
+<script>
+    $(document).ready(function () {
+
+        // Auto-dismiss alerts after 5 seconds
+        setTimeout(function () {
+            $('.alert').fadeOut('slow');
+        }, 5000);
+
+        // Handle status update form submission
+        $('#updateStatusForm').on('submit', function (e) {
+            e.preventDefault(); // Prevent default form submission
+
+            const selectedStatus = $('#newStatus').val();
+            const selectedText = $('#newStatus option:selected').text();
+
+            // Check if status has been selected
+            if (!selectedStatus || selectedStatus === '') {
+                alert('Please select a new status!');
+                return false;
+            }
+
+            // Show confirm dialog with English text
+            const confirmMessage = `Are you sure you want to update the order status to "${selectedText}"?`;
+
+            if (confirm(confirmMessage)) {
+                // If user clicks OK, submit form
+                this.submit();
+            }
+            // If user clicks Cancel, do nothing
+        });
+
+    });
+</script>
+
+</body>
+
+</html> 

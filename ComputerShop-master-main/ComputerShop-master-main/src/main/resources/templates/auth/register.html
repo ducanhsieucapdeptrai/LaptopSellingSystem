@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Register - Computer Shop</title>
+    <link rel="stylesheet" href="/assets/css/vendor/bootstrap.min.css" th:href="@{/assets/css/vendor/bootstrap.min.css}"/>
+    <link rel="stylesheet" href="/assets/css/style.min.css" th:href="@{/assets/css/style.min.css}"/>
+    <link rel="stylesheet" href="/assets/css/login-custom.css" th:href="@{/assets/css/login-custom.css}"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+
+<body>
+    <div class="axil-login-area">
+        <div class="form-container">
+            <h3>Create New Account</h3>
+
+            <!-- Error Messages -->
+            <div th:if="${error}" class="error" role="alert" th:text="${error}"></div>
+
+            <form th:action="@{/auth/register}" th:object="${user}" method="post" style="width:100%">
+                <div class="input-group">
+                    <span class="input-icon"><i class="fas fa-user"></i></span>
+                    <label for="username" class="form-label" hidden="hidden">Username</label>
+                    <input type="text" id="username" th:field="*{username}" class="form-control" placeholder="Username" required>
+                </div>
+                <div th:if="${#fields.hasErrors('username')}" th:errors="*{username}" class="error"></div>
+
+                <div class="input-group password-group">
+                    <span class="input-icon"><i class="fas fa-lock"></i></span>
+                    <label for="password" class="form-label" hidden="hidden">Password</label>
+                    <input type="password" id="password" th:field="*{password}" class="form-control" placeholder="Password" required>
+                    <span class="toggle-password-eye" onclick="togglePassword('password', 'eyeIcon1')">
+                        <i id="eyeIcon1" class="fa fa-eye"></i>
+                    </span>
+                </div>
+                <div th:if="${#fields.hasErrors('password')}" th:errors="*{password}" class="error"></div>
+
+                <div class="input-group password-group">
+                    <span class="input-icon"><i class="fas fa-lock"></i></span>
+                    <label for="passwordConfirm" class="form-label" hidden="hidden">Confirm Password</label>
+                    <input type="password" id="passwordConfirm" th:field="*{passwordConfirm}" class="form-control" placeholder="Confirm Password" required>
+                    <span class="toggle-password-eye" onclick="togglePassword('passwordConfirm', 'eyeIcon2')">
+                        <i id="eyeIcon2" class="fa fa-eye"></i>
+                    </span>
+                </div>
+                <div th:if="${#fields.hasErrors('passwordConfirm')}" th:errors="*{passwordConfirm}" class="error"></div>
+
+                <div class="input-group">
+                    <span class="input-icon"><i class="fas fa-user-circle"></i></span>
+                    <label for="fullName" class="form-label" hidden="hidden">Full Name</label>
+                    <input type="text" id="fullName" th:field="*{fullName}" class="form-control" placeholder="Full Name" required>
+                </div>
+                <div th:if="${#fields.hasErrors('fullName')}" th:errors="*{fullName}" class="error"></div>
+
+                <div class="input-group">
+                    <span class="input-icon"><i class="fas fa-envelope"></i></span>
+                    <label for="email" class="form-label" hidden="hidden">Email</label>
+                    <input type="email" id="email" th:field="*{email}" class="form-control" placeholder="Email" required>
+                </div>
+                <div th:if="${#fields.hasErrors('email')}" th:errors="*{email}" class="error"></div>
+
+                <div class="input-group">
+                    <span class="input-icon"><i class="fas fa-phone"></i></span>
+                    <label for="phoneNumber" class="form-label" hidden="hidden">Phone Number</label>
+                    <input type="tel" id="phoneNumber" th:field="*{phoneNumber}" class="form-control" placeholder="Phone Number" required>
+                </div>
+                <div th:if="${#fields.hasErrors('phoneNumber')}" th:errors="*{phoneNumber}" class="error"></div>
+
+                <div class="input-group">
+                    <span class="input-icon"><i class="fas fa-map-marker-alt"></i></span>
+                    <label for="address" class="form-label" hidden="hidden">Address</label>
+                    <input type="text" id="address" th:field="*{address}" class="form-control" placeholder="Address" required>
+                </div>
+                <div th:if="${#fields.hasErrors('address')}" th:errors="*{address}" class="error"></div>
+
+                <div class="d-grid gap-2">
+                    <button type="submit" class="btn btn-primary w-100">Register</button>
+                </div>
+
+                <div class="mt-3">
+                    <p>Already have an account? <a th:href="@{/auth/login}">Login</a></p>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function togglePassword(inputId, eyeId) {
+            var pwd = document.getElementById(inputId);
+            var eye = document.getElementById(eyeId);
+            if (pwd.type === "password") {
+                pwd.type = "text";
+                eye.classList.remove("fa-eye");
+                eye.classList.add("fa-eye-slash");
+            } else {
+                pwd.type = "password";
+                eye.classList.remove("fa-eye-slash");
+                eye.classList.add("fa-eye");
+            }
+        }
+    </script>
+</body>
+</html>

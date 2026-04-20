@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{admin/fragments/header :: header}">
+    <title>Notification Management</title>
+</head>
+<body id="page-top">
+
+<nav th:replace="~{admin/fragments/nav-bar :: nav-bar}"></nav>
+
+<div id="wrapper">
+    <!-- Sidebar -->
+    <ul th:replace="~{admin/fragments/sidebar :: sidebar}"></ul>
+
+    <div id="content-wrapper" class="min-vh-100 d-flex flex-column">
+        <div class="container-fluid">
+            <!-- Notifications Statistics -->
+            <div class="row mb-4">
+                <div class="col-xl-3 col-md-6 mb-4">
+                    <div class="card border-left-primary shadow h-100 py-2">
+                        <div class="card-body">
+                            <div class="row no-gutters align-items-center">
+                                <div class="col mr-2">
+                                    <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                        Total Notifications
+                                    </div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800" th:text="${totalNotifications}">0</div>
+                                </div>
+                                <div class="col-auto">
+                                    <i class="fas fa-bell fa-2x text-gray-300"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-3 col-md-6 mb-4">
+                    <div class="card border-left-success shadow h-100 py-2">
+                        <div class="card-body">
+                            <div class="row no-gutters align-items-center">
+                                <div class="col mr-2">
+                                    <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                        Unread Notifications
+                                    </div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800" th:text="${unreadNotifications}">0</div>
+                                </div>
+                                <div class="col-auto">
+                                    <i class="fas fa-bell-slash fa-2x text-gray-300"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-3 col-md-6 mb-4">
+                    <div class="card border-left-info shadow h-100 py-2">
+                        <div class="card-body">
+                            <div class="row no-gutters align-items-center">
+                                <div class="col mr-2">
+                                    <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                                        Order Notifications
+                                    </div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800" th:text="${orderNotifications}">0</div>
+                                </div>
+                                <div class="col-auto">
+                                    <i class="fas fa-shopping-cart fa-2x text-gray-300"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xl-3 col-md-6 mb-4">
+                    <div class="card border-left-warning shadow h-100 py-2">
+                        <div class="card-body">
+                            <div class="row no-gutters align-items-center">
+                                <div class="col mr-2">
+                                    <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                        System Notifications
+                                    </div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800" th:text="${systemNotifications}">0</div>
+                                </div>
+                                <div class="col-auto">
+                                    <i class="fas fa-cog fa-2x text-gray-300"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- End Notifications Statistics -->
+            <!-- Breadcrumbs -->
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item">
+                    <a th:href="@{/admin/dashboard}">Dashboard</a>
+                </li>
+                <li class="breadcrumb-item active">Notification Management</li>
+            </ol>
+
+            <!-- Page Heading -->
+            <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                <h1 class="h3 mb-0 text-gray-800">
+                    <i class="fas fa-bell mr-2"></i>Notification Management
+                </h1>
+                <div class="badge badge-info badge-pill">
+                    Showing: <span th:text="${notifications.size() ?: 0}">0</span> / <span th:text="${totalNotifications}">0</span> notifications
+                </div>
+                <div>
+                    <a href="/notifications/admin/broadcast" class="btn btn-primary btn-sm">
+                        <i class="fas fa-bullhorn fa-sm mr-1"></i>
+                        Send Broadcast Notification
+                    </a>
+                </div>
+            </div>
+
+            <!-- Success/Error Messages -->
+            <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
+                <i class="fas fa-check-circle mr-2"></i>
+                <span th:text="${success}"></span>
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+                <i class="fas fa-exclamation-triangle mr-2"></i>
+                <span th:text="${error}"></span>
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+
+            <!-- Filter & Search Card -->
+            <div class="card shadow mb-4">
+                <div class="card-header">
+                    <h6 class="m-0 font-weight-bold text-primary">
+                        <i class="fas fa-filter mr-2"></i>Search & Filter Notifications
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <form method="get" th:action="@{/notifications/admin}" id="searchForm">
+                        <div class="row">
+                            <!-- Search -->
+                            <div class="col-lg-4 col-md-6 mb-3">
+                                <label for="searchInput" class="form-label font-weight-bold">Search:</label>
+                                <div class="input-group">
+                                    <input type="text" 
+                                           class="form-control" 
+                                           id="searchInput" 
+                                           name="search" 
+                                           th:value="${searchTerm}" 
+                                           placeholder="Content, recipient..."
+                                           autocomplete="off">
+                                    <div class="input-group-append">
+                                        <button type="submit" class="btn btn-outline-secondary" title="Search">
+                                            <i class="fas fa-search"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Status Filter -->
+                            <div class="col-lg-3 col-md-6 mb-3">
+                                <label for="statusFilter" class="form-label font-weight-bold">Status:</label>
+                                <select class="form-control" id="statusFilter" name="status" onchange="this.form.submit()">
+                                    <option value="">-- All --</option>
+                                    <option value="unread" th:selected="${selectedStatus == 'unread'}">Unread</option>
+                                    <option value="read" th:selected="${selectedStatus == 'read'}">Read</option>
+                                </select>
+                            </div>
+                            
+                            <!-- Type Filter -->
+                            <div class="col-lg-3 col-md-6 mb-3">
+                                <label for="typeFilter" class="form-label font-weight-bold">Type:</label>
+                                <select class="form-control" id="typeFilter" name="type" onchange="this.form.submit()">
+                                    <option value="">-- All --</option>
+                                    <option value="order" th:selected="${selectedType == 'order'}">Order</option>
+                                    <option value="product" th:selected="${selectedType == 'product'}">Product</option>
+                                    <option value="system" th:selected="${selectedType == 'system'}">System</option>
+                                </select>
+                            </div>
+                            
+                            <!-- Buttons -->
+                            <div class="col-lg-2 col-md-6 mb-3 d-flex align-items-end">
+                                <div class="btn-group w-100">
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="fas fa-search mr-1"></i>Search
+                                    </button>
+                                    <a th:href="@{/notifications/admin}" class="btn btn-outline-secondary" title="Clear Filter">
+                                        <i class="fas fa-eraser"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Quick Filters -->
+                        <div class="row mt-2">
+                            <div class="col-12">
+                                <div class="btn-group btn-group-sm" role="group">
+                                    <a th:href="@{/notifications/admin(status='unread')}" 
+                                       class="btn btn-outline-warning"
+                                       th:classappend="${selectedStatus == 'unread'} ? 'active' : ''">
+                                        <i class="fas fa-bell mr-1"></i>Unread
+                                    </a>
+                                    <a th:href="@{/notifications/admin(type='order')}" 
+                                       class="btn btn-outline-primary"
+                                       th:classappend="${selectedType == 'order'} ? 'active' : ''">
+                                        <i class="fas fa-shopping-cart mr-1"></i>Order
+                                    </a>
+                                    <a th:href="@{/notifications/admin(type='system')}" 
+                                       class="btn btn-outline-secondary"
+                                       th:classappend="${selectedType == 'system'} ? 'active' : ''">
+                                        <i class="fas fa-cog mr-1"></i>System
+                                    </a>
+                                    <a th:href="@{/notifications/admin}" class="btn btn-outline-dark">
+                                        <i class="fas fa-list mr-1"></i>All
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Notifications Table -->
+            <div class="card shadow mb-4">
+                <div class="card-header ">
+                    <h6 class="fas fa-table">
+                        <i class="fas fa-list mr-3"></i>Notification List
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <!-- Empty State -->
+                    <div th:if="${notifications == null or #lists.isEmpty(notifications)}" class="text-center py-5">
+                        <i class="fas fa-inbox fa-4x text-gray-300 mb-3"></i>
+                        <h5 class="text-gray-500">No Notifications</h5>
+                        <p class="text-muted">No notifications match your search criteria.</p>
+                        <a th:href="@{/notifications/admin}" class="btn btn-outline-primary">
+                            <i class="fas fa-refresh mr-1"></i>View All Notifications
+                        </a>
+                    </div>
+                    <!-- Table -->
+                    <div th:if="${notifications != null and !#lists.isEmpty(notifications)}" class="table-responsive">
+                        <table class="table table-bordered table-hover" id="notificationsTable">
+                            <thead>
+                                <tr>
+                                    <th class="text-center" style="width: 120px;">ID</th>
+                                    <th style="width: 180px;">Recipient</th>
+                                    <th>Content</th>
+                                    <th class="text-center" style="width: 100px;">Type</th>
+                                    <th class="text-center" style="width: 100px;">Status</th>
+                                    <th class="text-center" style="width: 150px;">Created Time</th>
+                                    <th class="text-center" style="width: 120px;">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="notification : ${notifications}">
+                                    <td class="text-center">
+                                        <code class="text-primary font-weight-bold" th:text="${#strings.length(notification.notificationId) > 8 ? #strings.substring(notification.notificationId, 0, 8) + '...' : notification.notificationId}">ID</code>
+                                    </td>
+                                    <td>
+                                        <div th:if="${notification.user != null}">
+                                            <strong class="text-dark mb-1" th:text="${notification.user.fullName}">Tên user</strong><br>
+                                            <small class="text-muted" th:text="${notification.user.email}">email@example.com</small>
+                                        </div>
+                                        <div th:unless="${notification.user != null}">
+                                            <small class="text-muted">User does not exist</small>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="notification-message" th:text="${notification.message}" th:title="${notification.message}">
+                                            Notification content...
+                                        </div>
+                                    </td>
+                                    <td class="text-center">
+                                        <span th:if="${notification.orderId != null}" class="badge badge-primary notification-type-badge">
+                                            <i class="fas fa-shopping-cart mr-1"></i>Order
+                                        </span>
+                                        <span th:if="${notification.productId != null}" class="badge badge-info notification-type-badge">
+                                            <i class="fas fa-box mr-1"></i>Product
+                                        </span>
+                                        <span th:if="${notification.orderId == null and notification.productId == null}" class="badge badge-secondary notification-type-badge">
+                                            <i class="fas fa-info-circle mr-1"></i>System
+                                        </span>
+                                    </td>
+                                    <td class="text-center">
+                                        <span th:if="${notification.isRead}" class="badge badge-success">Read</span>
+                                        <span th:unless="${notification.isRead}" class="badge badge-warning">Unread</span>
+                                    </td>
+                                    <td class="text-center" th:text="${#temporals.format(notification.createdAt, 'dd/MM/yyyy HH:mm')}">01/01/2024 10:00</td>
+                                    <td class="text-center">
+                                        <a th:href="@{'/notifications/admin/detail/' + ${notification.notificationId}}" 
+                                           class="btn btn-info btn-sm">
+                                            <i class="fas fa-eye mr-1"></i>Details
+                                        </a>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /.container-fluid -->
+        <footer th:replace="~{admin/fragments/footer :: footer}"></footer>
+    </div>
+    <!-- /.content-wrapper -->
+</div>
+<!-- /#wrapper -->
+<!-- Scroll to Top Button -->
+<a class="scroll-to-top rounded" href="#page-top">
+    <i class="fas fa-angle-up"></i>
+</a>
+<!-- Logout Modal -->
+<div th:replace="~{admin/fragments/logout :: logout}"></div>
+<!-- Bootstrap core JavaScript -->
+<script th:src="@{/assets2/vendor/jquery/jquery.min.js}"></script>
+<script th:src="@{/assets2/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
+<!-- Core plugin JavaScript -->
+<script th:src="@{/assets2/vendor/jquery-easing/jquery.easing.min.js}"></script>
+<!-- Custom scripts for all pages -->
+<script th:src="@{/assets2/js/sb-admin.min.js}"></script>
+<!-- Custom CSS for better dropdown display -->
+<style>
+#statusFilter, #typeFilter, .form-control {
+    font-size: 14px;
+    padding: 8px 12px;
+}
+#statusFilter, #typeFilter {
+    min-width: 140px;
+}
+#searchInput {
+    min-width: 250px;
+}
+#statusFilter option, #typeFilter option {
+    padding: 6px 12px;
+    font-size: 14px;
+    line-height: 1.4;
+    white-space: nowrap;
+    overflow: visible;
+}
+.form-control {
+    min-height: 38px;
+    border: 1px solid #d1d3e2;
+}
+.form-control:focus {
+    border-color: #5a5c69;
+    box-shadow: 0 0 0 0.2rem rgba(90, 92, 105, 0.25);
+}
+.btn {
+    min-height: 38px;
+    line-height: 1.4;
+}
+.badge-warning {
+    background-color: #f6c23e;
+    color: #1a1a1a;
+    font-weight: 600;
+    font-size: 0.75rem;
+}
+.notification-type-badge {
+    font-size: 0.75rem;
+}
+.notification-message {
+    max-width: 300px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Modal styles */
+.modal-lg {
+    max-width: 900px;
+}
+
+.badge-lg {
+    font-size: 0.9rem;
+    padding: 0.5rem 1rem;
+}
+
+#notificationDetailModal .card {
+    box-shadow: none;
+    border: 1px solid #e3e6f0;
+}
+
+#notificationDetailModal .card-header {
+    border-bottom: 1px solid #e3e6f0;
+    font-weight: 600;
+}
+
+#notificationDetailModal pre {
+    background: #f8f9fc;
+    border: 1px solid #e3e6f0;
+    color: #5a5c69;
+    max-height: 200px;
+    overflow-y: auto;
+}
+</style>
+<!-- Page level custom scripts -->
+<script>
+$(document).ready(function() {
+    // DataTable with search disabled (use server-side search instead)
+    const table = $('#notificationsTable').DataTable({
+        "pageLength": 25,
+        "searching": false, // Disable client-side search
+        "language": {
+            "url": "//cdn.datatables.net/plug-ins/1.10.25/i18n/Vietnamese.json"
+        }
+    });
+
+    // Real-time search with debounce
+    let searchTimeout;
+    $('#searchInput').on('input', function() {
+        clearTimeout(searchTimeout);
+        const searchTerm = $(this).val();
+        
+        searchTimeout = setTimeout(function() {
+            if (searchTerm.length >= 2 || searchTerm.length === 0) {
+                $('#searchForm').submit();
+            }
+        }, 500); // Wait 500ms after user stops typing
+    });
+
+    // Quick search on Enter
+    $('#searchInput').on('keypress', function(e) {
+        if (e.which === 13) {
+            e.preventDefault();
+            $('#searchForm').submit();
+        }
+    });
+
+    // Clear search shortcut
+    $('#searchInput').on('keyup', function(e) {
+        if (e.key === 'Escape') {
+            $(this).val('');
+            $('#searchForm').submit();
+        }
+    });
+
+    // Highlight search terms
+    const searchTerm = '[[${searchTerm}]]';
+    if (searchTerm && searchTerm.trim() !== '') {
+        highlightSearchTerm(searchTerm);
+    }
+
+    // Auto-dismiss alerts
+    setTimeout(function() {
+        $('.alert').fadeOut('slow');
+    }, 5000);
+});
+
+function highlightSearchTerm(term) {
+    if (term && term.trim() !== '') {
+        $('.notification-message').each(function() {
+            const text = $(this).text();
+            const highlightedText = text.replace(
+                new RegExp('(' + term + ')', 'gi'),
+                '<mark class="bg-warning">$1</mark>'
+            );
+            $(this).html(highlightedText);
+        });
+    }
+}
+
+// Show loading state during search
+$('#searchForm').on('submit', function() {
+    $('.btn[type="submit"]').prop('disabled', true).html('<i class="fas fa-spinner fa-spin mr-1"></i>Searching...');
+});
+</script>
+</body>
+</html>

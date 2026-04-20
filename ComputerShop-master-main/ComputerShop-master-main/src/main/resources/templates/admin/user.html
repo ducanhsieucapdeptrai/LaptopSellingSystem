@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="admin/fragments/head :: head">
+    <title>User Management</title>
+</head>
+
+<body id="page-top">
+    <!-- Page Wrapper -->
+    <div id="wrapper">
+        <!-- Sidebar -->
+        <div th:replace="admin/fragments/sidebar :: sidebar"></div>
+
+        <!-- Content Wrapper -->
+        <div id="content-wrapper" class="d-flex flex-column">
+            <!-- Main Content -->
+            <div id="content">
+                <!-- Topbar -->
+                <div th:replace="admin/fragments/nav-bar :: nav-bar"></div>
+
+                <!-- Begin Page Content -->
+                <div class="container-fluid">
+                    <!-- Page Heading -->
+                    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                        <h1 class="h3 mb-0 text-gray-800">User Management</h1>
+                        <a th:href="@{/admin/add-user}" class="d-none d-sm-inline-block btn btn-primary shadow-sm">
+                            <i class="fas fa-user-plus fa-sm text-white-50 mr-2"></i>
+                            Add New User
+                        </a>
+                    </div>
+
+                    <!-- Content Row -->
+                    <div class="row">
+                        <!-- Total Users Card -->
+                        <div class="col-xl-3 col-md-6 mb-4">
+                            <div class="card border-left-primary shadow h-100 py-2">
+                                <div class="card-body">
+                                    <div class="row no-gutters align-items-center">
+                                        <div class="col mr-2">
+                                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                                Total Users</div>
+                                            <div class="h5 mb-0 font-weight-bold text-gray-800" th:text="${totalUsers}">0</div>
+                                        </div>
+                                        <div class="col-auto">
+                                            <i class="fas fa-users fa-2x text-gray-300"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Active Users Card -->
+                        <div class="col-xl-3 col-md-6 mb-4">
+                            <div class="card border-left-success shadow h-100 py-2">
+                                <div class="card-body">
+                                    <div class="row no-gutters align-items-center">
+                                        <div class="col mr-2">
+                                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                                Active Users</div>
+                                            <div class="h5 mb-0 font-weight-bold text-gray-800" th:text="${activeUsers}">0</div>
+                                        </div>
+                                        <div class="col-auto">
+                                            <i class="fas fa-user-check fa-2x text-gray-300"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- New Users Card -->
+                        <div class="col-xl-3 col-md-6 mb-4">
+                            <div class="card border-left-info shadow h-100 py-2">
+                                <div class="card-body">
+                                    <div class="row no-gutters align-items-center">
+                                        <div class="col mr-2">
+                                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                                                New Users (This Month)</div>
+                                            <div class="h5 mb-0 font-weight-bold text-gray-800" th:text="${newUsers}">0</div>
+                                        </div>
+                                        <div class="col-auto">
+                                            <i class="fas fa-user-plus fa-2x text-gray-300"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Admin Users Card -->
+                        <div class="col-xl-3 col-md-6 mb-4">
+                            <div class="card border-left-warning shadow h-100 py-2">
+                                <div class="card-body">
+                                    <div class="row no-gutters align-items-center">
+                                        <div class="col mr-2">
+                                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                                Administrator</div>
+                                            <div class="h5 mb-0 font-weight-bold text-gray-800" th:text="${adminUsers}">0</div>
+                                        </div>
+                                        <div class="col-auto">
+                                            <i class="fas fa-user-shield fa-2x text-gray-300"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Users Table -->
+                    <div class="card shadow mb-4">
+                        <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                            <h6 class="m-0 font-weight-bold text-primary">User List</h6>
+                            <div class="dropdown no-arrow">
+                                <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink"
+                                   data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <i class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i>
+                                </a>
+                                <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in"
+                                     aria-labelledby="dropdownMenuLink">
+                                    <div class="dropdown-header">Options:</div>
+                                    <a class="dropdown-item" href="#" onclick="exportToExcel()">
+                                        <i class="fas fa-file-excel fa-sm fa-fw mr-2 text-gray-400"></i>
+                                        Export to Excel
+                                    </a>
+                                    <a class="dropdown-item" href="#" onclick="printTable()">
+                                        <i class="fas fa-print fa-sm fa-fw mr-2 text-gray-400"></i>
+                                        Print List
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-bordered" id="usersTable">
+                                    <thead>
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>Username</th>
+                                            <th>Email</th>
+                                            <th>Role</th>
+                                            <th>Status</th>
+                                            <th>Created Date</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr th:each="user : ${users}">
+                                            <td th:text="${user.id}">1</td>
+                                            <td th:text="${user.username}">admin</td>
+                                            <td th:text="${user.email}">admin@example.com</td>
+                                            <td>
+                                                <span th:if="${user.role == T(com.example.computershop.enums.Role).Admin}"
+                                                      class="badge badge-warning">Administrator</span>
+                                                <span th:if="${user.role == T(com.example.computershop.enums.Role).Customer}" 
+                                                      class="badge badge-info">Customer</span>
+                                                <span th:if="${user.role == T(com.example.computershop.enums.Role).Sales}" 
+                                                      class="badge badge-success">Sales Staff</span>
+                                                <span th:if="${user.role == T(com.example.computershop.enums.Role).Shipper}" 
+                                                      class="badge badge-primary">Shipper</span>
+                                            </td>
+                                            <td>
+                                                <span th:if="${user.active}" 
+                                                      class="badge badge-success">Active</span>
+                                                <span th:unless="${user.active}" 
+                                                      class="badge badge-danger">Locked</span>
+                                            </td>
+                                            <td th:text="${#temporals.format(user.createdAt, 'dd/MM/yyyy')}">01/01/2024</td>
+                                            <td>
+                                                <div class="btn-group" role="group">
+                                                    <a th:href="@{/admin/edit-user/{id}(id=${user.id})}" 
+                                                       class="btn btn-primary btn-sm">
+                                                        <i class="fas fa-edit"></i>
+                                                    </a>
+                                                    <button type="button" class="btn btn-info btn-sm"
+                                                            onclick="toggleUserStatus(this)"
+                                                            th:data-user-id="${user.id}"
+                                                            title="Toggle Status">
+                                                        <i class="fas fa-toggle-on"></i>
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- /.container-fluid -->
+            </div>
+            <!-- End of Main Content -->
+
+            <!-- Footer -->
+            <div th:replace="admin/fragments/footer :: footer"></div>
+        </div>
+        <!-- End of Content Wrapper -->
+    </div>
+    <!-- End of Page Wrapper -->
+
+    <!-- Scroll to Top Button-->
+    <a class="scroll-to-top rounded" href="#page-top">
+        <i class="fas fa-angle-up"></i>
+    </a>
+
+    <!-- Logout Modal-->
+    <div th:replace="admin/fragments/logout-modal :: logout-modal"></div>
+
+    <!-- Bootstrap core JavaScript-->
+    <div th:replace="admin/fragments/scripts :: scripts"></div>
+
+    <!-- Page level custom scripts -->
+    <script th:inline="javascript">
+        // Initialize DataTable
+        $(document).ready(function() {
+            $('#usersTable').DataTable({
+                language: {
+                    url: '//cdn.datatables.net/plug-ins/1.10.24/i18n/English.json'
+                }
+            });
+        });
+
+        // Toggle user status function
+        function toggleUserStatus(button) {
+            const userId = button.getAttribute('data-user-id');
+            fetch('/admin/toggle-user-status/' + userId, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            })
+            .then(response => response.text())
+            .then(data => {
+                if (data === 'success') {
+                    location.reload();
+                } else {
+                    alert('An error occurred!');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred!');
+            });
+        }
+
+        // Export to Excel function
+        function exportToExcel() {
+            window.location.href = '/admin/export-users';
+        }
+
+        // Print table function
+        function printTable() {
+            window.print();
+        }
+    </script>
+</body>
+</html> 

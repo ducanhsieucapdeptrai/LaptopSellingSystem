@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notifications - Computer Shop</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- FontAwesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    
+    <style>
+        .notification-item {
+            transition: all 0.3s ease;
+            border-left: 4px solid #007bff;
+        }
+        .notification-item.unread {
+            background-color: #f8f9fa;
+            border-left-color: #28a745;
+        }
+        .notification-item.read {
+            border-left-color: #6c757d;
+        }
+        .notification-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        .notification-meta {
+            font-size: 0.875rem;
+            color: #6c757d;
+        }
+        .notification-actions {
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .notification-item:hover .notification-actions {
+            opacity: 1;
+        }
+        .notification-icon {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            font-size: 1.2rem;
+        }
+        .notification-icon.order {
+            background-color: #e3f2fd;
+            color: #1976d2;
+        }
+        .notification-icon.info {
+            background-color: #e8f5e8;
+            color: #388e3c;
+        }
+        .notification-icon.warning {
+            background-color: #fff3e0;
+            color: #f57c00;
+        }
+        .empty-notifications {
+            text-align: center;
+            padding: 3rem 1rem;
+            color: #6c757d;
+        }
+        .empty-notifications i {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+    </style>
+</head>
+<body>
+    <!-- Include header -->
+    <div th:replace="~{user/fragments/header :: header}"></div>
+
+    <div class="container my-5">
+        <div class="row">
+            <div class="col-12">
+                <!-- Page Header -->
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <div>
+                        <h2><i class="fas fa-bell me-2"></i>My Notifications</h2>
+                        <p class="text-muted mb-0">
+                            Total <span th:text="${notifications.size()}">0</span> notifications
+                            - <span class="text-success fw-bold" th:text="${unreadCount}">0</span> unread
+                        </p>
+                    </div>
+                    <div>
+                        <button class="btn btn-outline-primary" id="markAllReadBtn" th:if="${unreadCount > 0}">
+                            <i class="fas fa-check-double me-1"></i>
+                            Mark All as Read
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Success/Error Alerts -->
+                <div id="alertContainer"></div>
+
+                <!-- Notifications List -->
+                <div class="row">
+                    <div class="col-12">
+                        <div th:if="${notifications.empty}" class="empty-notifications">
+                            <i class="fas fa-bell-slash"></i>
+                            <h4>No notifications yet</h4>
+                            <p>You don't have any notifications. Order updates and announcements will appear here.</p>
+                        </div>
+
+                        <div th:if="${!notifications.empty}" class="notifications-container">
+                            <div th:each="notification : ${notifications}" 
+                                 th:class="'card notification-item mb-3 ' + (${notification.isRead} ? 'read' : 'unread')"
+                                 th:data-notification-id="${notification.notificationId}">
+                                <div class="card-body">
+                                    <div class="row align-items-start">
+                                        <div class="col-auto">
+                                            <div th:class="'notification-icon ' + (${notification.orderId != null} ? 'order' : 'info')">
+                                                <i th:class="${notification.orderId != null} ? 'fas fa-shopping-cart' : 'fas fa-info-circle'"></i>
+                                            </div>
+                                        </div>
+                                        <div class="col">
+                                            <div class="d-flex justify-content-between align-items-start">
+                                                <div class="flex-grow-1">
+                                                    <p class="mb-2" th:text="${notification.message}">Thông báo mẫu</p>
+                                                    <div class="notification-meta">
+                                                        <i class="fas fa-clock me-1"></i>
+                                                        <span th:text="${#temporals.format(notification.createdAt, 'dd/MM/yyyy HH:mm')}">01/01/2024 10:00</span>
+                                                        <span th:if="${!notification.isRead}" class="badge bg-success ms-2">New</span>
+                                                        <span th:if="${notification.orderId != null}" class="badge bg-primary ms-2">
+                                                            <i class="fas fa-shopping-cart me-1"></i>Order
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                                <div class="notification-actions">
+                                                    <button th:if="${!notification.isRead}" 
+                                                            class="btn btn-sm btn-outline-success mark-read-btn"
+                                                            th:data-notification-id="${notification.notificationId}"
+                                                            title="Mark as read">
+                                                        <i class="fas fa-check"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Include footer -->
+    <div th:replace="~{user/fragments/footer :: footer}"></div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <script>
+        $(document).ready(function() {
+            // Đánh dấu notification đã đọc
+            $('.mark-read-btn').click(function() {
+                const notificationId = $(this).data('notification-id');
+                markAsRead(notificationId, $(this).closest('.notification-item'));
+            });
+
+            // Đánh dấu tất cả đã đọc
+            $('#markAllReadBtn').click(function() {
+                markAllAsRead();
+            });
+
+            function markAsRead(notificationId, notificationElement) {
+                $.post(`/notifications/mark-read/${notificationId}`)
+                    .done(function(response) {
+                        if (response.success) {
+                            notificationElement.removeClass('unread').addClass('read');
+                            notificationElement.find('.badge:contains("Mới")').remove();
+                            notificationElement.find('.mark-read-btn').remove();
+                            
+                            // Cập nhật counter
+                            updateUnreadCount();
+                            
+                            showAlert('Marked notification as read', 'success');
+                        }
+                    })
+                    .fail(function() {
+                        showAlert('Có lỗi xảy ra khi đánh dấu thông báo', 'danger');
+                    });
+            }
+
+            function markAllAsRead() {
+                $.post('/notifications/mark-all-read')
+                    .done(function(response) {
+                        if (response.success) {
+                            $('.notification-item.unread').removeClass('unread').addClass('read');
+                            $('.badge:contains("New")').remove();
+                            $('.mark-read-btn').remove();
+                            $('#markAllReadBtn').hide();
+                            
+                            // Cập nhật counter
+                            updateUnreadCount();
+                            
+                            showAlert('Marked all notifications as read', 'success');
+                        }
+                    })
+                    .fail(function() {
+                        showAlert('Có lỗi xảy ra khi đánh dấu thông báo', 'danger');
+                    });
+            }
+
+            function updateUnreadCount() {
+                const unreadCount = $('.notification-item.unread').length;
+                $('.text-success.fw-bold').text(unreadCount);
+                
+                if (unreadCount === 0) {
+                    $('#markAllReadBtn').hide();
+                }
+            }
+
+            function showAlert(message, type) {
+                const alertHtml = `
+                    <div class="alert alert-${type} alert-dismissible fade show" role="alert">
+                        <i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'} me-2"></i>
+                        ${message}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                `;
+                $('#alertContainer').html(alertHtml);
+                
+                setTimeout(function() {
+                    $('.alert').alert('close');
+                }, 3000);
+            }
+        });
+    </script>
+</body>
+</html> 

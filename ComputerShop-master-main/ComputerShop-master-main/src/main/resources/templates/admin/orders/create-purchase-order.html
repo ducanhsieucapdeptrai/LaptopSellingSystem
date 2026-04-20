@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{admin/fragments/header :: header}">
+    <title>Create Purchase Order</title>
+</head>
+<body>
+<nav th:replace="~{admin/fragments/nav-bar :: nav-bar}"></nav>
+<div id="wrapper">
+    <ul th:replace="~{admin/fragments/sidebar :: sidebar}"></ul>
+    <div id="content-wrapper">
+        <div class="container-fluid">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="/admin/dashboard">Dashboard</a></li>
+                <li class="breadcrumb-item"><a href="/admin/purchase-orders">Purchase Order Management</a></li>
+                <li class="breadcrumb-item active">Create Purchase Order</li>
+            </ol>
+            <div class="card mb-3">
+                <div class="card-header">
+                    <i class="fas fa-plus"></i> Create Purchase Order
+                </div>
+                <div class="card-body">
+                    <form th:action="@{/admin/purchase-orders/create}" th:object="${order}" method="post">
+                        <div class="form-group">
+                            <label>Total Amount</label>
+                            <input type="number" id="totalAmount" name="totalAmount" class="form-control" readonly />
+                        </div>
+                        <div class="form-group">
+                            <label>Paid Amount</label>
+                            <input type="number" id="paidAmount" name="paidAmount" class="form-control" min="0" />
+                        </div>
+                        <div class="form-group">
+                            <label>Debt Amount</label>
+                            <input type="number" id="debtAmount" name="debtAmount" class="form-control" readonly />
+                        </div>
+                        <div class="form-group">
+                            <label>Status</label>
+                            <select id="status" name="status" class="form-control">
+                                <option value="PAID">Paid</option>
+                                <option value="PARTIAL">Partial Payment</option>
+                                <option value="UNPAID">Unpaid</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Select Products to Import</label>
+                            <table class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>Product</th>
+                                        <th>Quantity</th>
+                                        <th>Import Price</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="product-rows">
+                                    <tr>
+                                        <td>
+                                            <select name="productIds" class="form-control" required>
+                                                <option th:each="p : ${products}" th:value="${p.productID}" th:text="${p.name}"></option>
+                                            </select>
+                                        </td>
+                                        <td><input type="number" name="quantities" class="form-control" min="1" required /></td>
+                                        <td><input type="number" name="importPrices" class="form-control" min="0" required /></td>
+                                        <td><button type="button" class="btn btn-danger btn-sm" onclick="removeRow(this)">Delete</button></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <button type="button" class="btn btn-info" onclick="addRow()">Add Product</button>
+                        </div>
+                        <button type="submit" class="btn btn-success">Create Purchase Order</button>
+                        <a href="/admin/purchase-orders" class="btn btn-secondary">Back</a>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <footer th:replace="~{admin/fragments/footer :: footer}"></footer>
+    </div>
+</div>
+<script>
+function addRow() {
+    var row = document.querySelector('#product-rows tr');
+    var clone = row.cloneNode(true);
+    clone.querySelectorAll('input').forEach(input => input.value = '');
+    document.getElementById('product-rows').appendChild(clone);
+    updateTotal();
+}
+function removeRow(btn) {
+    var rows = document.querySelectorAll('#product-rows tr');
+    if (rows.length > 1) btn.closest('tr').remove();
+    updateTotal();
+}
+function updateTotal() {
+    let total = 0;
+    document.querySelectorAll('#product-rows tr').forEach(row => {
+        const qty = parseInt(row.querySelector('input[name="quantities"]').value) || 0;
+        const price = parseInt(row.querySelector('input[name="importPrices"]').value) || 0;
+        total += qty * price;
+    });
+    document.getElementById('totalAmount').value = total;
+}
+function updateDebtAndStatus() {
+    const total = parseInt(document.getElementById('totalAmount').value) || 0;
+    const paid = parseInt(document.getElementById('paidAmount').value) || 0;
+    let status = document.getElementById('status').value;
+    let debt = total - paid;
+    if (status === 'PAID') {
+        document.getElementById('debtAmount').value = 0;
+        document.getElementById('debtAmount').readOnly = true;
+    } else {
+        document.getElementById('debtAmount').value = debt > 0 ? debt : 0;
+        document.getElementById('debtAmount').readOnly = true;
+        if (!document.getElementById('paidAmount').value || paid >= total) {
+            document.getElementById('status').value = 'PAID';
+            document.getElementById('debtAmount').value = 0;
+        }
+    }
+}
+document.getElementById('paidAmount').addEventListener('input', updateDebtAndStatus);
+document.getElementById('status').addEventListener('change', updateDebtAndStatus);
+document.addEventListener('input', function(e) {
+    if (e.target.name === 'quantities' || e.target.name === 'importPrices') {
+        updateTotal();
+        updateDebtAndStatus();
+    }
+});
+window.onload = function() { updateTotal(); updateDebtAndStatus(); };
+</script>
+</body>
+</html> 

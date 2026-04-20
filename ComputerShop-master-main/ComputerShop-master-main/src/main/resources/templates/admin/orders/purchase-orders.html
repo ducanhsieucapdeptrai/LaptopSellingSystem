@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{admin/fragments/header :: header}">
+    <title>Purchase Order Management</title>
+</head>
+<body>
+<nav th:replace="~{admin/fragments/nav-bar :: nav-bar}"></nav>
+<div id="wrapper">
+    <ul th:replace="~{admin/fragments/sidebar :: sidebar}"></ul>
+    <div id="content-wrapper">
+        <div class="container-fluid">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="/admin/dashboard">Dashboard</a></li>
+                <li class="breadcrumb-item active">Purchase Order Management</li>
+            </ol>
+            <div class="card mb-3">
+                <div class="card-header">
+                    <i class="fas fa-table"></i> List of Purchase Orders
+                    <a href="/admin/purchase-orders/create" class="btn btn-primary btn-sm float-right">Create New Purchase Order</a>
+                </div>
+                <div class="card-body">
+                    <form method="get" class="form-inline mb-3">
+                        <label class="mr-2">From Date</label>
+                        <input type="date" name="fromDate" class="form-control mr-2" th:value="${fromDate}" />
+                        <label class="mr-2">To Date</label>
+                        <input type="date" name="toDate" class="form-control mr-2" th:value="${toDate}" />
+                        <label class="mr-2">Status</label>
+                        <select name="status" class="form-control mr-2">
+                            <option value="">All</option>
+                            <option value="PAID" th:selected="${status == 'PAID'}">Paid</option>
+                            <option value="PARTIAL" th:selected="${status == 'PARTIAL'}">Partial Payment</option>
+                            <option value="UNPAID" th:selected="${status == 'UNPAID'}">Unpaid</option>
+                        </select>
+                        <label class="mr-2">Debt</label>
+                        <select name="debt" class="form-control mr-2">
+                            <option value="">All</option>
+                            <option value="debt" th:selected="${debt == 'debt'}">Still Owes</option>
+                            <option value="paid" th:selected="${debt == 'paid'}">Fully Paid</option>
+                        </select>
+                        <button type="submit" class="btn btn-info">Filter</button>
+                    </form>
+                    <div class="table-responsive">
+                        <table class="table table-bordered">
+                            <thead>
+                            <tr>
+                                <th>Code</th>
+                                <th>Import Date</th>
+                                <th>Total Amount</th>
+                                <th>Paid Amount</th>
+                                <th>Debt Amount</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:each="order : ${orders}">
+                                <td th:text="${order.id}"></td>
+                                <td th:text="${#temporals.format(order.createdAt, 'dd/MM/yyyy HH:mm')}"></td>
+                                <td th:text="${order.totalAmount}"></td>
+                                <td th:text="${order.paidAmount}"></td>
+                                <td th:text="${order.debtAmount}"></td>
+                                <td th:text="${order.status}"></td>
+                                <td>
+                                    <a th:href="@{'/admin/purchase-orders/' + ${order.id}}" class="btn btn-info btn-sm">Details</a>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <footer th:replace="~{admin/fragments/footer :: footer}"></footer>
+    </div>
+</div>
+</body>
+</html> 

@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Order Success</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; background: #f5f5f5; }
+        .container { max-width: 900px; margin: 0 auto; background: white; padding: 40px; border-radius: 8px; text-align: center; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .success-icon { font-size: 80px; color: #28a745; margin-bottom: 20px; }
+        h1 { color: #28a745; margin-bottom: 10px; }
+        h2 { color: #495057; margin: 30px 0 20px 0; text-align: left; }
+        
+        .order-info { background: #f8f9fa; padding: 25px; border-radius: 8px; margin: 30px 0; text-align: left; }
+        .shipping-info { background: #e7f3ff; padding: 25px; border-radius: 8px; margin: 30px 0; text-align: left; border-left: 4px solid #007bff; }
+        
+        .info-row { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #eee; }
+        .info-row:last-child { border-bottom: none; }
+        .info-row.total { font-weight: bold; font-size: 18px; background: rgba(40, 167, 69, 0.1); margin: 0 -25px; padding: 15px 25px; border-radius: 6px; }
+        
+        .info-label { font-weight: 600; color: #495057; }
+        .info-value { color: #212529; }
+        .shipping-method { color: #007bff; font-weight: 600; }
+        .free-shipping { color: #28a745; font-weight: 600; }
+        .paid-shipping { color: #dc3545; font-weight: 600; }
+        
+        .btn { background: #007bff; color: white; padding: 15px 30px; border: none; border-radius: 4px; text-decoration: none; display: inline-block; margin: 10px; transition: all 0.3s; }
+        .btn:hover { background: #0056b3; transform: translateY(-1px); }
+        .btn-secondary { background: #6c757d; }
+        .btn-secondary:hover { background: #545b62; }
+        
+        .next-steps { margin-top: 30px; padding: 25px; background: #e7f3ff; border-radius: 8px; text-align: left; }
+        .next-steps h4 { color: #007bff; margin-bottom: 15px; }
+        .next-steps p { margin: 8px 0; color: #495057; }
+        .next-steps p::before { content: "• "; color: #007bff; font-weight: bold; }
+        
+        .status-badge { padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; text-transform: uppercase; }
+        .status-pending { background: #fff3cd; color: #856404; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="success-icon">✅</div>
+        <h1>Order Placed Successfully!</h1>
+        <p>Thank you for your order. Your order has been received and is being processed.</p>
+        
+        <!-- Order Details -->
+        <div class="order-info" th:if="${order != null}">
+            <h2>📋 Order Information</h2>
+            <div class="info-row">
+                <span class="info-label">Order Code:</span>
+                <span class="info-value" th:text="${order.id}">123</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Customer:</span>
+                <span class="info-value" th:text="${order.customerName}">Customer Name</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Email:</span>
+                <span class="info-value" th:text="${order.customerEmail}">email@example.com</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Phone Number:</span>
+                <span class="info-value" th:text="${order.customerPhone}">Phone</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Order Date:</span>
+                <span class="info-value" th:text="${#temporals.format(order.orderDate, 'dd/MM/yyyy HH:mm')}">Date</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Status:</span>
+                <span class="status-badge status-pending" th:text="${order.status}">Pending</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Payment Method:</span>
+                <span class="info-value" th:text="${order.paymentMethod}">Cash on Delivery</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Shipping Method:</span>
+                <span class="shipping-method" th:text="${order.shippingMethod == 'standard' ? 'Standard Delivery (2-8 days)' : order.shippingMethod}">Standard</span>
+            </div>
+            <div class="info-row" th:if="${order.distance != null and order.distance > 0}">
+                <span class="info-label">Distance:</span>
+                <span class="info-value">
+                    <span th:text="${#numbers.formatDecimal(order.distance, 1, 'POINT', 1, 'POINT')}">0.0</span> km
+                </span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Shipping Fee:</span>
+                <span th:if="${order.shippingFee != null and order.shippingFee > 0}" 
+                      class="paid-shipping" 
+                      th:text="${#numbers.formatDecimal(order.shippingFee, 0, 'COMMA', 0, 'POINT')} + ' ₫'">0 ₫</span>
+                <span th:if="${order.shippingFee == null or order.shippingFee == 0}" 
+                      class="free-shipping">Free</span>
+            </div>
+            <div class="info-row" th:if="${order.distance != null and order.distance > 0}">
+                <span class="info-label">Estimated Delivery Time:</span>
+                <span class="info-value">
+                    <span th:if="${order.distance <= 50}">2-3 days</span>
+                    <span th:if="${order.distance > 50 and order.distance <= 500}">4-5 days</span>
+                    <span th:if="${order.distance > 500 and order.distance <= 1000}">6-7 days</span>
+                    <span th:if="${order.distance > 1000}">8-10 days</span>
+                </span>
+            </div>
+            <div class="info-row" th:if="${order.note != null and !#strings.isEmpty(order.note)}">
+                <span class="info-label">Note:</span>
+                <span class="info-value" th:text="${order.note}">Note</span>
+            </div>
+        </div>
+
+        <!-- Order Summary -->
+        <div class="order-info" th:if="${order != null}">
+            <h2>💰 Order Summary</h2>
+            <div class="info-row">
+                <span class="info-label">Subtotal:</span>
+                <span class="info-value" th:text="${#numbers.formatDecimal((order.totalAmount - (order.shippingFee ?: 0)), 0, 'COMMA', 0, 'POINT')} + ' ₫'">0 ₫</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Shipping Fee:</span>
+                <span th:if="${order.shippingFee != null and order.shippingFee > 0}" 
+                      class="info-value" 
+                      th:text="${#numbers.formatDecimal(order.shippingFee, 0, 'COMMA', 0, 'POINT')} + ' ₫'">0 ₫</span>
+                <span th:if="${order.shippingFee == null or order.shippingFee == 0}" 
+                      class="free-shipping">Free</span>
+            </div>
+            <div class="info-row total">
+                <span class="info-label">Total Payment:</span>
+                <span class="info-value" th:text="${#numbers.formatDecimal(order.totalAmount, 0, 'COMMA', 0, 'POINT')} + ' ₫'">0 ₫</span>
+            </div>
+        </div>
+        
+        <!-- Action Buttons -->
+        <div>
+            <a href="/cart/view" class="btn btn-secondary">Continue Shopping</a>
+            <a href="/products" class="btn">View Other Products</a>
+        </div>
+        
+        <!-- Next Steps -->
+        <div class="next-steps">
+            <h4>📧 Next Steps</h4>
+            <p>You will receive an order confirmation email shortly</p>
+            <p>Your order will be processed within 1-2 business days</p>
+            <p>For COD orders, please prepare exact cash amount</p>
+            <p>To track your order, please save your order code</p>
+            <p>Any questions? Contact: support@computershop.com or hotline: 1900-xxxx</p>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,203 @@
+/* Checkout Page Custom Styles */
+
+.empty-cart-message {
+    padding: 60px 20px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    margin: 40px 0;
+}
+
+.checkout-customer-section {
+    margin-bottom: 40px;
+}
+
+.checkout-method-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.single-method {
+    padding: 15px 20px;
+    background: #f8f9fa;
+    border: 1px solid #e9ecef;
+    border-radius: 5px;
+    font-size: 14px;
+}
+
+.single-method i {
+    margin-right: 10px;
+    color: #666;
+}
+
+.checkout-method-switcher {
+    color: #0066cc;
+    text-decoration: none;
+}
+
+.checkout-method-switcher:hover {
+    text-decoration: underline;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: #333;
+    display: block;
+}
+
+.form-group span {
+    color: #dc3545;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    width: 100%;
+    padding: 12px 16px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 14px;
+    transition: border-color 0.3s;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    border-color: #0066cc;
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(0, 102, 204, 0.1);
+}
+
+.checkbox-primary {
+    margin-right: 8px;
+}
+
+.checkout-box {
+    margin: 15px 0;
+}
+
+.checkout-box label {
+    font-weight: normal;
+    margin-bottom: 0;
+    cursor: pointer;
+}
+
+.different-address {
+    margin: 20px 0;
+    padding: 15px;
+    background: #f8f9fa;
+    border-radius: 5px;
+}
+
+.shipping-amount {
+    margin-bottom: 15px;
+}
+
+.shipping-amount .title {
+    font-weight: 600;
+    color: #333;
+}
+
+.input-group {
+    margin-bottom: 10px;
+}
+
+.single-payment {
+    margin-bottom: 20px;
+    padding: 15px;
+    border: 1px solid #e9ecef;
+    border-radius: 5px;
+}
+
+.single-payment.active {
+    border-color: #0066cc;
+    background: #f0f8ff;
+}
+
+.single-payment p {
+    margin-top: 8px;
+    margin-bottom: 0;
+    font-size: 14px;
+    color: #666;
+}
+
+.order-total-amount {
+    font-size: 18px;
+    font-weight: 700;
+    color: #0066cc;
+}
+
+/* Billing form styles */
+.axil-checkout-billing {
+    background: white;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+}
+
+.axil-checkout-billing .title {
+    font-size: 24px;
+    font-weight: 700;
+    color: #333;
+}
+
+/* Order summary styles */
+.axil-order-summery {
+    background: #f8f9fa;
+    padding: 30px;
+    border-radius: 10px;
+    position: sticky;
+    top: 20px;
+}
+
+.axil-order-summery .title {
+    font-size: 20px;
+    font-weight: 700;
+    color: #333;
+}
+
+.summery-table {
+    background: white;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.summery-table td {
+    padding: 15px;
+    border-bottom: 1px solid #eee;
+}
+
+.summery-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.order-total td {
+    font-weight: 700;
+    font-size: 18px;
+}
+
+/* Checkout button */
+.checkout-btn {
+    margin-top: 20px;
+    font-size: 16px;
+    font-weight: 600;
+    padding: 15px 30px;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .axil-checkout-billing,
+    .axil-order-summery {
+        padding: 20px;
+    }
+    
+    .axil-order-summery {
+        position: static;
+        margin-top: 30px;
+    }
+} 

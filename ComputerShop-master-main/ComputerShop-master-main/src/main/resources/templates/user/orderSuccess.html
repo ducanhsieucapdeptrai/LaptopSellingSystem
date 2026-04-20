@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Successful - ComputerShop</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" th:href="@{/assets/css/main-custom.css}">
+    
+    <style>
+        .success-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+        }
+        
+        .success-card {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.1);
+            max-width: 600px;
+            width: 100%;
+            padding: 40px;
+            text-align: center;
+            animation: slideUp 0.6s ease-out;
+        }
+        
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .success-icon {
+            font-size: 4rem;
+            color: #28a745;
+            margin-bottom: 1.5rem;
+            animation: bounce 1s ease-in-out;
+        }
+        
+        @keyframes bounce {
+            0%, 20%, 53%, 80%, 100% {
+                transform: translateY(0);
+            }
+            40%, 43% {
+                transform: translateY(-15px);
+            }
+            70% {
+                transform: translateY(-7px);
+            }
+            90% {
+                transform: translateY(-3px);
+            }
+        }
+        
+        .order-details {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            border-left: 4px solid #28a745;
+        }
+        
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            padding: 5px 0;
+        }
+        
+        .detail-label {
+            font-weight: 600;
+            color: #666;
+        }
+        
+        .detail-value {
+            color: #333;
+            font-weight: 500;
+        }
+        
+        .btn-custom {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            color: white;
+            padding: 12px 30px;
+            border-radius: 25px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            margin: 10px;
+        }
+        
+        .btn-custom:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+            color: white;
+        }
+        
+        .btn-outline-custom {
+            border: 2px solid #667eea;
+            color: #667eea;
+            background: transparent;
+            padding: 10px 25px;
+            border-radius: 25px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            margin: 10px;
+        }
+        
+        .btn-outline-custom:hover {
+            background: #667eea;
+            color: white;
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+    <div class="success-container">
+        <div class="success-card">
+            <div class="success-icon">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            
+            <h1 class="h2 text-success mb-3">Payment Successful!</h1>
+            <p class="text-muted mb-4">Thank you for trusting and shopping at ComputerShop. Your order has been confirmed and will be processed as soon as possible.</p>
+            
+            <div class="order-details">
+                <h5 class="mb-3 text-primary">
+                    <i class="fas fa-receipt"></i> Transaction Information
+                </h5>
+                
+                <div class="detail-row">
+                    <span class="detail-label">
+                        <i class="fas fa-hashtag"></i> Order ID:
+                    </span>
+                    <span class="detail-value" th:text="${orderId}">ORD123456</span>
+                </div>
+                
+                <div class="detail-row">
+                    <span class="detail-label">
+                        <i class="fas fa-money-bill-wave"></i> Amount:
+                    </span>
+                    <span class="detail-value" th:text="${totalPrice} + ' VND'">1,000,000 VND</span>
+                </div>
+                
+                <div class="detail-row">
+                    <span class="detail-label">
+                        <i class="fas fa-clock"></i> Payment Time:
+                    </span>
+                    <span class="detail-value" th:text="${paymentTime}">25/12/2024 14:30:15</span>
+                </div>
+                
+                <div class="detail-row" th:if="${transactionId}">
+                    <span class="detail-label">
+                        <i class="fas fa-barcode"></i> Transaction ID:
+                    </span>
+                    <span class="detail-value" th:text="${transactionId}">TXN123456789</span>
+                </div>
+                
+                <div class="detail-row">
+                    <span class="detail-label">
+                        <i class="fas fa-credit-card"></i> Payment Method:
+                    </span>
+                    <span class="detail-value">VNPay</span>
+                </div>
+            </div>
+            
+            <div th:if="${successMessage}" class="alert alert-success" role="alert">
+                <i class="fas fa-info-circle"></i>
+                <span th:text="${successMessage}"></span>
+            </div>
+            
+            <div th:if="${responseMessage}" class="alert alert-info" role="alert">
+                <i class="fas fa-comment"></i>
+                <span th:text="${responseMessage}"></span>
+            </div>
+            
+            <div class="mt-4">
+                <a href="/user/homepage" class="btn-outline-custom">
+                    <i class="fas fa-home"></i> Back to Home
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // Auto redirect after 30 seconds
+        setTimeout(function() {
+            if (confirm('Do you want to go back to home page?')) {
+                window.location.href = '/user/homepage';
+            }
+        }, 30000);
+        
+        // Prevent back button
+        window.history.pushState(null, null, window.location.href);
+        window.onpopstate = function() {
+            window.history.pushState(null, null, window.location.href);
+        };
+    </script>
+</body>
+</html> 

@@ -1,0 +1,114 @@
+<!doctype html>
+<html class="no-js" lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Shopping Page</title>
+</head>
+<body class="sticky-header">
+
+<a href="#top" class="back-to-top" id="backto-top"><i class="fal fa-arrow-up"></i></a>
+
+<header class="header axil-header header-style-5">
+    <div th:replace="~{user/fragments/header2 :: header}"></div>
+</header>
+
+<main class="main-wrapper">
+    <div class="axil-shop-area axil-section-gap bg-color-white">
+        <div class="container">
+            <div class="row">
+                <div th:replace="~{user/fragments/sidebar :: sidebar}"></div>
+                <div class="col-lg-9">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="axil-shop-top mb--40">
+                                <div class="category-select align-items-center justify-content-lg-end justify-content-between">
+                                    <select class="single-select">
+                                        <option>Sort By</option>
+                                        <option>Sort by Name A-Z</option>
+                                        <option>Sort by Name Z-A</option>
+                                        <option>Sort by Price: Low to High</option>
+                                        <option>Sort by Price: High to Low</option>
+                                    </select>
+                                </div>
+                                <div class="d-lg-none">
+                                    <button class="product-filter-mobile filter-toggle"><i class="fas fa-filter"></i> FILTER</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row row--15">
+                        <div class="col-xl-4 col-sm-6" th:each="product : ${products}" th:if="${product.isActive}">
+                            <div class="axil-product product-style-one mb--30">
+                                <div class="thumbnail">
+                                    <a th:href="@{/user/single-product(id=${product.productID})}">
+                                        <img th:src="@{'/assets/images/product/laptop/' + ${product.imageURL}}" th:alt="${product.name}" alt="Product Images" style="height: 330px;width: 330px;">
+                                    </a>
+                                    <!-- Discount badge (if you want to add discount functionality later) -->
+                                    <div class="label-block label-right" th:if="${product.price.compareTo(T(java.math.BigInteger).valueOf(1000000)) > 0}">
+                                        <div class="product-badget">HOT</div>
+                                    </div>
+                                    <div class="product-hover-action">
+                                        <ul class="cart-action">
+                                            <li class="select-option"><a th:href="@{/cart/add/{id}(id=${product.productID})}">Add to Cart</a></li>
+                                            <li class="quickview">
+                                                <a th:href="@{/user/single-product(id=${product.productID})}" title="View Details">
+                                                    <i class="far fa-eye"></i>
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="product-content">
+                                    <div class="inner">
+                                        <h5 class="title">
+                                            <a th:href="@{/user/single-product(id=${product.productID})}" th:text="${product.name}">Product Name</a>
+                                        </h5>
+                                        <div class="product-price-variant">
+                                            <!-- Display price range if has variants -->
+                                            <span th:if="${product.hasVariants()}" class="price current-price">
+                                                <span th:text="${#numbers.formatDecimal(product.minPrice, 0, 'COMMA', 0, 'POINT')}">0</span>
+                                                <span th:if="${product.minPrice.compareTo(product.maxPrice) != 0}">
+                                                    - <span th:text="${#numbers.formatDecimal(product.maxPrice, 0, 'COMMA', 0, 'POINT')}">0</span>
+                                                </span>
+                                                VND
+                                            </span>
+                                            <!-- Display single price if no variants -->
+                                            <span th:unless="${product.hasVariants()}" class="price current-price" 
+                                                  th:text="${#numbers.formatDecimal(product.price, 0, 'COMMA', 0, 'POINT')} + ' VND'">Price</span>
+                                        </div>
+                                        <div class="product-category">
+                                            <span class="category-name" th:if="${product.categories}" th:text="${product.categories.name}">Category</span>
+                                        </div>
+                                        <div class="product-brand">
+                                            <span class="brand-name" th:text="${product.brand}">Brand</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12" th:if="${#lists.isEmpty(products)}">
+                            <div class="text-center py-5">
+                                <h4 th:if="${searchTerm != null and !#strings.isEmpty(searchTerm)}">
+                                    No products found for "<span class="text-primary" th:text="${searchTerm}"></span>"
+                                </h4>
+                                <h4 th:unless="${searchTerm != null and !#strings.isEmpty(searchTerm)}">
+                                    No products found
+                                </h4>
+                                <p>Please try again with different keywords or contact us for support.</p>
+                                <a th:href="@{/user/shopping-page}" class="btn btn-primary">View All Products</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<div th:replace="~{user/fragments/footer :: footer}"></div>
+
+<div th:replace="~{user/fragments/cartreview :: cartreview}"></div>
+
+</body>
+</html>

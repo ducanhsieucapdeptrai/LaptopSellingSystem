@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{admin/fragments/header :: header}">
+    <title>Sales Report - Admin</title>
+    <!-- Chart.js đã có sẵn ở footer -->
+    <style>
+        /* Style bảng và biểu đồ cho đẹp, dễ nhìn */
+        .report-section {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        .table-report th, .table-report td {
+            text-align: center;
+            vertical-align: middle;
+        }
+        .chart-container {
+            position: relative;
+            height: 350px;
+            margin-bottom: 32px;
+        }
+    </style>
+</head>
+<body id="page-top">
+<nav th:replace="~{admin/fragments/nav-bar :: nav-bar}"></nav>
+<div id="wrapper">
+    <!-- Sidebar -->
+    <ul th:replace="~{admin/fragments/sidebar :: sidebar}"></ul>
+    <div id="content-wrapper">
+        <div class="container-fluid">
+            <!-- Breadcrumbs-->
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="/admin/dashboard">Dashboard</a></li>
+                <li class="breadcrumb-item"><a href="#">Reports</a></li>
+                <li class="breadcrumb-item active">Sales</li>
+            </ol>
+            <!-- Page Navigation -->
+            <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                <h1 class="h3 mb-0 text-gray-800">
+                    <i class="fas fa-chart-line"></i> Sales Report
+                </h1>
+                <div class="btn-group" role="group">
+                    <a href="/admin/reports/sales" class="btn btn-primary btn-sm">
+                        <i class="fas fa-chart-line"></i> Sales
+                    </a>
+                    <a href="/admin/reports/products" class="btn btn-outline-primary btn-sm">
+                        <i class="fas fa-box"></i> Products
+                    </a>
+                    <a href="/admin/reports/customers" class="btn btn-outline-primary btn-sm">
+                        <i class="fas fa-users"></i> Customers
+                    </a>
+                </div>
+            </div>
+            <!-- Nội dung báo cáo doanh số -->
+            <div class="card mb-4 report-section">
+                <div class="card-header">
+                    <i class="fas fa-chart-line"></i> Revenue Statistics by Month
+                </div>
+                <div class="card-body">
+                    <!-- Biểu đồ doanh thu -->
+                    <div class="chart-container">
+                        <canvas id="revenueChart"></canvas>
+                    </div>
+                    <!-- Bảng doanh thu theo tháng -->
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-hover table-report">
+                            <thead class="thead-light">
+                            <tr>
+                                <th>Month</th>
+                                <th>Revenue (VND)</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:each="rev, idx : ${monthlyRevenue}">
+                                <td th:text="${idx.index + 1}"></td>
+                                <td th:text="${#numbers.formatInteger(rev, 0, 'POINT')} + ' ₫'"></td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="card-footer small text-muted text-right">
+                    Data updated from the system
+                </div>
+            </div>
+        </div>
+        <footer th:replace="~{admin/fragments/footer :: footer}"></footer>
+    </div>
+</div>
+<!-- /#wrapper -->
+<!-- Scroll to Top Button-->
+<a class="scroll-to-top rounded" href="#page-top">
+    <i class="fas fa-angle-up"></i>
+</a>
+<!-- Logout Modal-->
+<div th:replace="~{admin/fragments/logout :: logout}"></div>
+
+<!-- Chart.js đã có ở footer -->
+<!-- Script truyền data từ Thymeleaf sang JS để vẽ biểu đồ -->
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@4"></script>
+<script th:inline="javascript">
+    // Lấy dữ liệu từ Thymeleaf
+    let monthlyRevenue = /*[[${monthlyRevenue}]]*/ [];
+    if (Array.isArray(monthlyRevenue)) {
+        monthlyRevenue = monthlyRevenue.map(v => Number(v) || 0);
+    }
+    function formatVND(num) {
+        return num.toLocaleString('vi-VN') + ' ₫';
+    }
+    document.addEventListener('DOMContentLoaded', function() {
+        const ctx = document.getElementById('revenueChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: Array.from({length: 12}, (_, i) => `Month ${i+1}`),
+                datasets: [{
+                    label: 'Revenue (VND)',
+                    data: monthlyRevenue,
+                    backgroundColor: 'rgba(54, 162, 235, 0.6)',
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: { display: false },
+                    title: { display: false },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return formatVND(context.parsed.y);
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            callback: function(value) { return formatVND(value); }
+                        }
+                    }
+                }
+            }
+        });
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{admin/fragments/header :: header}">
+    <title>Shipper Dashboard</title>
+</head>
+
+<body id="page-top" class="sidebar-toggled">
+<nav th:replace="~{admin/fragments/nav-bar :: nav-bar}"></nav>
+
+<div id="wrapper">
+    <!-- Sidebar -->
+    <ul th:replace="~{shipper/fragments/sidebar :: sidebar}"></ul>
+
+    <div id="content-wrapper" class="d-flex flex-column">
+        <div id="content">
+            <div class="container-fluid">
+                <!-- Page Heading -->
+                <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                    <h1 class="h3 mb-0 text-gray-800">
+                        <i class="fas fa-truck text-primary mr-2"></i>
+                        Shipper Dashboard
+                    </h1>
+                    <div class="text-muted">
+                        <i class="fas fa-user mr-1"></i>
+                        Hello, <span th:text="${currentUser?.fullName}">Shipper</span>
+                        <span th:text="${currentUser?.role}"></span>
+                        <span th:if="${currentUser?.role == 'Admin'}">
+                            <a href="/admin/dashboard" class="btn btn-primary btn-sm">
+                                <i class="fas fa-arrow-left mr-1"></i>Back
+                            </a>
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Error/Success Messages -->
+                <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <i class="fas fa-exclamation-circle mr-2"></i>
+                    <span th:text="${error}"></span>
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+
+                <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
+                    <i class="fas fa-check-circle mr-2"></i>
+                    <span th:text="${success}"></span>
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+
+                <!-- Content Row - Order Statistics -->
+                <div class="row">
+                    <!-- Processing Orders Card -->
+                    <div class="col-xl-3 col-md-6 mb-4">
+                        <div class="card border-left-warning shadow h-100 py-2">
+                            <div class="card-body">
+                                <div class="row no-gutters align-items-center">
+                                    <div class="col mr-2">
+                                        <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                            Processing
+                                        </div>
+                                        <div class="h5 mb-0 font-weight-bold text-gray-800" th:text="${processingCount}">0</div>
+                                    </div>
+                                    <div class="col-auto">
+                                        <i class="fas fa-clock fa-2x text-warning"></i>
+                                    </div>
+                                </div>
+                                <div class="mt-2">
+                                    <a href="/shipper/orders?status=PROCESSING" class="btn btn-warning btn-sm">
+                                        <i class="fas fa-eye mr-1"></i>View Details
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Shipped Orders Card -->
+                    <div class="col-xl-3 col-md-6 mb-4">
+                        <div class="card border-left-info shadow h-100 py-2">
+                            <div class="card-body">
+                                <div class="row no-gutters align-items-center">
+                                    <div class="col mr-2">
+                                        <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                                            Shipping
+                                        </div>
+                                        <div class="h5 mb-0 font-weight-bold text-gray-800" th:text="${shippedCount}">0</div>
+                                    </div>
+                                    <div class="col-auto">
+                                        <i class="fas fa-shipping-fast fa-2x text-info"></i>
+                                    </div>
+                                </div>
+                                <div class="mt-2">
+                                    <a href="/shipper/orders?status=SHIPPED" class="btn btn-info btn-sm">
+                                        <i class="fas fa-eye mr-1"></i>View Details
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Delivered Orders Card -->
+                    <div class="col-xl-3 col-md-6 mb-4">
+                        <div class="card border-left-success shadow h-100 py-2">
+                            <div class="card-body">
+                                <div class="row no-gutters align-items-center">
+                                    <div class="col mr-2">
+                                        <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                            Delivered
+                                        </div>
+                                        <div class="h5 mb-0 font-weight-bold text-gray-800" th:text="${deliveredCount}">0</div>
+                                    </div>
+                                    <div class="col-auto">
+                                        <i class="fas fa-check-circle fa-2x text-success"></i>
+                                    </div>
+                                </div>
+                                <div class="mt-2">
+                                    <a href="/shipper/orders?status=DELIVERED" class="btn btn-success btn-sm">
+                                        <i class="fas fa-eye mr-1"></i>View Details
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- All Orders Card -->
+                    <div class="col-xl-3 col-md-6 mb-4">
+                        <div class="card border-left-primary shadow h-100 py-2">
+                            <div class="card-body">
+                                <div class="row no-gutters align-items-center">
+                                    <div class="col mr-2">
+                                        <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                            All Orders
+                                        </div>
+                                        <div class="h5 mb-0 font-weight-bold text-gray-800" 
+                                             th:text="${processingCount + shippedCount + deliveredCount}">0</div>
+                                    </div>
+                                    <div class="col-auto">
+                                        <i class="fas fa-list fa-2x text-primary"></i>
+                                    </div>
+                                </div>
+                                <div class="mt-2">
+                                    <a href="/shipper/orders" class="btn btn-primary btn-sm">
+                                        <i class="fas fa-eye mr-1"></i>View All
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="card shadow mb-4">
+                            <div class="card-header py-3">
+                                <h6 class="m-0 font-weight-bold">
+                                    <i class="fas fa-bolt mr-2"></i>
+                                    Quick Actions
+                                </h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-4 mb-3">
+                                        <div class="card border-left-warning">
+                                            <div class="card-body py-3">
+                                                <div class="d-flex align-items-center">
+                                                    <div class="mr-3">
+                                                        <i class="fas fa-clock fa-2x text-warning"></i>
+                                                    </div>
+                                                    <div>
+                                                        <h6 class="font-weight-bold mb-1">Orders Pending Delivery</h6>
+                                                        <p class="mb-2 small text-muted">View orders awaiting delivery</p>
+                                                        <a href="/shipper/orders?status=PROCESSING" class="btn btn-warning btn-sm">
+                                                            <i class="fas fa-arrow-right mr-1"></i>View Now
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 mb-3">
+                                        <div class="card border-left-info">
+                                            <div class="card-body py-3">
+                                                <div class="d-flex align-items-center">
+                                                    <div class="mr-3">
+                                                        <i class="fas fa-shipping-fast fa-2x text-info"></i>
+                                                    </div>
+                                                    <div>
+                                                        <h6 class="font-weight-bold mb-1">In Transit</h6>
+                                                        <p class="mb-2 small text-muted">Manage orders currently being delivered</p>
+                                                        <a href="/shipper/orders?status=SHIPPED" class="btn btn-info btn-sm">
+                                                            <i class="fas fa-arrow-right mr-1"></i>View Now
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 mb-3">
+                                        <div class="card border-left-success">
+                                            <div class="card-body py-3">
+                                                <div class="d-flex align-items-center">
+                                                    <div class="mr-3">
+                                                        <i class="fas fa-check-circle fa-2x text-success"></i>
+                                                    </div>
+                                                    <div>
+                                                        <h6 class="font-weight-bold mb-1">Completed</h6>
+                                                        <p class="mb-2 small text-muted">Successfully delivered orders</p>
+                                                        <a href="/shipper/orders?status=DELIVERED" class="btn btn-success btn-sm">
+                                                            <i class="fas fa-arrow-right mr-1"></i>View Now
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Instructions -->
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="card shadow mb-4">
+                            <div class="card-header py-3">
+                                <h6 class="m-0 font-weight-bold">
+                                    <i class="fas fa-info-circle mr-2"></i>
+                                    Instructions
+                                </h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <h6 class="font-weight-bold text-primary">Shipping Process:</h6>
+                                        <ol class="mb-3">
+                                            <li><strong>Processing</strong> → <strong>Shipping</strong>: When you start shipping</li>
+                                            <li><strong>Shipping</strong> → <strong>Delivered</strong>: When delivery is completed</li>
+                                            <li><strong>Cancel</strong>: Can be cancelled from any status (except delivered)</li>
+                                        </ol>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <h6 class="font-weight-bold text-primary">Important Notes:</h6>
+                                        <ul class="mb-0">
+                                            <li>Only update status when you have actually performed the action</li>
+                                            <li>Verify customer information before delivery</li>
+                                            <li>Contact the customer if any issues arise during shipping</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Footer -->
+        <footer class="sticky-footer bg-white" th:replace="~{admin/fragments/footer :: footer}"></footer>
+    </div>
+</div>
+
+<!-- Scroll to Top Button-->
+<a class="scroll-to-top rounded" href="#page-top">
+    <i class="fas fa-angle-up"></i>
+</a>
+
+<!-- Logout Modal-->
+<div th:replace="~{admin/fragments/logout :: logout}"></div>
+
+</body>
+</html>

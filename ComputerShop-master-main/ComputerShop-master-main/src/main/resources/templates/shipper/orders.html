@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{admin/fragments/header :: header}">
+    <title>Order Management - Shipper</title>
+</head>
+
+<body id="page-top" class="sidebar-toggled">
+<nav th:replace="~{admin/fragments/nav-bar :: nav-bar}"></nav>
+
+<div id="wrapper">
+    <!-- Sidebar -->
+    <ul th:replace="~{shipper/fragments/sidebar :: sidebar}"></ul>
+
+    <div id="content-wrapper" class="d-flex flex-column">
+        <div id="content">
+            <div class="container-fluid">
+                <!-- Page Heading -->
+                <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                    <h1 class="h3 mb-0 text-gray-800">
+                        <i class="fas fa-list text-primary mr-2"></i>
+                        Order List
+                    </h1>
+                </div>
+
+                <!-- Breadcrumbs -->
+                <ol class="breadcrumb mb-4">
+                    <li class="breadcrumb-item">
+                        <a th:href="@{/shipper/dashboard}">Dashboard</a>
+                    </li>
+                    <li class="breadcrumb-item active">Order list</li>
+                </ol>
+
+                <!-- Error/Success Messages -->
+                <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <i class="fas fa-exclamation-circle mr-2"></i>
+                    <span th:text="${error}"></span>
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+
+                <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
+                    <i class="fas fa-check-circle mr-2"></i>
+                    <span th:text="${success}"></span>
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+
+                <!-- Filter and Search -->
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold">
+                            <i class="fas fa-filter mr-2"></i>
+                            Filter & Search
+                        </h6>
+                    </div>
+                    <div class="card-body">
+                        <form method="get" th:action="@{/shipper/orders}">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label for="status">Filter by status:</label>
+                                        <select class="form-control" id="status" name="status">
+                                            <option value="">-- All statuses --</option>
+                                            <option value="PROCESSING" th:selected="${selectedStatus == 'PROCESSING'}">
+                                                🔄 Processing
+                                            </option>
+                                            <option value="SHIPPED" th:selected="${selectedStatus == 'SHIPPED'}">
+                                                🚚 Shipping
+                                            </option>
+                                            <option value="DELIVERED" th:selected="${selectedStatus == 'DELIVERED'}">
+                                                📦 Delivered
+                                            </option>
+                                            <option value="CANCELLED" th:selected="${selectedStatus == 'CANCELLED'}">
+                                                ❌ Cancelled
+                                            </option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="search">Search:</label>
+                                        <input type="text" class="form-control" id="search" name="search"
+                                               th:value="${searchTerm}"
+                                               placeholder="Search by Order ID, name, email, phone number...">
+                                    </div>
+                                </div>
+                                <div class="col-md-2">
+                                    <div class="form-group">
+                                        <label>&nbsp;</label>
+                                        <div>
+                                            <button type="submit" class="btn btn-primary btn-block">
+                                                <i class="fas fa-search mr-1"></i>Filter
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Orders Table -->
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold ">
+                            <i class="fas fa-table mr-2"></i>
+                            Orders List
+                            <span class="badge badge-secondary ml-2" th:text="${totalOrders}">0</span>
+                        </h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-bordered" id="ordersTable">
+                                <thead>
+                                <tr>
+                                    <th>Order ID</th>
+                                    <th>Customer</th>
+                                    <th>Contact</th>
+                                    <th>Delivery Address</th>
+                                    <th>Order Date</th>
+                                    <th>Total Amount</th>
+                                    <th>Payment Method</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr th:if="${#lists.isEmpty(orders)}">
+                                    <td colspan="9" class="text-center text-muted py-4">
+                                        <i class="fas fa-inbox fa-3x mb-3 d-block"></i>
+                                        No orders found.
+                                    </td>
+                                </tr>
+                                <tr th:each="order : ${orders}">
+                                    <td>
+                                        <code th:text="${order.id}">ORDER-001</code>
+                                        <div th:if="${order.voucherCode}" class="mt-1">
+                                            <small class="badge badge-info">
+                                                <i class="fas fa-ticket-alt mr-1"></i>
+                                                <span th:text="${order.voucherCode}">VOUCHER</span>
+                                            </small>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <strong th:text="${order.getCustomerName()}">Customer Name</strong>
+                                        <div th:if="${order.alternativeReceiverName}" class="mt-1">
+                                            <small class="text-info">
+                                                <i class="fas fa-user-alt mr-1"></i>
+                                                Alternative Receiver
+                                            </small>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div>
+                                            <i class="fas fa-envelope text-muted mr-1"></i>
+                                            <span th:text="${order.getCustomerEmail()}">email@example.com</span>
+                                        </div>
+                                        <div th:if="${order.getCustomerPhone()}">
+                                            <i class="fas fa-phone text-muted mr-1"></i>
+                                            <span th:text="${order.getCustomerPhone()}">0123456789</span>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div th:text="${order.shippingAddress}">Delivery Address</div>
+                                        <div th:if="${order.distance}" class="mt-1">
+                                            <small class="text-muted">
+                                                <i class="fas fa-route mr-1"></i>
+                                                <span th:text="${#numbers.formatDecimal(order.distance, 1, 1)}">0.0</span> km
+                                            </small>
+                                        </div>
+                                    </td>
+                                    <td th:text="${#temporals.format(order.orderDate, 'dd/MM/yyyy HH:mm')}">
+                                        01/01/2024 10:00
+                                    </td>
+                                    <td>
+                                        <div>
+                                            <strong class="text-success">
+                                                <span th:text="${#numbers.formatDecimal(order.totalAmount, 0, 'COMMA', 0, 'POINT')}">1,000,000</span>₫
+                                            </strong>
+                                        </div>
+                                        <div th:if="${order.discountAmount != null and order.discountAmount > 0}" class="mt-1">
+                                            <small class="text-muted">
+                                                Original: <span th:text="${#numbers.formatDecimal(order.originalAmount, 0, 'COMMA', 0, 'POINT')}">1,200,000</span>₫
+                                            </small>
+                                            <br>
+                                            <small class="text-danger">
+                                                Discount: <span th:text="${#numbers.formatDecimal(order.discountAmount, 0, 'COMMA', 0, 'POINT')}">200,000</span>₫
+                                            </small>
+                                        </div>
+                                        <div th:if="${order.shippingFee != null and order.shippingFee > 0}" class="mt-1">
+                                            <small class="text-info">
+                                                <i class="fas fa-shipping-fast mr-1"></i>
+                                                Shipping: <span th:text="${#numbers.formatDecimal(order.shippingFee, 0, 'COMMA', 0, 'POINT')}">30,000</span>₫
+                                            </small>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div th:if="${order.paymentMethod}">
+                                            <span class="badge badge-light" th:text="${order.paymentMethod}">COD</span>
+                                        </div>
+                                        <div th:if="${order.shippingMethod}" class="mt-1">
+                                            <small class="text-muted" th:text="${order.shippingMethod}">Standard</small>
+                                        </div>
+                                        <div th:if="${order.note}" class="mt-1">
+                                            <small class="text-warning" title="Note">
+                                                <i class="fas fa-sticky-note mr-1"></i>
+                                                Has note
+                                            </small>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <span th:switch="${order.status}" class="badge badge-pill p-2">
+                                            <span th:case="'PROCESSING'" class="badge badge-warning">
+                                                🔄 Processing
+                                            </span>
+                                            <span th:case="'SHIPPED'" class="badge badge-info">
+                                                🚚 Shipping
+                                            </span>
+                                            <span th:case="'DELIVERED'" class="badge badge-success">
+                                                📦 Delivered
+                                            </span>
+                                            <span th:case="'CANCELLED'" class="badge badge-danger">
+                                                ❌ Cancelled
+                                            </span>
+                                            <span th:case="*" class="badge badge-secondary">
+                                                ❓ Unknown
+                                            </span>
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <div class="btn-group">
+                                            <a th:href="@{/shipper/orders/{id}(id=${order.id})}"
+                                               class="btn btn-info btn-sm" title="View details">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+                                            <div class="btn-group" role="group">
+                                                <button type="button" class="btn btn-warning btn-sm dropdown-toggle"
+                                                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
+                                                        th:if="${order.status == 'PROCESSING' or order.status == 'SHIPPED'}"
+                                                        title="Update status">
+                                                    <i class="fas fa-edit"></i>
+                                                </button>
+                                                <div class="dropdown-menu">
+                                                    <h6 class="dropdown-header">Update status:</h6>
+                                                    <form th:action="@{/shipper/orders/update-status}" method="post" class="d-inline">
+                                                        <input type="hidden" name="orderId" th:value="${order.id}">
+                                                        <button type="submit" name="newStatus" value="SHIPPED"
+                                                                class="dropdown-item"
+                                                                th:if="${order.status == 'PROCESSING'}"
+                                                                onclick="return confirm('Confirm changing to Shipping status?')">
+                                                            <i class="fas fa-shipping-fast text-info mr-2"></i>Shipping
+                                                        </button>
+                                                        <button type="submit" name="newStatus" value="DELIVERED"
+                                                                class="dropdown-item"
+                                                                th:if="${order.status == 'SHIPPED'}"
+                                                                onclick="return confirm('Confirm successful delivery?')">
+                                                            <i class="fas fa-check-circle text-success mr-2"></i>Delivered
+                                                        </button>
+                                                        <div class="dropdown-divider"
+                                                             th:if="${order.status != 'DELIVERED' and order.status != 'CANCELLED'}"></div>
+                                                        <button type="submit" name="newStatus" value="CANCELLED"
+                                                                class="dropdown-item text-danger"
+                                                                th:if="${order.status != 'DELIVERED' and order.status != 'CANCELLED'}"
+                                                                onclick="return confirm('Confirm cancelling this order?')">
+                                                            <i class="fas fa-times-circle mr-2"></i>Cancel Order
+                                                        </button>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Summary Statistics -->
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="card shadow mb-4">
+                            <div class="card-header py-3">
+                                <h6 class="m-0 font-weight-bold ">
+                                    <i class="fas fa-chart-bar mr-2"></i>
+                                    Quick Statistics
+                                </h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="row text-center">
+                                    <div class="col-md-3">
+                                        <div class="border-left-warning p-3">
+                                            <h4 class="text-warning"
+                                                th:text="${#lists.size(orders.?[status == 'PROCESSING'])}">0</h4>
+                                            <small class="text-muted">Processing</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="border-left-info p-3">
+                                            <h4 class="text-info"
+                                                th:text="${#lists.size(orders.?[status == 'SHIPPED'])}">0</h4>
+                                            <small class="text-muted">Shipping</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="border-left-success p-3">
+                                            <h4 class="text-success"
+                                                th:text="${#lists.size(orders.?[status == 'DELIVERED'])}">0</h4>
+                                            <small class="text-muted">Delivered</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="border-left-danger p-3">
+                                            <h4 class="text-danger"
+                                                th:text="${#lists.size(orders.?[status == 'CANCELLED'])}">0</h4>
+                                            <small class="text-muted">Cancelled</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Footer -->
+        <footer class="sticky-footer bg-white" th:replace="~{admin/fragments/footer :: footer}"></footer>
+    </div>
+</div>
+
+<!-- Scroll to Top Button-->
+<a class="scroll-to-top rounded" href="#page-top">
+    <i class="fas fa-angle-up"></i>
+</a>
+
+<!-- Logout Modal-->
+<div th:replace="~{admin/fragments/logout :: logout}"></div>
+
+<!-- Custom JavaScript -->
+<script th:inline="none">
+    /*<![CDATA[*/
+    $(document).ready(function() {
+        // Check if DataTable is already initialized
+        if ($.fn.DataTable.isDataTable('#ordersTable')) {
+            $('#ordersTable').DataTable().destroy();
+        }
+
+        $('#ordersTable').DataTable({
+            "language": {
+                "url": "//cdn.datatables.net/plug-ins/1.10.25/i18n/English.json"
+            },
+            "pageLength": 25,
+            "order": [[ 4, "desc" ]], // Sort by date column descending
+            "columnDefs": [
+                { "orderable": false, "targets": [8] } // Disable sorting on action column
+            ]
+        });
+    });
+    /*]]>*/
+</script>
+
+</body>
+</html>

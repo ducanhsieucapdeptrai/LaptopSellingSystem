@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{admin/fragments/header :: header}">
+    <title>Add Product to Purchase Order</title>
+</head>
+<body>
+<nav th:replace="~{admin/fragments/nav-bar :: nav-bar}"></nav>
+<div id="wrapper">
+    <ul th:replace="~{admin/fragments/sidebar :: sidebar}"></ul>
+    <div id="content-wrapper">
+        <div class="container-fluid">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="/admin/dashboard">Dashboard</a></li>
+                <li class="breadcrumb-item"><a th:href="@{'/admin/purchase-orders/' + ${order.id}}">Purchase Order Details</a></li>
+                <li class="breadcrumb-item active">Add Product</li>
+            </ol>
+            <div class="card mb-3">
+                <div class="card-header">
+                    <i class="fas fa-plus"></i> Add Product to Purchase Order
+                </div>
+                <div class="card-body">
+                    <form th:action="@{'/admin/purchase-orders/' + ${order.id} + '/add-detail'}" th:object="${detail}" method="post">
+                        <div class="form-group">
+                            <label>Product</label>
+                            <select th:field="*{product}" class="form-control" required>
+                                <option th:each="p : ${products}" th:value="${p.productID}" th:text="${p.name}"></option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Quantity</label>
+                            <input type="number" th:field="*{quantity}" class="form-control" min="1" required />
+                        </div>
+                        <div class="form-group">
+                            <label>Import Price</label>
+                            <input type="number" th:field="*{importPrice}" class="form-control" min="0" required />
+                        </div>
+                        <button type="submit" class="btn btn-success">Add Product</button>
+                        <a th:href="@{'/admin/purchase-orders/' + ${order.id}}" class="btn btn-secondary">Back</a>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <footer th:replace="~{admin/fragments/footer :: footer}"></footer>
+    </div>
+</div>
+</body>
+</html> 

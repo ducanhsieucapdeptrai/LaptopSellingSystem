@@ -1,0 +1,116 @@
+<div th:fragment="header">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <!-- Custom fonts for this template-->
+    <link th:href="@{/assets2/vendor/fontawesome-free/css/all.min.css}" rel="stylesheet" type="text/css">
+
+    <!-- Page level plugin CSS-->
+    <link th:href="@{/assets2/vendor/datatables/dataTables.bootstrap4.css}" rel="stylesheet">
+
+    <!-- Custom styles for this template-->
+    <link th:href="@{/assets2/css/sb-admin.css}" rel="stylesheet">
+
+    <link th:href="@{/assets2/css/colReorder-bootstrap4.css}" rel="stylesheet">
+
+    <!-- Admin Custom Styles -->
+    <link th:href="@{/assets2/css/admin-custom.css}" rel="stylesheet">
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script th:src="@{/assets/js/noti.js}"></script>
+
+    
+    <!-- Sidebar Collapse Styles -->
+    <style>
+    /* Sidebar collapse styling - chỉ cho menu có submenu */
+    .sidebar .nav-link[data-toggle="collapse"].collapsed:after {
+        content: "\f107";
+        font-family: "Font Awesome 5 Free";
+        font-weight: 900;
+        float: right;
+        transition: transform 0.15s ease-in-out;
+    }
+
+    .sidebar .nav-link[data-toggle="collapse"]:not(.collapsed):after {
+        content: "\f106";
+        font-family: "Font Awesome 5 Free";
+        font-weight: 900;
+        float: right;
+        transition: transform 0.15s ease-in-out;
+    }
+
+    /* Remove dropdown-like styling, make it blend with sidebar */
+    .sidebar .collapse {
+        border: none;
+        background: transparent;
+    }
+
+    .sidebar .collapse-inner {
+        background-color: rgba(255, 255, 255, 0.1);
+        border: none;
+        border-radius: 0;
+        box-shadow: none;
+        margin: 0;
+        padding: 0;
+    }
+
+    .sidebar .collapse-item {
+        padding: 0.75rem 1rem 0.75rem 3rem;
+        margin: 0;
+        display: block;
+        color: rgba(255, 255, 255, 0.8);
+        text-decoration: none;
+        border-radius: 0;
+        white-space: nowrap;
+        font-size: 0.85rem;
+        transition: all 0.15s ease-in-out;
+        border-left: 3px solid transparent;
+    }
+
+    .sidebar .collapse-item:hover {
+        background-color: rgba(255, 255, 255, 0.1);
+        color: white;
+        text-decoration: none;
+        border-left-color: #4e73df;
+        padding-left: 3.2rem;
+    }
+
+    .sidebar .collapse-item.active {
+        background-color: rgba(78, 115, 223, 0.15);
+        color: white;
+        border-left-color: #4e73df;
+    }
+
+    .sidebar .collapse-header {
+        display: none; /* Hide headers for cleaner look */
+    }
+
+    /* Additional sidebar improvements */
+    .sidebar .nav-link {
+        position: relative;
+    }
+
+    .sidebar .nav-item {
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .sidebar .nav-item:last-child {
+        border-bottom: none;
+    }
+
+    /* Smooth transitions for all sidebar elements */
+    .sidebar .nav-link,
+    .sidebar .collapse-item {
+        transition: all 0.15s ease-in-out;
+    }
+
+    /* Active state for main nav items */
+    .sidebar .nav-item.active > .nav-link {
+        background-color: rgba(78, 115, 223, 0.15);
+        border-left: 3px solid #4e73df;
+    }
+    </style>
+
+</div>

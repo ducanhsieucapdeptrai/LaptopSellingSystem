@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{admin/fragments/header :: header}">
+    <title>Send Broadcast Notification</title>
+</head>
+<body id="page-top">
+
+    <nav th:replace="~{admin/fragments/nav-bar :: nav-bar}"></nav>
+
+    <div id="wrapper">
+        <!-- Sidebar -->
+        <ul th:replace="~{admin/fragments/sidebar :: sidebar}"></ul>
+
+        <div id="content-wrapper" class="d-flex flex-column">
+            <div id="content">
+                <div class="container-fluid">
+                    <!-- Page Heading -->
+                    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                        <h1 class="h3 mb-0 text-gray-800">
+                            <i class="fas fa-bullhorn text-primary me-2"></i>Send Broadcast Notification
+                        </h1>
+                        <a th:href="@{/notifications/admin}" class="d-none d-sm-inline-block btn btn-sm btn-secondary shadow-sm">
+                            <i class="fas fa-arrow-left fa-sm text-white-50 me-1"></i>
+                            Back
+                        </a>
+                    </div>
+
+                    <!-- Alert Messages -->
+                    <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
+                        <i class="fas fa-check-circle me-2"></i>
+                        <span th:text="${success}"></span>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+
+                    <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+                        <i class="fas fa-exclamation-circle me-2"></i>
+                        <span th:text="${error}"></span>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+
+                    <div class="row">
+                        <!-- Form Column -->
+                        <div class="col-xl-8 col-lg-7">
+                            <div class="card shadow mb-4">
+                                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                                    <h6 class="m-0 font-weight-bold text-primary">
+                                        <i class="fas fa-edit me-2"></i>Compose Notification
+                                    </h6>
+                                </div>
+                                <div class="card-body">
+                                    <form method="post" th:action="@{/notifications/admin/broadcast}" id="broadcastForm">
+                                        <div class="mb-3">
+                                            <label for="message" class="form-label fw-bold">
+                                                <i class="fas fa-comment text-primary me-1"></i>
+                                                Notification Content <span class="text-danger">*</span>
+                                            </label>
+                                            <textarea class="form-control" 
+                                                    id="message" 
+                                                    name="message" 
+                                                    rows="8" 
+                                                    placeholder="Enter the notification content you want to send to all users..."
+                                                    maxlength="1000"
+                                                    required
+                                                    style="resize: vertical;"></textarea>
+                                            <div class="d-flex justify-content-between align-items-center mt-2">
+                                                <small class="text-muted">
+                                                    <i class="fas fa-info-circle me-1"></i>
+                                                    Notification will be sent to all active users
+                                                </small>
+                                                <small class="text-muted" id="charCount">0/1000</small>
+                                            </div>
+                                        </div>
+
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <button type="button" class="btn btn-outline-secondary" onclick="clearForm()">
+                                                <i class="fas fa-eraser me-1"></i>
+                                                Clear Content
+                                            </button>
+                                            <div class="d-flex gap-2">
+                                                <button type="button" class="btn btn-info" id="previewBtn">
+                                                    <i class="fas fa-eye me-1"></i>
+                                                    Preview
+                                                </button>
+                                                <button type="submit" class="btn btn-primary" id="sendBtn">
+                                                    <i class="fas fa-paper-plane me-1"></i>
+                                                    Send Notification
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Preview Column -->
+                        <div class="col-xl-4 col-lg-5">
+                            <!-- Preview Card -->
+                            <div class="card shadow mb-4 preview-card">
+                                <div class="card-header py-3">
+                                    <h6 class="m-0 font-weight-bold text-info">
+                                        <i class="fas fa-mobile-alt me-2"></i>Preview
+                                    </h6>
+                                </div>
+                                <div class="card-body">
+                                    <div class="notification-preview p-3 border rounded bg-light">
+                                        <div class="d-flex align-items-start">
+                                            <div class="notification-icon me-3 flex-shrink-0">
+                                                <div class="bg-primary bg-gradient rounded-circle d-flex align-items-center justify-content-center" 
+                                                     style="width: 40px; height: 40px;">
+                                                    <i class="fas fa-bell text-white"></i>
+                                                </div>
+                                            </div>
+                                            <div class="flex-grow-1">
+                                                <div class="notification-content" id="previewContent">
+                                                    <p class="text-muted mb-0 fst-italic">
+                                                        Notification content will be displayed here...
+                                                    </p>
+                                                </div>
+                                                <div class="notification-meta mt-2">
+                                                    <small class="text-muted">
+                                                        <i class="fas fa-clock me-1"></i>
+                                                        <span id="previewTime">Just now</span>
+                                                        <span class="badge bg-success ms-2">New</span>
+                                                    </small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <hr>
+                                    
+                                    <div class="notification-info">
+                                        <h6 class="fw-bold">
+                                            <i class="fas fa-users text-primary me-1"></i>Sending Information
+                                        </h6>
+                                        <div class="mb-2">
+                                            <small class="text-success">
+                                                <i class="fas fa-check-circle me-1"></i>
+                                                All active users
+                                            </small>
+                                        </div>
+                                        <div class="alert alert-warning py-2 mb-0">
+                                            <small>
+                                                <i class="fas fa-exclamation-triangle me-1"></i>
+                                                Notification cannot be undone after sending
+                                            </small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Tips Card -->
+                            <div class="card shadow mb-4">
+                                <div class="card-header py-3">
+                                    <h6 class="m-0 font-weight-bold text-success">
+                                        <i class="fas fa-lightbulb me-2"></i>Writing Tips
+                                    </h6>
+                                </div>
+                                <div class="card-body">
+                                    <ul class="list-unstyled mb-0">
+                                        <li class="mb-2">
+                                            <i class="fas fa-check text-success me-2"></i>
+                                            <small>Use clear and easy-to-understand language</small>
+                                        </li>
+                                        <li class="mb-2">
+                                            <i class="fas fa-check text-success me-2"></i>
+                                            <small>Mention important information at the beginning</small>
+                                        </li>
+                                        <li class="mb-2">
+                                            <i class="fas fa-check text-success me-2"></i>
+                                            <small>Avoid using spam words</small>
+                                        </li>
+                                        <li class="mb-0">
+                                            <i class="fas fa-check text-success me-2"></i>
+                                            <small>Check spelling before sending</small>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <!-- Statistics Card -->
+                            <div class="card shadow">
+                                <div class="card-header py-3">
+                                    <h6 class="m-0 font-weight-bold text-warning">
+                                        <i class="fas fa-chart-bar me-2"></i>Statistics
+                                    </h6>
+                                </div>
+                                <div class="card-body">
+                                    <div class="row text-center">
+                                        <div class="col-6">
+                                            <div class="border-end">
+                                                <div class="h5 mb-0 text-primary">
+                                                    <i class="fas fa-users"></i>
+                                                </div>
+                                                <small class="text-muted">Total Users</small>
+                                                <div class="fw-bold" th:text="${totalUsers} ?: '0'">0</div>
+                                            </div>
+                                        </div>
+                                        <div class="col-6">
+                                            <div class="h5 mb-0 text-success">
+                                                <i class="fas fa-user-check"></i>
+                                            </div>
+                                            <small class="text-muted">Online</small>
+                                            <div class="fw-bold" th:text="${onlineUsers} ?: '0'">0</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <footer th:replace="~{admin/fragments/footer :: footer}"></footer>
+        </div>
+    </div>
+
+    <!-- Confirmation Modal -->
+    <div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="confirmModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="confirmModalLabel">
+                        <i class="fas fa-exclamation-triangle text-warning me-2"></i>
+                        Confirm Send Notification
+                    </h5>
+                    <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle me-2"></i>
+                        Are you sure you want to send this notification to <strong>all users</strong>?
+                    </div>
+                    
+                    <div class="alert alert-warning">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        <strong>Warning:</strong> This action cannot be undone!
+                    </div>
+                    
+                    <div class="notification-preview-modal">
+                        <h6 class="fw-bold">Notification Content:</h6>
+                        <div class="border p-3 bg-light rounded" id="modalPreviewContent">
+                            <!-- Content will be filled by JavaScript -->
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                        <i class="fas fa-times me-1"></i>Cancel
+                    </button>
+                    <button type="button" class="btn btn-primary" id="confirmSendBtn">
+                        <i class="fas fa-paper-plane me-1"></i>Confirm Send
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Custom CSS -->
+    <style>
+        
+        .notification-preview {
+            transition: all 0.3s ease;
+        }
+        
+        .notification-preview:hover {
+            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.1);
+        }
+        
+        .preview-card {
+            position: sticky;
+            top: 100px;
+        }
+        
+        @media (max-width: 991.98px) {
+            .preview-card {
+                position: relative;
+                top: auto;
+            }
+        }
+        
+        .notification-icon {
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+        
+        .gap-2 {
+            gap: 0.5rem;
+        }
+    </style>
+
+    <!-- Scripts -->
+    <script src="/assets2/vendor/jquery/jquery.min.js" th:src="@{/assets2/vendor/jquery/jquery.min.js}"></script>
+    <script src="/assets2/vendor/bootstrap/js/bootstrap.bundle.min.js" th:src="@{/assets2/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
+    <script src="/assets2/js/sb-admin.min.js" th:src="@{/assets2/js/sb-admin.min.js}"></script>
+
+    <script>
+        $(document).ready(function() {
+            const messageTextarea = $('#message');
+            const charCount = $('#charCount');
+            const previewContent = $('#previewContent');
+            const previewTime = $('#previewTime');
+            const broadcastForm = $('#broadcastForm');
+
+            // Character counter and live preview
+            messageTextarea.on('input', function() {
+                const currentLength = $(this).val().length;
+                charCount.text(`${currentLength}/1000`);
+                
+                // Update character count styling
+                charCount.removeClass('warning danger');
+                if (currentLength > 800) {
+                    charCount.addClass('warning');
+                }
+                if (currentLength > 950) {
+                    charCount.addClass('danger');
+                }
+
+                // Update preview
+                const content = $(this).val().trim();
+                if (content) {
+                    previewContent.html(`<p class="mb-0">${content.replace(/\n/g, '<br>')}</p>`);
+                } else {
+                    previewContent.html('<p class="text-muted mb-0 fst-italic">Notification content will be displayed here...</p>');
+                }
+
+                // Update preview time
+                const now = new Date();
+                previewTime.text(now.toLocaleTimeString('en-US', { 
+                    hour: '2-digit', 
+                    minute: '2-digit' 
+                }));
+            });
+
+            // Form submission with confirmation
+            broadcastForm.on('submit', function(e) {
+                e.preventDefault();
+                
+                const message = messageTextarea.val().trim();
+                if (!message) {
+                    alert('Please enter notification content');
+                    messageTextarea.focus();
+                    return;
+                }
+
+                if (message.length < 10) {
+                    alert('Notification content is too short (minimum 10 characters)');
+                    messageTextarea.focus();
+                    return;
+                }
+
+                // Show preview in modal
+                $('#modalPreviewContent').html(message.replace(/\n/g, '<br>'));
+                
+                // Use Bootstrap 4 modal
+                $('#confirmModal').modal('show');
+            });
+
+            // Confirm send
+            $('#confirmSendBtn').click(function() {
+                $('#confirmModal').modal('hide');
+                
+                $('#sendBtn').prop('disabled', true).html('<i class="fas fa-spinner fa-spin me-1"></i>Sending...');
+                
+                // Submit form
+                broadcastForm.off('submit').submit();
+            });
+
+            // Preview button
+            $('#previewBtn').click(function() {
+                const message = messageTextarea.val().trim();
+                if (!message) {
+                    alert('Please enter notification content to preview');
+                    messageTextarea.focus();
+                    return;
+                }
+                
+                // Scroll to preview on mobile
+                if (window.innerWidth < 992) {
+                    $('html, body').animate({
+                        scrollTop: $('.preview-card').offset().top - 20
+                    }, 500);
+                }
+                
+                // Highlight preview
+                $('.notification-preview').addClass('border-primary');
+                setTimeout(() => {
+                    $('.notification-preview').removeClass('border-primary');
+                }, 2000);
+            });
+
+            // Auto-dismiss alerts
+            setTimeout(function() {
+                $('.alert-dismissible').alert('close');
+            }, 5000);
+        });
+
+        function clearForm() {
+            if (confirm('Are you sure you want to delete all content?')) {
+                $('#message').val('').trigger('input');
+                $('#message').focus();
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{admin/fragments/header :: header}">
+    <title>Fix Voucher</title>
+</head>
+<body id="page-top" class="newsletter-popup-modal">
+<nav th:replace="~{admin/fragments/nav-bar :: nav-bar}"></nav>
+<div id="wrapper">
+    <!-- Sidebar -->
+    <ul th:replace="~{admin/fragments/sidebar :: sidebar}"></ul>
+
+    <div id="content-wrapper" class="flex-grow-1">
+        <div class="container-fluid">
+            <!-- Breadcrumbs-->
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item">
+                    <a href="/admin/dashboard">Dashboard</a>
+                </li>
+                <li class="breadcrumb-item">
+                    <a href="/admin/vouchers">Voucher Management</a>
+                </li>
+                <li class="breadcrumb-item active">Edit Voucher</li>
+            </ol>
+            
+            <!-- Main body information -->
+            <div class="row justify-content-center">
+                <div class="col-md-8 col-lg-6">
+                    <div class="card shadow mb-4">
+                        <div class="card-header bg-primary text-white">
+                            <h4 class="mb-0">Edit Voucher</h4>
+                        </div>
+                        <div class="card-body">
+                            <!-- Error message display -->
+                            <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+                                <i class="fas fa-exclamation-circle"></i>
+                                <span th:text="${error}"></span>
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                            
+                            <form th:action="@{/admin/vouchers/edit/{id}(id=${voucher.voucherId})}" method="post">
+                                <div class="form-group mb-3">
+                                    <label for="code">Mã voucher<span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" id="code" name="code" required 
+                                           th:value="${voucher.code}" placeholder="Enter voucher code (e.g., SUMMER2023)">
+                                    <small class="form-text text-muted">This code will be used by customers to apply the voucher.</small>
+                                </div>
+                                
+                                <div class="form-group mb-3">
+                                    <label for="discountPercent">Discount Percentage<span class="text-danger">*</span></label>
+                                    <input type="number" class="form-control" id="discountPercent" name="discountPercent" 
+                                           min="1" max="100" required th:value="${voucher.discountPercent}" 
+                                           placeholder="Enter discount percentage (1-100)">
+                                    <small class="form-text text-muted">The discount percentage applied to the total order amount.</small>
+                                </div>
+                                
+                                <div class="form-group mb-3">
+                                    <label for="maxDiscountAmount">Maximum Discount Amount</label>
+                                    <input type="number" class="form-control" id="maxDiscountAmount" name="maxDiscountAmount" 
+                                           min="0" th:value="${voucher.maxDiscountAmount}" 
+                                           placeholder="Enter maximum discount amount (VND)">
+                                    <small class="form-text text-muted">The maximum discount amount in VND. Leave blank if unlimited.</small>
+                                </div>
+                                
+                                <div class="form-group mb-3">
+                                    <label for="expirationDate">Expiration Date<span class="text-danger">*</span></label>
+                                    <input type="datetime-local" class="form-control" id="expirationDate" name="expirationDate" 
+                                           required th:value="${#temporals.format(voucher.expirationDate, 'yyyy-MM-dd''T''HH:mm')}">
+                                    <small class="form-text text-muted">The date and time when the voucher expires.</small>
+                                </div>
+                                
+                                <div class="form-group mb-3">
+                                    <div>Status</div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="isActive" name="isActive" 
+                                               th:checked="${voucher.isActive}">
+                                        <label class="form-check-label" for="isActive">
+                                            The voucher is active and ready to use.
+                                        </label>
+                                    </div>
+                                </div>
+                                
+                                <div class="form-group mb-3">
+                                    <button type="submit" class="btn btn-success w-100">
+                                        <i class="fas fa-save"></i> Update Voucher
+                                    </button>
+                                    <a href="/admin/vouchers" class="btn btn-secondary w-100 mt-2">
+                                        <i class="fas fa-arrow-left"></i> Back to Vouchers
+                                    </a>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <footer class="mt-auto" th:replace="~{admin/fragments/footer :: footer}"></footer>
+    </div>
+</div>
+
+<!-- Scroll to Top Button-->
+<a class="scroll-to-top rounded" href="#page-top">
+    <i class="fas fa-angle-up"></i>
+</a>
+
+<!-- Logout Modal-->
+<div th:replace="~{admin/fragments/logout :: logout}"></div>
+
+<!-- Bootstrap core JavaScript-->
+<script th:src="@{/assets2/vendor/jquery/jquery.min.js}"></script>
+<script th:src="@{/assets2/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
+
+<!-- Core plugin JavaScript-->
+<script th:src="@{/assets2/vendor/jquery-easing/jquery.easing.min.js}"></script>
+</body>
+</html> 

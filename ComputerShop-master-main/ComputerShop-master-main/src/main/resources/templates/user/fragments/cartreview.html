@@ -1,0 +1,98 @@
+<div th:fragment="cartreview">
+    <!-- Cart Dropdown -->
+    <div class="cart-dropdown" id="cart-dropdown">
+        <div class="cart-content-wrap">
+            <div class="cart-header">
+                <h2 class="header-title">Shopping Cart</h2>
+                <button class="cart-close sidebar-close"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="cart-body">
+                <!-- Empty Cart Message -->
+                <div th:if="${cartItems == null || cartItems.isEmpty()}" class="empty-cart-review">
+                    <div class="empty-cart-icon">
+                        <i class="flaticon-shopping-cart"></i>
+                    </div>
+                    <h4>Empty Cart</h4>
+                    <p>Check out our products</p>
+                    <a th:href="@{/user/shopping-page}" class="axil-btn btn-bg-primary btn-sm">Start Shopping</a>
+                </div>
+                
+                <!-- Cart Items -->
+                <ul class="cart-item-list" th:if="${cartItems != null && !cartItems.isEmpty()}">
+                    <li class="cart-item" th:each="item : ${cartItems}">
+                        <div class="item-img">
+                            <a th:href="@{'/user/single-product?id=' + ${item.product.productID}}">
+                                <!-- Show variant image if available, otherwise product image -->
+                                <img th:if="${item.hasVariant() and item.variant.variantImageUrl != null}" 
+                                     th:src="@{'/assets/images/product/laptop/' + ${item.variant.variantImageUrl}}" 
+                                     th:alt="${item.product.name}">
+                                <img th:unless="${item.hasVariant() and item.variant.variantImageUrl != null}" 
+                                     th:if="${item.product.imageURL != null}"
+                                     th:src="@{'/assets/images/product/laptop/' + ${item.product.imageURL}}" 
+                                     th:alt="${item.product.name}">
+                                <img th:unless="${item.product.imageURL != null}" 
+                                     th:src="@{/assets/images/product/laptop/default.jpg}" 
+                                     alt="Product Image">
+                            </a>
+                            <button class="close-btn" 
+                                    th:data-product-id="${item.product.productID}"
+                                    th:data-variant-id="${item.hasVariant() ? item.variant.variantId : ''}">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                        <div class="item-content">
+                            <h3 class="item-title">
+                                <a th:href="@{'/user/single-product?id=' + ${item.product.productID}}" 
+                                   th:text="${item.product.name}">Product name</a>
+                            </h3>
+                            
+                            <!-- Variant Information -->
+                            <div th:if="${item.hasVariant()}" class="variant-info-compact">
+                                <small class="variant-specs-compact">
+                                    <span th:if="${item.variant.cpu != null}" th:text="${item.variant.cpu}">CPU</span>
+                                    <span th:if="${item.variant.ram != null}"> • <span th:text="${item.variant.ram}">RAM</span></span>
+                                    <span th:if="${item.variant.storage != null}"> • <span th:text="${item.variant.storage}">Storage</span></span>
+                                </small>
+                            </div>
+                            
+                            <div class="item-price">
+                                <!-- Show variant price if available, otherwise product price -->
+                                <span th:if="${item.hasVariant()}" 
+                                      th:text="${#numbers.formatDecimal(item.variant.price, 0, 'COMMA', 0, 'POINT')}">0</span>
+                                <span th:unless="${item.hasVariant()}" 
+                                      th:text="${#numbers.formatDecimal(item.product.price, 0, 'COMMA', 0, 'POINT')}">0</span>
+                                <span class="currency-symbol"> VND</span>
+                            </div>
+                            <div class="pro-qty item-quantity">
+                                <span class="quantity-label">Qty: </span>
+                                <span class="quantity-value" th:text="${item.quantity}">1</span>
+                            </div>
+                            <div class="item-total">
+                                <span class="total-label">Total: </span>
+                                <!-- Calculate total using correct price -->
+                                <span th:if="${item.hasVariant()}" 
+                                      th:text="${#numbers.formatDecimal(item.variant.price * item.quantity, 0, 'COMMA', 0, 'POINT')}">0</span>
+                                <span th:unless="${item.hasVariant()}" 
+                                      th:text="${#numbers.formatDecimal(item.product.price * item.quantity, 0, 'COMMA', 0, 'POINT')}">0</span>
+                                <span class="currency-symbol"> VND</span>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+            <div class="cart-footer" th:if="${cartItems != null && !cartItems.isEmpty()}">
+                <h3 class="cart-subtotal">
+                    <span class="subtotal-title">Subtotal:</span>
+                    <span class="subtotal-amount">
+                        <span th:text="${#numbers.formatDecimal(cartTotal, 0, 'COMMA', 0, 'POINT')}">0</span>
+                        <span class="currency-symbol"> VND</span>
+                    </span>
+                </h3>
+                <div class="group-btn">
+                    <a th:href="@{/cart/view}" class="axil-btn btn-bg-primary viewcart-btn">View Cart</a>
+                    <a th:href="@{/cart/checkout}" class="axil-btn btn-bg-secondary checkout-btn">Checkout</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

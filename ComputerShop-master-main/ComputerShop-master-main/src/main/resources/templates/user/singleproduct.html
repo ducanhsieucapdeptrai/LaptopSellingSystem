@@ -1,0 +1,420 @@
+<!doctype html>
+<html class="no-js" lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title th:text="${product != null ? product.name + ' - Product Details' : 'Product Details'}">Product Details</title>
+</head>
+<body class="sticky-header">
+
+<a href="#top" class="back-to-top" id="backto-top"><i class="fal fa-arrow-up"></i></a>
+
+<header class="header axil-header header-style-5">
+    <div th:replace="~{user/fragments/header2 :: header}"></div>
+</header>
+
+<main class="main-wrapper">
+    <div class="axil-single-product-area axil-section-gap pb--0 bg-color-white">
+        <div class="single-product-thumb mb--40">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-7 mb--40">
+                        <div class="row">
+                            <div class="col-lg-10 order-lg-2">
+                                <div class="single-product-thumbnail-wrap zoom-gallery">
+                                    <div class="single-product-thumbnail product-large-thumbnail-3 axil-product">
+                                        <div class="thumbnail">
+                                            <a th:href="@{'/assets/images/product/laptop/' + ${product.imageURL}}" class="popup-zoom" id="main-image-link">
+                                                <img th:src="@{'/assets/images/product/laptop/' + ${product.imageURL}}" 
+                                                     th:alt="${product.name}" 
+                                                     alt="Product Images" 
+                                                     id="main-product-image"
+                                                     style="height: 500px; width: 100%; object-fit: contain;">
+                                            </a>
+                                        </div>
+                                    </div>
+                                    <div class="label-block" th:if="${product.price.compareTo(T(java.math.BigInteger).valueOf(1000000)) > 0}">
+                                        <div class="product-badget">HOT</div>
+                                    </div>
+                                    <div class="product-quick-view position-view">
+                                        <a th:href="@{'/assets/images/product/laptop/' + ${product.imageURL}}" class="popup-zoom" id="zoom-link">
+                                            <i class="far fa-search-plus"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-2 order-lg-1">
+                                <div class="product-small-thumb-3 small-thumb-wrapper" id="thumbnail-container">
+                                    <!-- Main Product Image -->
+                                    <div class="small-thumb-img active" th:attr="data-image=${product.imageURL}, data-variant-id='main'">
+                                        <img th:src="@{'/assets/images/product/laptop/' + ${product.imageURL}}" 
+                                             th:alt="${product.name}" 
+                                             alt="thumb image"
+                                             style="cursor: pointer;">
+                                    </div>
+                                    
+                                    <!-- Variant Images -->
+                                    <th:block th:if="${variants != null and !variants.isEmpty()}" th:each="variant : ${variants}">
+                                        <!-- Variant Main Image -->
+                                        <div th:if="${variant.variantImageUrl != null and !variant.variantImageUrl.isEmpty() and !variant.variantImageUrl.equals('')}"
+                                             class="small-thumb-img"
+                                             th:attr="data-image=${variant.variantImageUrl}, data-variant-id=${variant.variantId}">
+                                            <img th:src="@{'/assets/images/product/laptop/' + ${variant.variantImageUrl}}"
+                                                 th:alt="${variant.displayName}"
+                                                 alt="variant thumb"
+                                                 style="cursor: pointer;"
+                                                 onerror="this.style.display='none';">
+                                        </div>
+
+                                        <!-- Additional Variant Images -->
+                                        <th:block th:if="${variant.variantImagesArray != null and variant.variantImagesArray.length > 0}"
+                                                  th:each="variantImg : ${variant.variantImagesArray}">
+                                            <div class="small-thumb-img"
+                                                 th:attr="data-image=${variantImg}, data-variant-id=${variant.variantId}">
+                                                <img th:src="@{'/assets/images/product/laptop/' + ${variantImg}}"
+                                                     th:alt="${variant.displayName}"
+                                                     alt="variant additional thumb"
+                                                     style="cursor: pointer;">
+                                            </div>
+                                        </th:block>
+                                    </th:block>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-5 mb--40">
+                        <div class="single-product-content">
+                            <div class="inner">
+                                <h2 class="product-title" th:text="${product.name}">Product Name</h2>
+                                
+                                <!-- Hiển thị giá theo variants -->
+                                <div th:if="${variants != null and !variants.isEmpty()}">
+                                    <span class="price-range" id="price-display">
+                                        <!-- Price will be updated by JavaScript -->
+                                        <span th:text="${#numbers.formatDecimal(variants[0].price, 0, 'COMMA', 0, 'POINT')}">0</span> VND
+                                    </span>
+                                </div>
+                                <div th:unless="${variants != null and !variants.isEmpty()}">
+                                    <span class="price-amount" th:text="${#numbers.formatDecimal(product.price, 0, 'COMMA', 0, 'POINT')} + ' VND'">Price</span>
+                                </div>
+                                
+                                <!-- RATING SECTION - Cập nhật với dữ liệu thực -->
+                                <div class="product-rating">
+                                    <div class="star-rating">
+                                        <!-- Display stars based on actual rating -->
+                                        <th:block th:if="${rating != null and rating.averageRating != null and rating.averageRating > 0}">
+                                            <th:block th:each="i : ${#numbers.sequence(1, rating.fullStars)}">
+                                                <i class="fas fa-star"></i>
+                                            </th:block>
+                                            <th:block th:if="${rating.hasHalfStar}">
+                                                <i class="fas fa-star-half-alt"></i>
+                                            </th:block>
+                                            <th:block th:each="i : ${#numbers.sequence(1, rating.emptyStars)}">
+                                                <i class="far fa-star"></i>
+                                            </th:block>
+                                        </th:block>
+                                        <!-- Default stars if no rating -->
+                                        <th:block th:unless="${rating != null and rating.averageRating != null and rating.averageRating > 0}">
+                                            <i class="far fa-star"></i>
+                                            <i class="far fa-star"></i>
+                                            <i class="far fa-star"></i>
+                                            <i class="far fa-star"></i>
+                                            <i class="far fa-star"></i>
+                                        </th:block>
+                                    </div>
+                                    <div class="review-link">
+                                        <a href="#reviews">
+                                            (<span th:text="${rating != null ? rating.formattedRating : '0.0'}">0.0</span> - 
+                                             <span th:text="${rating != null ? rating.totalReviews : 0}">0</span> reviews)
+                                        </a>
+                                    </div>
+                                </div>
+                                
+                                <!-- Variant Selection Section -->
+                                <div th:if="${variants != null and !variants.isEmpty()}" class="product-variants mt-4">
+                                    <h5 class="mb-3">Variants</h5>
+                                    
+                                    <div class="variant-grid">
+                                        <div th:each="variant, iterStat : ${variants}" 
+                                             class="variant-card" 
+                                             th:attr="data-variant-id=${variant.variantId}, 
+                                                      data-price=${variant.price}, 
+                                                      data-quantity=${variant.quantity}, 
+                                                      data-cpu=${variant.cpu}, 
+                                                      data-ram=${variant.ram}, 
+                                                      data-storage=${variant.storage}, 
+                                                      data-gpu=${variant.gpu},
+                                                      data-image=${(variant.variantImageUrl != null and !variant.variantImageUrl.isEmpty() and !variant.variantImageUrl.equals('')) ? variant.variantImageUrl : product.imageURL},
+                                                      data-color=${variant.customAttributesMap.get('color')}"
+                                             th:classappend="${variant.quantity == 0} ? 'out-of-stock' : ''">
+                                            <input type="radio" th:id="'variant-' + ${variant.variantId}" 
+                                                   name="selectedVariant" th:value="${variant.variantId}"
+                                                   th:checked="${iterStat.first}"
+                                                   th:disabled="${variant.quantity == 0}">
+                                            <label th:for="'variant-' + ${variant.variantId}" class="variant-label">
+                                                <div class="variant-content">
+                                                    <div class="variant-title" th:text="${variant.cpu ?: 'N/A'}">CPU</div>
+                                                    <div class="variant-ram-storage" th:text="${variant.ram + ' - ' + variant.storage}">RAM - Storage</div>
+                                                    <div class="variant-gpu" th:text="${variant.gpu ?: 'Integrated'}">GPU</div>
+                                                    <!-- Color Display -->
+                                                    <div th:if="${variant.customAttributesMap.get('color') != null and !variant.customAttributesMap.get('color').isEmpty()}" 
+                                                         class="variant-color">
+                                                        <span class="color-label">Color:</span>
+                                                        <span class="color-value" th:text="${variant.customAttributesMap.get('color')}">Color</span>
+                                                    </div>
+                                                </div>
+                                                <div th:if="${variant.quantity == 0}" class="sold-out-badge">
+                                                    <i class="fas fa-times"></i>
+                                                </div>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <ul class="product-meta">
+                                    <li th:if="${variants == null or variants.isEmpty()}">
+                                        <i class="fal fa-check"></i>In Stock: <span th:text="${product.quantity}">0</span> products
+                                    </li>
+                                    <li th:if="${variants != null and !variants.isEmpty()}" id="stock-info">
+                                        <!-- Stock info will be updated by JavaScript -->
+                                        <span th:if="${variants[0].quantity > 0}">
+                                            <i class="fal fa-check"></i>In Stock: <span id="variant-stock-display" th:text="${variants[0].quantity}"></span> products
+                                        </span>
+                                        <span th:unless="${variants[0].quantity > 0}" style="color: #ff4757;">
+                                            <i class="fal fa-times"></i>Out of Stock
+                                        </span>
+                                    </li>
+                                    <li><i class="fal fa-check"></i>Free Shipping</li>
+                                    <li><i class="fal fa-check"></i>Brand: <span th:text="${product.brand}">Brand</span></li>
+                                    <li th:if="${product.categories}"><i class="fal fa-check"></i>Category: <span th:text="${product.categories.name}">Category</span></li>
+                                </ul>
+
+                                <!-- Start Product Action Wrapper  -->
+                                <div class="product-action-wrapper d-flex-center">
+                                    <!-- Start Quantity Action  -->
+                                    <div class="pro-qty"><input type="text" value="1" id="quantity-input"></div>
+                                    <!-- End Quantity Action  -->
+
+                                    <!-- Start Product Action  -->
+                                    <ul class="product-action d-flex-center mb--0">
+                                        <li class="add-to-cart">
+                                            <a href="#" class="axil-btn btn-bg-primary" id="add-to-cart-btn" 
+                                               th:attr="data-product-id=${product.productID}">Add to Cart</a>
+                                        </li>
+                                        <li class="wishlist"><a href="wishlist.html" class="axil-btn wishlist-btn"><i class="far fa-heart"></i></a></li>
+                                    </ul>
+                                    <!-- End Product Action  -->
+
+                                </div>
+                                <!-- End Product Action Wrapper  -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- End .single-product-thumb -->
+
+        <div class="woocommerce-tabs wc-tabs-wrapper bg-vista-white">
+            <div class="container">
+                <ul class="nav tabs" id="myTab" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <a class="active" id="description-tab" data-bs-toggle="tab" href="#description" role="tab" aria-controls="description" aria-selected="true">Description</a>
+                    </li>
+                    <li class="nav-item " role="presentation">
+                        <a id="additional-info-tab" data-bs-toggle="tab" href="#additional-info" role="tab" aria-controls="additional-info" aria-selected="false">Technical Information</a>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <a id="reviews-tab" data-bs-toggle="tab" href="#reviews" role="tab" aria-controls="reviews" aria-selected="false">
+                            Reviews (<span th:text="${rating != null ? rating.totalReviews : 0}">0</span>)
+                        </a>
+                    </li>
+                </ul>
+                <div class="tab-content" id="myTabContent">
+                    <div class="tab-pane fade show active" id="description" role="tabpanel" aria-labelledby="description-tab">
+                        <div class="product-desc-wrapper">
+                            <div class="row">
+                                <div class="col-lg-12 mb--30">
+                                    <div class="single-desc">
+                                        <h5 class="title">Product Description:</h5>
+                                        <p th:text="${product.description != null ? product.description : 'No detailed description available for this product. Please contact us for more information.'}">
+                                            Product Description
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- End .row -->
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <ul class="pro-des-features">
+                                        <li class="single-features">
+                                            <div class="icon">
+                                                <img th:src="@{/assets/images/product/product-thumb/icon-3.png}" alt="icon">
+                                            </div>
+                                            Easy Returns
+                                        </li>
+                                        <li class="single-features">
+                                            <div class="icon">
+                                                <img th:src="@{/assets/images/product/product-thumb/icon-2.png}" alt="icon">
+                                            </div>
+                                            Quality Service
+                                        </li>
+                                        <li class="single-features">
+                                            <div class="icon">
+                                                <img th:src="@{/assets/images/product/product-thumb/icon-1.png}" alt="icon">
+                                            </div>
+                                            Authentic Products
+                                        </li>
+                                    </ul>
+                                    <!-- End .pro-des-features -->
+                                </div>
+                            </div>
+                            <!-- End .row -->
+                        </div>
+                        <!-- End .product-desc-wrapper -->
+                    </div>
+                    <div class="tab-pane fade" id="additional-info" role="tabpanel" aria-labelledby="additional-info-tab">
+                        <div class="product-additional-info">
+                            <div class="table-responsive">
+                                <table>
+                                    <tbody>
+                                    <tr th:if="${specifications != null and specifications.cpu != null}">
+                                        <th>CPU</th>
+                                        <td id="spec-cpu" th:text="${specifications.cpu}">CPU Info</td>
+                                    </tr>
+                                    <tr th:if="${specifications != null and specifications.ram != null}">
+                                        <th>RAM</th>
+                                        <td id="spec-ram" th:text="${specifications.ram}">RAM Info</td>
+                                    </tr>
+                                    <tr th:if="${specifications != null and specifications.ssd != null}">
+                                        <th>SSD/Storage</th>
+                                        <td id="spec-storage" th:text="${specifications.ssd}">SSD Info</td>
+                                    </tr>
+                                    <tr th:if="${specifications != null and specifications.vga != null}">
+                                        <th>GPU/Graphics Card</th>
+                                        <td id="spec-gpu" th:text="${specifications.vga}">VGA Info</td>
+                                    </tr>
+                                    <tr th:if="${specifications != null and specifications.screen != null}">
+                                        <th>Display</th>
+                                        <td th:text="${specifications.screen}">Screen Info</td>
+                                    </tr>
+                                    <tr th:if="${specifications != null and specifications.weight != null}">
+                                        <th>Weight</th>
+                                        <td th:text="${specifications.weight} + ' kg'">Weight</td>
+                                    </tr>
+                                    <tr th:if="${specifications != null and specifications.connect != null}">
+                                        <th>Connectivity</th>
+                                        <td th:text="${specifications.connect}">Connect Info</td>
+                                    </tr>
+                                    <tr th:if="${specifications != null and specifications.battery != null}">
+                                        <th>Battery</th>
+                                        <td th:text="${specifications.battery}">Battery Info</td>
+                                    </tr>
+                                    <tr>
+                                        <th>Brand</th>
+                                        <td th:text="${product.brand}">Brand</td>
+                                    </tr>
+                                    <tr th:if="${product.categories}">
+                                        <th>Category</th>
+                                        <td th:text="${product.categories.name}">Category</td>
+                                    </tr>
+                                    <tr th:if="${specifications == null}">
+                                        <td colspan="2" class="text-center">No detailed technical information available for this product.</td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="reviews" role="tabpanel" aria-labelledby="reviews-tab">
+                        <div class="reviews-wrapper">
+                            <!-- Rating Summary -->
+                            <div class="row mb-4" th:if="${rating != null and rating.totalReviews > 0}">
+                                <div class="col-lg-4">
+                                    <div class="text-center">
+                                        <div class="average-rating mb-3">
+                                            <h2 class="rating-number mb-2" th:text="${rating.formattedRating}" style="color: #ff497c;">0.0</h2>
+                                            <div class="star-rating mb-2">
+                                                <th:block th:each="i : ${#numbers.sequence(1, rating.fullStars)}">
+                                                    <i class="fas fa-star" style="color: #ffc107;"></i>
+                                                </th:block>
+                                                <th:block th:if="${rating.hasHalfStar}">
+                                                    <i class="fas fa-star-half-alt" style="color: #ffc107;"></i>
+                                                </th:block>
+                                                <th:block th:each="i : ${#numbers.sequence(1, rating.emptyStars)}">
+                                                    <i class="far fa-star" style="color: #e4e5e9;"></i>
+                                                </th:block>
+                                            </div>
+                                            <div class="total-reviews text-muted" th:text="${rating.totalReviews} + ' reviews'">0 reviews</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-8">
+                                    <div class="rating-breakdown">
+                                        <th:block th:each="i : ${#numbers.sequence(5, 1, -1)}">
+                                            <div class="d-flex align-items-center mb-2">
+                                                <span th:text="${i} + ' stars'" style="width: 60px;">5 stars</span>
+                                                <div class="progress flex-fill mx-3" style="height: 8px;">
+                                                    <div class="progress-bar" style="background-color: #ffc107;" 
+                                                         th:style="'width: ' + ${rating.getRatingPercentage(i)} + '%'"></div>
+                                                </div>
+                                                <span th:text="${rating.ratingDistribution.get(i) ?: 0}" style="width: 30px;">0</span>
+                                            </div>
+                                        </th:block>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- No Reviews Message -->
+                            <div class="row" th:if="${rating == null or rating.totalReviews == 0}">
+                                <div class="col-12 text-center py-5">
+                                    <h5>No reviews yet</h5>
+                                    <p>Be the first to review this product!</p>
+                                </div>
+                            </div>
+
+                            <!-- Reviews List sử dụng mẫu HTML đã cung cấp -->
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="comment-area">
+                                        <ul class="comment-list" id="reviews-list">
+                                            <!-- Reviews will be loaded here via JavaScript -->
+                                        </ul>
+                                        
+                                        <!-- Load More Button -->
+                                        <div class="text-center mt-4">
+                                            <button class="axil-btn btn-outline" id="load-more-reviews" style="display: none;">
+                                                Load More Reviews
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- woocommerce-tabs -->
+
+    </div>
+</main>
+
+<div th:replace="~{user/fragments/footer :: footer}"></div>
+
+<div th:replace="~{user/fragments/cartreview :: cartreview}"></div>
+
+<script th:src="@{/assets/js/single-product.js}"></script>
+
+<link rel="stylesheet" th:href="@{/assets/css/single-product.css}">
+
+<style>
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.2); }
+    100% { transform: scale(1); }
+}
+</style>
+
+</body>
+</html>

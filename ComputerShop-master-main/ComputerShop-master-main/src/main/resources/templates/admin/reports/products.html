@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{admin/fragments/header :: header}">
+    <title>Products Report - Admin</title>
+    <style>
+        .report-section { max-width: 900px; margin: 0 auto; }
+        .table-report th, .table-report td { text-align: center; vertical-align: middle; }
+        .chart-container { position: relative; height: 350px; margin-bottom: 32px; }
+        .product-img-thumb { width: 48px; height: 48px; object-fit: cover; border-radius: 6px; border: 1px solid #eee; }
+    </style>
+</head>
+<body id="page-top">
+<nav th:replace="~{admin/fragments/nav-bar :: nav-bar}"></nav>
+<div id="wrapper">
+    <ul th:replace="~{admin/fragments/sidebar :: sidebar}"></ul>
+    <div id="content-wrapper">
+        <div class="container-fluid">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="/admin/dashboard">Dashboard</a></li>
+                <li class="breadcrumb-item"><a href="#">Reports</a></li>
+                <li class="breadcrumb-item active">Products</li>
+            </ol>
+            <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                <h1 class="h3 mb-0 text-gray-800">
+                    <i class="fas fa-box"></i> Products Report
+                </h1>
+                <div class="btn-group" role="group">
+                    <a href="/admin/reports/sales" class="btn btn-outline-primary btn-sm">
+                        <i class="fas fa-chart-line"></i> Sales
+                    </a>
+                    <a href="/admin/reports/products" class="btn btn-primary btn-sm">
+                        <i class="fas fa-box"></i> Products
+                    </a>
+                    <a href="/admin/reports/customers" class="btn btn-outline-primary btn-sm">
+                        <i class="fas fa-users"></i> Customers
+                    </a>
+                </div>
+            </div>
+            <div class="card mb-4 report-section">
+                <div class="card-header">
+                    <i class="fas fa-box"></i> Top 5 Products Selling Fastest
+                </div>
+                <div class="card-body">
+                    <div class="chart-container">
+                        <canvas id="productPieChart"></canvas>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-hover table-report">
+                            <thead class="thead-light">
+                            <tr>
+                                <th>STT</th>
+                                <th>Image</th>
+                                <th>Product Name</th>
+                                <th>Quantity Sold</th>
+                                <th>Revenue (VND)</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:each="prod, idx : ${topProducts}">
+                                <td th:text="${idx.index + 1}"></td>
+                                <td><img th:src="${prod.imageURL}" class="product-img-thumb" alt="Product Image"></td>
+                                <td th:text="${prod.name}"></td>
+                                <td th:text="${prod.totalSold}"></td>
+                                <td th:text="${#numbers.formatInteger(prod.totalRevenue, 0, 'POINT')} + ' ₫'"></td>
+                            </tr>
+                            <tr th:if="${topProducts.size() == 0}"><td colspan="5">No product data available.</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="card-footer small text-muted text-right">
+                    Data updated from the system
+                </div>
+            </div>
+        </div>
+        <footer th:replace="~{admin/fragments/footer :: footer}"></footer>
+    </div>
+</div>
+<a class="scroll-to-top rounded" href="#page-top">
+    <i class="fas fa-angle-up"></i>
+</a>
+<div th:replace="~{admin/fragments/logout :: logout}"></div>
+<!-- Script truyền data từ Thymeleaf sang JS để vẽ biểu đồ -->
+<script th:inline="javascript">
+    // Lấy dữ liệu từ Thymeleaf
+    const topProducts = /*[[${topProducts}]]*/ [];
+    // Vẽ biểu đồ tròn top sản phẩm
+    document.addEventListener('DOMContentLoaded', function() {
+        const ctx = document.getElementById('productPieChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'pie',
+            data: {
+                labels: topProducts.map(p => p.name),
+                datasets: [{
+                    data: topProducts.map(p => p.totalSold),
+                    backgroundColor: [
+                        'rgba(54, 162, 235, 0.7)',
+                        'rgba(255, 99, 132, 0.7)',
+                        'rgba(255, 206, 86, 0.7)',
+                        'rgba(75, 192, 192, 0.7)',
+                        'rgba(153, 102, 255, 0.7)'
+                    ],
+                    borderColor: '#fff',
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: { position: 'bottom' },
+                    title: { display: false }
+                }
+            }
+        });
+    });
+</script>
+</body>
+</html>

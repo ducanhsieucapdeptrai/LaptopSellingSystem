@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Login - Computer Shop</title>
+    <link rel="stylesheet" href="/assets/css/vendor/bootstrap.min.css" th:href="@{/assets/css/vendor/bootstrap.min.css}"/>
+    <link rel="stylesheet" href="/assets/css/style.min.css" th:href="@{/assets/css/style.min.css}"/>
+    <link rel="stylesheet" href="/assets/css/login-custom.css" th:href="@{/assets/css/login-custom.css}"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body>
+<div class="axil-login-area">
+    <div class="form-container">
+        <h3>Login to Your Account</h3>
+
+        <div th:if="${error}" class="alert error" role="alert">
+            <span class="alert-message" th:text="${error}"></span>
+        </div>
+
+        <div th:if="${param.oauth2error}" class="alert error" role="alert">
+            <span class="alert-message" th:switch="${param.oauth2error[0]}">
+                <span th:case="'email_not_found'">Email not found from OAuth2 provider.</span>
+                <span th:case="'email_already_exists'">This email already exists. Please login with your existing account.</span>
+                <span th:case="'access_denied'">Access denied during login.</span>
+                <span th:case="'oauth2_error'">An error occurred during login. Please try again.</span>
+                <span th:case="'provider_conflict'">This email is already registered with a regular account. Please login with password or use forgot password.</span>
+                <span th:case="'provider_mismatch'">This email is registered with a different OAuth2 provider. Please login using the original method.</span>
+                <span th:case="*">OAuth2 login failed. Please try again.</span>
+            </span>
+        </div>
+
+        <div th:if="${message}" class="alert success" role="alert">
+            <span class="alert-message" th:text="${message}"></span>
+        </div>
+
+        <div th:if="${param.verified}" class="alert success" role="alert">
+            <span class="alert-message">Account has been successfully verified. You can now login.</span>
+        </div>
+
+        <div th:if="${param.resent}" class="alert success" role="alert">
+            <span class="alert-message">Verification email has been resent. Please check your inbox.</span>
+        </div>
+
+        <form th:action="@{/auth/login-process}" method="post" style="width:100%">
+            <div class="input-group">
+                <span class="input-icon"><i class="fas fa-user"></i></span>
+                <label for="username" class="visually-hidden">Username</label>
+                <input id="username" name="username" type="text" class="form-control" placeholder="Username" required>
+            </div>
+
+            <div class="input-group password-group">
+                <span class="input-icon"><i class="fas fa-lock"></i></span>
+                <label for="password" class="visually-hidden">Password</label>
+                <input id="password" name="password" type="password" class="form-control" placeholder="Password" required>
+                <span class="toggle-password-eye" onclick="togglePassword()">
+                    <i id="eyeIcon" class="fa fa-eye"></i>
+                </span>
+            </div>
+
+            <div class="d-grid gap-2">
+                <button type="submit" class="btn btn-primary w-100">Login</button>
+            </div>
+
+            <div class="mt-3">
+                <p>Don't have an account? <a th:href="@{/auth/register}">Register Now</a></p>
+                <p>Didn't receive verification email? <br><a th:href="@{/auth/resend-verification}">Resend Verification Email</a></p>
+                <p>Forgot Password? <a th:href="@{/auth/forgot-password}">Reset Password</a></p>
+            </div>
+
+            <div class="social-login">
+                <span>Or login with</span>
+                <div class="social-icons">
+                    <a th:href="@{/oauth2/authorization/google}" class="social-btn google" title="Sign in with Google">
+                        <i class="fab fa-google"></i>
+                    </a>
+                    <a th:href="@{/oauth2/authorization/github}" class="social-btn github" title="Sign in with Github">
+                        <i class="fab fa-github"></i>
+                    </a>
+                    <a th:href="@{/oauth2/authorization/facebook}" class="social-btn facebook" title="Login with Facebook">
+                        <i class="fab fa-facebook-f"></i>
+                    </a>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    function togglePassword() {
+        const pwd = document.getElementById("password");
+        const eye = document.getElementById("eyeIcon");
+        if (pwd.type === "password") {
+            pwd.type = "text";
+            eye.classList.remove("fa-eye");
+            eye.classList.add("fa-eye-slash");
+        } else {
+            pwd.type = "password";
+            eye.classList.remove("fa-eye-slash");
+            eye.classList.add("fa-eye");
+        }
+    }
+</script>
+</body>
+</html>

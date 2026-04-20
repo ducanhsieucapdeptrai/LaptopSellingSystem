@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{admin/fragments/header :: header}">
+    <title>Create Export Order</title>
+</head>
+<body>
+<nav th:replace="~{admin/fragments/nav-bar :: nav-bar}"></nav>
+<div id="wrapper">
+    <ul th:replace="~{admin/fragments/sidebar :: sidebar}"></ul>
+    <div id="content-wrapper">
+        <div class="container-fluid">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="/admin/dashboard">Dashboard</a></li>
+                <li class="breadcrumb-item"><a href="/admin/export-orders">Export Order Management</a></li>
+                <li class="breadcrumb-item active">Create Export Order</li>
+            </ol>
+            <div class="card mb-3">
+                <div class="card-header">
+                    <i class="fas fa-plus"></i> Create Export Order
+                </div>
+                <div class="card-body">
+                    <form th:action="@{/admin/export-orders/create}" th:object="${order}" method="post">
+                        <div class="form-group">
+                            <label>Note</label>
+                            <input type="text" th:field="*{note}" class="form-control" />
+                        </div>
+                        <div class="form-group">
+                            <label>Status</label>
+                            <select th:field="*{status}" class="form-control">
+                                <option value="EXPORTED">Exported</option>
+                                <option value="PENDING">Not Exported</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Select Products to Export</label>
+                            <table class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>Product</th>
+                                        <th>Quantity</th>
+                                        <th>Export Price</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="product-rows">
+                                    <tr>
+                                        <td>
+                                            <select name="productIds" class="form-control" required>
+                                                <option th:each="p : ${products}" th:value="${p.productID}" th:text="${p.name}"></option>
+                                            </select>
+                                        </td>
+                                        <td><input type="number" name="quantities" class="form-control" min="1" required /></td>
+                                        <td><input type="number" name="exportPrices" class="form-control" min="0" required /></td>
+                                        <td><button type="button" class="btn btn-danger btn-sm" onclick="removeRow(this)">Delete</button></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <button type="button" class="btn btn-info" onclick="addRow()">Add Product</button>
+                        </div>
+                        <button type="submit" class="btn btn-success">Create Export Order</button>
+                        <a href="/admin/export-orders" class="btn btn-secondary">Back</a>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <footer th:replace="~{admin/fragments/footer :: footer}"></footer>
+    </div>
+</div>
+<script>
+function addRow() {
+    var row = document.querySelector('#product-rows tr');
+    var clone = row.cloneNode(true);
+    clone.querySelectorAll('input').forEach(input => input.value = '');
+    document.getElementById('product-rows').appendChild(clone);
+}
+function removeRow(btn) {
+    var rows = document.querySelectorAll('#product-rows tr');
+    if (rows.length > 1) btn.closest('tr').remove();
+}
+</script>
+</body>
+</html> 

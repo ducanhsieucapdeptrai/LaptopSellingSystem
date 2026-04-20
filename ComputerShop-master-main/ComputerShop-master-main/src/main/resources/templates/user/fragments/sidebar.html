@@ -1,0 +1,686 @@
+<div class="col-lg-3" th:fragment="sidebar">
+<div class="axil-shop-sidebar">
+    <div class="d-lg-none">
+        <button class="sidebar-close filter-close-btn"><i class="fas fa-times"></i></button>
+    </div>
+    <form id="product-filter-form" method="get" action="/user/shopping-page">
+
+        <div class="toggle-list product-categories active">
+            <h6 class="title">Categories</h6>
+            <div class="shop-submenu">
+                <ul>
+                    <li>
+                        <div class="checkbox-container">
+                            <input type="checkbox" 
+                                   id="category-all"
+                                   name="category" 
+                                   value="" 
+                                   class="sidebar-checkbox"
+                                   th:checked="${#strings.isEmpty(selectedCategory)}" 
+                                   onchange="handleAllCheckbox(this, 'category')">
+                            <label for="category-all" class="sidebar-label">All</label>
+                        </div>
+                    </li>
+                    <li th:each="category, iterStat : ${categories}">
+                        <div class="checkbox-container">
+                            <input type="checkbox" 
+                                   th:id="|category-${iterStat.index}|"
+                                   name="category" 
+                                   th:value="${category.name}"
+                                   class="sidebar-checkbox"
+                                   th:checked="${selectedCategory != null && selectedCategory.contains(category.name)}"
+                                   onchange="handleCategoryCheckbox(this)">
+                            <label th:for="|category-${iterStat.index}|" 
+                                   class="sidebar-label" 
+                                   th:text="${category.name}"></label>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="toggle-list product-categories active">
+            <h6 class="title">Brand</h6>
+            <div class="shop-submenu">
+                <ul>
+                    <li>
+                        <div class="checkbox-container">
+                            <input type="checkbox" 
+                                   id="brand-all"
+                                   name="brand" 
+                                   value="" 
+                                   class="sidebar-checkbox"
+                                   th:checked="${#strings.isEmpty(selectedBrand)}" 
+                                   onchange="handleAllCheckbox(this, 'brand')">
+                            <label for="brand-all" class="sidebar-label">All</label>
+                        </div>
+                    </li>
+                    <li th:each="brand, iterStat : ${brands}">
+                        <div class="checkbox-container">
+                            <input type="checkbox" 
+                                   th:id="|brand-${iterStat.index}|"
+                                   name="brand" 
+                                   th:value="${brand}"
+                                   class="sidebar-checkbox"
+                                   th:checked="${selectedBrand != null && selectedBrand.contains(brand)}"
+                                   onchange="handleCategoryCheckbox(this)">
+                            <label th:for="|brand-${iterStat.index}|" 
+                                   class="sidebar-label" 
+                                   th:text="${brand}"></label>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="toggle-list product-categories active">
+            <h6 class="title">CPU</h6>
+            <div class="shop-submenu">
+                <ul>
+                    <li>
+                        <div class="checkbox-container">
+                            <input type="checkbox" 
+                                   id="cpu-all"
+                                   name="cpu" 
+                                   value="" 
+                                   class="sidebar-checkbox"
+                                   th:checked="${#strings.isEmpty(selectedCpu)}" 
+                                   onchange="handleAllCheckbox(this, 'cpu')">
+                            <label for="cpu-all" class="sidebar-label">All</label>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="checkbox-container">
+                            <input type="checkbox" 
+                                   id="cpu-0"
+                                   name="cpu" 
+                                   value="Intel Core i5"
+                                   class="sidebar-checkbox"
+                                   th:checked="${selectedCpu != null && selectedCpu.contains('Intel Core i5')}"
+                                   onchange="handleCategoryCheckbox(this)">
+                            <label for="cpu-0" class="sidebar-label">Intel Core i5</label>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="checkbox-container">
+                            <input type="checkbox" 
+                                   id="cpu-1"
+                                   name="cpu" 
+                                   value="Intel Core i7"
+                                   class="sidebar-checkbox"
+                                   th:checked="${selectedCpu != null && selectedCpu.contains('Intel Core i7')}"
+                                   onchange="handleCategoryCheckbox(this)">
+                            <label for="cpu-1" class="sidebar-label">Intel Core i7</label>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="checkbox-container">
+                            <input type="checkbox" 
+                                   id="cpu-2"
+                                   name="cpu" 
+                                   value="Intel Core i9"
+                                   class="sidebar-checkbox"
+                                   th:checked="${selectedCpu != null && selectedCpu.contains('Intel Core i9')}"
+                                   onchange="handleCategoryCheckbox(this)">
+                            <label for="cpu-2" class="sidebar-label">Intel Core i9</label>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="checkbox-container">
+                            <input type="checkbox" 
+                                   id="cpu-3"
+                                   name="cpu" 
+                                   value="AMD Ryzen 7"
+                                   class="sidebar-checkbox"
+                                   th:checked="${selectedCpu != null && selectedCpu.contains('AMD Ryzen 7')}"
+                                   onchange="handleCategoryCheckbox(this)">
+                            <label for="cpu-3" class="sidebar-label">AMD Ryzen 7</label>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="checkbox-container">
+                            <input type="checkbox" 
+                                   id="cpu-4"
+                                   name="cpu" 
+                                   value="AMD Ryzen 9"
+                                   class="sidebar-checkbox"
+                                   th:checked="${selectedCpu != null && selectedCpu.contains('AMD Ryzen 9')}"
+                                   onchange="handleCategoryCheckbox(this)">
+                            <label for="cpu-4" class="sidebar-label">AMD Ryzen 9</label>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="toggle-list product-categories active">
+            <h6 class="title">RAM</h6>
+            <div class="shop-submenu">
+                <ul>
+                    <li>
+                        <div class="checkbox-container">
+                            <input type="checkbox" 
+                                   id="ram-all"
+                                   name="ram" 
+                                   value="" 
+                                   class="sidebar-checkbox"
+                                   th:checked="${#strings.isEmpty(selectedRam)}" 
+                                   onchange="handleAllCheckbox(this, 'ram')">
+                            <label for="ram-all" class="sidebar-label">All</label>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="checkbox-container">
+                            <input type="checkbox" 
+                                   id="ram-0"
+                                   name="ram" 
+                                   value="16GB"
+                                   class="sidebar-checkbox"
+                                   th:checked="${selectedRam != null && selectedRam.contains('16GB')}"
+                                   onchange="handleCategoryCheckbox(this)">
+                            <label for="ram-0" class="sidebar-label">16GB</label>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="checkbox-container">
+                            <input type="checkbox" 
+                                   id="ram-1"
+                                   name="ram" 
+                                   value="32GB"
+                                   class="sidebar-checkbox"
+                                   th:checked="${selectedRam != null && selectedRam.contains('32GB')}"
+                                   onchange="handleCategoryCheckbox(this)">
+                            <label for="ram-1" class="sidebar-label">32GB</label>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="checkbox-container">
+                            <input type="checkbox" 
+                                   id="ram-2"
+                                   name="ram" 
+                                   value="64GB"
+                                   class="sidebar-checkbox"
+                                   th:checked="${selectedRam != null && selectedRam.contains('64GB')}"
+                                   onchange="handleCategoryCheckbox(this)">
+                            <label for="ram-2" class="sidebar-label">64GB</label>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="toggle-list product-categories active">
+            <h6 class="title">SSD</h6>
+            <div class="shop-submenu">
+                <ul>
+                    <li>
+                        <div class="checkbox-container">
+                            <input type="checkbox" 
+                                   id="ssd-all"
+                                   name="ssd" 
+                                   value="" 
+                                   class="sidebar-checkbox"
+                                   th:checked="${#strings.isEmpty(selectedSsd)}" 
+                                   onchange="handleAllCheckbox(this, 'ssd')">
+                            <label for="ssd-all" class="sidebar-label">All</label>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="checkbox-container">
+                            <input type="checkbox" 
+                                   id="ssd-0"
+                                   name="ssd" 
+                                   value="512GB"
+                                   class="sidebar-checkbox"
+                                   th:checked="${selectedSsd != null && selectedSsd.contains('512GB')}"
+                                   onchange="handleCategoryCheckbox(this)">
+                            <label for="ssd-0" class="sidebar-label">512GB</label>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="checkbox-container">
+                            <input type="checkbox" 
+                                   id="ssd-1"
+                                   name="ssd" 
+                                   value="1TB"
+                                   class="sidebar-checkbox"
+                                   th:checked="${selectedSsd != null && selectedSsd.contains('1TB')}"
+                                   onchange="handleCategoryCheckbox(this)">
+                            <label for="ssd-1" class="sidebar-label">1TB</label>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="checkbox-container">
+                            <input type="checkbox" 
+                                   id="ssd-2"
+                                   name="ssd" 
+                                   value="2TB"
+                                   class="sidebar-checkbox"
+                                   th:checked="${selectedSsd != null && selectedSsd.contains('2TB')}"
+                                   onchange="handleCategoryCheckbox(this)">
+                            <label for="ssd-2" class="sidebar-label">2TB</label>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="checkbox-container">
+                            <input type="checkbox" 
+                                   id="ssd-3"
+                                   name="ssd" 
+                                   value="4TB"
+                                   class="sidebar-checkbox"
+                                   th:checked="${selectedSsd != null && selectedSsd.contains('4TB')}"
+                                   onchange="handleCategoryCheckbox(this)">
+                            <label for="ssd-3" class="sidebar-label">4TB</label>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="toggle-list product-categories active">
+            <h6 class="title">VGA</h6>
+            <div class="shop-submenu">
+                <ul>
+                    <li>
+                        <div class="checkbox-container">
+                            <input type="checkbox" 
+                                   id="vga-all"
+                                   name="vga" 
+                                   value="" 
+                                   class="sidebar-checkbox"
+                                   th:checked="${#strings.isEmpty(selectedVga)}" 
+                                   onchange="handleAllCheckbox(this, 'vga')">
+                            <label for="vga-all" class="sidebar-label">All</label>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="checkbox-container">
+                            <input type="checkbox" 
+                                   id="vga-0"
+                                   name="vga" 
+                                   value="NVIDIA GTX 1650"
+                                   class="sidebar-checkbox"
+                                   th:checked="${selectedVga != null && selectedVga.contains('NVIDIA GTX 1650')}"
+                                   onchange="handleCategoryCheckbox(this)">
+                            <label for="vga-0" class="sidebar-label">NVIDIA GTX 1650</label>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="checkbox-container">
+                            <input type="checkbox" 
+                                   id="vga-1"
+                                   name="vga" 
+                                   value="NVIDIA RTX 2070"
+                                   class="sidebar-checkbox"
+                                   th:checked="${selectedVga != null && selectedVga.contains('NVIDIA RTX 2070')}"
+                                   onchange="handleCategoryCheckbox(this)">
+                            <label for="vga-1" class="sidebar-label">NVIDIA RTX 2070</label>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="checkbox-container">
+                            <input type="checkbox" 
+                                   id="vga-2"
+                                   name="vga" 
+                                   value="NVIDIA RTX 3050"
+                                   class="sidebar-checkbox"
+                                   th:checked="${selectedVga != null && selectedVga.contains('NVIDIA RTX 3050')}"
+                                   onchange="handleCategoryCheckbox(this)">
+                            <label for="vga-2" class="sidebar-label">NVIDIA RTX 3050</label>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="checkbox-container">
+                            <input type="checkbox" 
+                                   id="vga-3"
+                                   name="vga" 
+                                   value="NVIDIA RTX 3060"
+                                   class="sidebar-checkbox"
+                                   th:checked="${selectedVga != null && selectedVga.contains('NVIDIA RTX 3060')}"
+                                   onchange="handleCategoryCheckbox(this)">
+                            <label for="vga-3" class="sidebar-label">NVIDIA RTX 3060</label>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="checkbox-container">
+                            <input type="checkbox" 
+                                   id="vga-4"
+                                   name="vga" 
+                                   value="NVIDIA RTX 3070"
+                                   class="sidebar-checkbox"
+                                   th:checked="${selectedVga != null && selectedVga.contains('NVIDIA RTX 3070')}"
+                                   onchange="handleCategoryCheckbox(this)">
+                            <label for="vga-4" class="sidebar-label">NVIDIA RTX 3070</label>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="checkbox-container">
+                            <input type="checkbox" 
+                                   id="vga-5"
+                                   name="vga" 
+                                   value="NVIDIA RTX 3080"
+                                   class="sidebar-checkbox"
+                                   th:checked="${selectedVga != null && selectedVga.contains('NVIDIA RTX 3080')}"
+                                   onchange="handleCategoryCheckbox(this)">
+                            <label for="vga-5" class="sidebar-label">NVIDIA RTX 3080</label>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="checkbox-container">
+                            <input type="checkbox" 
+                                   id="vga-6"
+                                   name="vga" 
+                                   value="NVIDIA RTX 4050"
+                                   class="sidebar-checkbox"
+                                   th:checked="${selectedVga != null && selectedVga.contains('NVIDIA RTX 4050')}"
+                                   onchange="handleCategoryCheckbox(this)">
+                            <label for="vga-6" class="sidebar-label">NVIDIA RTX 4050</label>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="checkbox-container">
+                            <input type="checkbox" 
+                                   id="vga-7"
+                                   name="vga" 
+                                   value="NVIDIA RTX 4070"
+                                   class="sidebar-checkbox"
+                                   th:checked="${selectedVga != null && selectedVga.contains('NVIDIA RTX 4070')}"
+                                   onchange="handleCategoryCheckbox(this)">
+                            <label for="vga-7" class="sidebar-label">NVIDIA RTX 4070</label>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="checkbox-container">
+                            <input type="checkbox" 
+                                   id="vga-8"
+                                   name="vga" 
+                                   value="NVIDIA RTX 4090"
+                                   class="sidebar-checkbox"
+                                   th:checked="${selectedVga != null && selectedVga.contains('NVIDIA RTX 4090')}"
+                                   onchange="handleCategoryCheckbox(this)">
+                            <label for="vga-8" class="sidebar-label">NVIDIA RTX 4090</label>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="checkbox-container">
+                            <input type="checkbox" 
+                                   id="vga-9"
+                                   name="vga" 
+                                   value="AMD RX5500M"
+                                   class="sidebar-checkbox"
+                                   th:checked="${selectedVga != null && selectedVga.contains('AMD RX5500M')}"
+                                   onchange="handleCategoryCheckbox(this)">
+                            <label for="vga-9" class="sidebar-label">AMD RX5500M</label>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="toggle-list product-categories active">
+            <h6 class="title">Screen</h6>
+            <div class="shop-submenu">
+                <ul>
+                    <li>
+                        <div class="checkbox-container">
+                            <input type="checkbox" 
+                                   id="screen-all"
+                                   name="screen" 
+                                   value="" 
+                                   class="sidebar-checkbox"
+                                   th:checked="${#strings.isEmpty(selectedScreen)}" 
+                                   onchange="handleAllCheckbox(this, 'screen')">
+                            <label for="screen-all" class="sidebar-label">Tất Cả</label>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="checkbox-container">
+                            <input type="checkbox" 
+                                   id="screen-0"
+                                   name="screen" 
+                                   value="15.6&quot;"
+                                   class="sidebar-checkbox"
+                                   th:checked="${selectedScreen != null && selectedScreen.contains('15.6&quot;')}"
+                                   onchange="handleCategoryCheckbox(this)">
+                            <label for="screen-0" class="sidebar-label">15.6''</label>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="checkbox-container">
+                            <input type="checkbox" 
+                                   id="screen-1"
+                                   name="screen" 
+                                   value="16&quot;"
+                                   class="sidebar-checkbox"
+                                   th:checked="${selectedScreen != null && selectedScreen.contains('16&quot;')}"
+                                   onchange="handleCategoryCheckbox(this)">
+                            <label for="screen-1" class="sidebar-label">16''</label>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="checkbox-container">
+                            <input type="checkbox" 
+                                   id="screen-2"
+                                   name="screen" 
+                                   value="17.3&quot;"
+                                   class="sidebar-checkbox"
+                                   th:checked="${selectedScreen != null && selectedScreen.contains('17.3&quot;')}"
+                                   onchange="handleCategoryCheckbox(this)">
+                            <label for="screen-2" class="sidebar-label">17.3''</label>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="checkbox-container">
+                            <input type="checkbox" 
+                                   id="screen-3"
+                                   name="screen" 
+                                   value="18&quot;"
+                                   class="sidebar-checkbox"
+                                   th:checked="${selectedScreen != null && selectedScreen.contains('18&quot;')}"
+                                   onchange="handleCategoryCheckbox(this)">
+                            <label for="screen-3" class="sidebar-label">18''</label>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="toggle-list product-price-range active">
+            <h6 class="title">Price</h6>
+            <div class="shop-submenu">
+                <div class="price-filter-wrapper mt--25">
+                    <div id="slider-range" class="price-slider"></div>
+                    <div class="price-range-display mt--20">
+                        <div class="price-input-wrapper">
+                            <label class="price-label">Price Range:</label>
+                            <input type="text" id="amount" class="amount-range form-control" readonly>
+                        </div>
+                        <!-- Hidden inputs for form submission -->
+                        <input type="hidden" id="price-min" name="priceMin" th:value="${selectedPriceMin != null ? selectedPriceMin : 0}">
+                        <input type="hidden" id="price-max" name="priceMax" th:value="${selectedPriceMax != null ? selectedPriceMax : 50000000}">
+                    </div>
+                    <div class="price-presets mt-3">
+                        <small class="preset-label">Quick option:</small>
+                        <div class="preset-buttons mt-2">
+                            <button type="button" class="btn btn-sm btn-outline-secondary preset-btn" 
+                                    data-min="0" data-max="20000000">Under 20M</button>
+                            <button type="button" class="btn btn-sm btn-outline-secondary preset-btn" 
+                                    data-min="20000000" data-max="50000000">20M - 50M</button>
+                            <button type="button" class="btn btn-sm btn-outline-secondary preset-btn" 
+                                    data-min="50000000" data-max="100000000">50M - 100M</button>
+                            <button type="button" class="btn btn-sm btn-outline-secondary preset-btn" 
+                                    data-min="100000000" data-max="150000000">Above 100M</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="filter-buttons d-flex gap-2 mt-3">
+            <button type="submit" class="axil-btn btn-bg-primary flex-fill">Search</button>
+        </div>
+        <div class="filter-buttons d-flex gap-2 mt-3">
+            <a href="/user/shopping-page" class="axil-btn btn-bg-secondary flex-fill text-center text-decoration-none">Reset</a>
+        </div>
+    </form>
+</div>
+<script>
+function handleAllCheckbox(allCheckbox, groupName) {
+    const checkboxes = document.querySelectorAll(`input.sidebar-checkbox[name="${groupName}"]`);
+    checkboxes.forEach(checkbox => {
+        if (checkbox !== allCheckbox) {
+            checkbox.checked = false;
+        }
+    });
+}
+
+function handleCategoryCheckbox(checkbox) {
+    if (checkbox.checked) {
+        const allCheckbox = document.querySelector(`input.sidebar-checkbox[name="${checkbox.name}"][value=""]`);
+        if (allCheckbox) {
+            allCheckbox.checked = false;
+        }
+    }
+}
+
+function submitFilterForm() {
+    const form = document.getElementById('product-filter-form');
+    if (!form) {
+        return;
+    }
+
+    const formData = new FormData(form);
+    const params = new URLSearchParams();
+    
+    const groups = {};
+    for (const [key, value] of formData.entries()) {
+        if (value && value.trim() !== '') {
+            // Special handling for price parameters - don't group them
+            if (key === 'priceMin' || key === 'priceMax') {
+                params.append(key, value);
+            } else {
+                if (!groups[key]) {
+                    groups[key] = [];
+                }
+                groups[key].push(value);
+            }
+        }
+    }
+    
+    // Add grouped parameters
+    for (const [key, values] of Object.entries(groups)) {
+        if (values.length > 0) {
+            params.append(key, values.join(','));
+        }
+    }
+    
+    const searchUrl = '/user/shopping-page' + (params.toString() ? '?' + params.toString() : '');
+    window.location.href = searchUrl;
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Wait a bit for all elements to be rendered
+    setTimeout(function() {
+        const form = document.getElementById('product-filter-form');
+        if (form) {
+            // Remove old event listener and add new one
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                submitFilterForm();
+            });
+            
+            // Try multiple ways to find submit button
+            let submitBtn = form.querySelector('button[type="submit"]');
+            if (!submitBtn) {
+                submitBtn = form.querySelector('button.axil-btn');
+            }
+            if (!submitBtn) {
+                submitBtn = document.querySelector('button.axil-btn.btn-bg-primary');
+            }
+            
+            if (submitBtn) {
+                submitBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    submitFilterForm();
+                });
+            }
+        }
+        
+        // Initialize price preset buttons
+        const presetButtons = document.querySelectorAll('.preset-btn');
+        presetButtons.forEach(function(btn) {
+            btn.addEventListener('click', function() {
+                const min = parseInt(this.getAttribute('data-min'));
+                const max = parseInt(this.getAttribute('data-max'));
+                
+                // Update slider
+                if (typeof $('#slider-range').slider === 'function') {
+                    $('#slider-range').slider('values', [min, max]);
+                    
+                    // Format price display
+                    function formatPrice(price) {
+                        return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+                    }
+                    
+                    // Update display and hidden inputs
+                    $('#amount').val(formatPrice(min) + ' VNĐ - ' + formatPrice(max) + ' VNĐ');
+                    $('#price-min').val(min);
+                    $('#price-max').val(max);
+                    
+                    // Update button styles
+                    presetButtons.forEach(function(b) { b.classList.remove('active', 'btn-primary'); b.classList.add('btn-outline-secondary'); });
+                    this.classList.remove('btn-outline-secondary');
+                    this.classList.add('btn-primary', 'active');
+                }
+            });
+        });
+    }, 100); // Wait 100ms for DOM to be fully rendered
+});
+</script>
+
+<style>
+.price-filter-wrapper {
+    padding: 15px 0;
+}
+
+.price-slider {
+    margin: 20px 0;
+}
+
+.price-range-display {
+    text-align: center;
+}
+
+.price-label {
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 5px;
+    display: block;
+}
+
+.amount-range {
+    text-align: center;
+    border: 1px solid #ddd;
+    padding: 8px 12px;
+    border-radius: 4px;
+    font-weight: 500;
+    color: #007bff;
+    background-color: #f8f9fa;
+}
+
+.preset-label {
+    color: #666;
+    font-weight: 500;
+}
+
+.preset-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+}
+
+.preset-btn {
+    font-size: 11px;
+    padding: 4px 8px;
+    border-radius: 15px;
+    transition: all 0.3s ease;
+}
+
+.preset-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+</style>
+</div>

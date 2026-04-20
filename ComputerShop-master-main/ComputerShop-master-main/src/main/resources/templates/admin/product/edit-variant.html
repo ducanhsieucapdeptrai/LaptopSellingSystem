@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{admin/fragments/header :: header}">
+    <title>Edit product configuration</title>
+</head>
+<body id="page-top">
+<nav th:replace="~{admin/fragments/nav-bar :: nav-bar}"></nav>
+<div id="wrapper">
+    <ul th:replace="~{admin/fragments/sidebar :: sidebar}"></ul>
+
+    <div id="content-wrapper">
+        <div class="container-fluid">
+            <!-- Breadcrumbs-->
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item">
+                    <a href="/admin">Dashboard</a>
+                </li>
+                <li class="breadcrumb-item">
+                    <a href="/admin/product">Product</a>
+                </li>
+                <li class="breadcrumb-item">
+                    <a th:href="@{'/admin/product-variants/' + ${product.productID}}">Product Variants</a>
+                </li>
+                <li class="breadcrumb-item active">Edit Variant</li>
+            </ol>
+
+            <!-- Alert Messages -->
+            <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
+                <span th:text="${success}"></span>
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+
+            <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+                <span th:text="${error}"></span>
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+
+            <!-- Product Info Card -->
+            <div class="card mb-3">
+                <div class="card-header">
+                    <i class="fas fa-laptop"></i>
+                    Product Information
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-8">
+                            <h5 class="text-primary mb-3" th:text="${product.name}">Product Name</h5>
+                            <div class="product-info">
+                                <div class="info-item mb-2">
+                                    <strong>Product Code:</strong> 
+                                    <span class="badge badge-light" th:text="${product.productID}"></span>
+                                </div>
+                                <div class="info-item mb-2">
+                                    <strong>Brand:</strong> 
+                                    <span class="text-info" th:text="${product.brand}"></span>
+                                </div>
+                                <div class="info-item mb-2">
+                                    <strong>Category:</strong> 
+                                    <span class="text-success" th:if="${product.categories}" th:text="${product.categories.name}">Category</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="product-image-container">
+                                <img th:src="@{'/assets/images/product/laptop/' + ${product.imageURL}}" 
+                                     th:alt="${product.name}"
+                                     class="img-fluid rounded border"
+                                     style="max-height: 120px;"
+                                     onerror="this.src='/assets/images/product/default-product.png'">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Edit Variant Form -->
+            <div class="card mb-3">
+                <div class="card-header">
+                    <i class="fas fa-edit"></i>
+                    Edit Variant
+                </div>
+                <div class="card-body">
+                    <form th:action="@{'/admin/product-variants/update/' + ${variant.variantId}}" method="post" th:object="${variant}" enctype="multipart/form-data">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="cpu">CPU <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" id="cpu" name="cpu" 
+                                           th:value="${variant.cpu}" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="ram">RAM <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" id="ram" name="ram" 
+                                           th:value="${variant.ram}" required>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="storage">Storage <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" id="storage" name="storage" 
+                                           th:value="${variant.storage}" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="gpu">Graphics Card (GPU)</label>
+                                    <input type="text" class="form-control" id="gpu" name="gpu" 
+                                           th:value="${variant.gpu}">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="screen">Screen</label>
+                                    <input type="text" class="form-control" id="screen" name="screen" 
+                                           th:value="${variant.screen}">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="price">Price <span class="text-danger">*</span></label>
+                                    <input type="number" class="form-control" id="price" name="price" 
+                                           th:value="${variant.price}" required min="0">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="quantity">Quantity <span class="text-danger">*</span></label>
+                                    <input type="number" class="form-control" id="quantity" name="quantity" 
+                                           th:value="${variant.quantity}" required min="0">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="sku">Product Code</label>
+                                    <input type="text" class="form-control" id="sku" name="sku" 
+                                           th:value="${variant.sku}" readonly>
+                                    <small class="form-text text-muted">Product code is automatically generated and cannot be changed</small>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="variantName">Variant Name</label>
+                                    <input type="text" class="form-control" id="variantName" name="variantName" 
+                                           th:value="${variant.variantName}" 
+                                           placeholder="Leave blank to auto-generate from specifications">
+                                    <small class="form-text text-muted">If left blank, the name will be auto-generated from the specifications</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Custom Fields Section -->
+                        <div th:if="${customFields != null and #lists.size(customFields) > 0}" class="custom-fields-section">
+                            <div class="row">
+                                <div class="col-12">
+                                    <h6 class="text-primary mb-3">
+                                        <i class="fas fa-cogs"></i> Information
+                                    </h6>
+                                </div>
+                            </div>
+                                    </h6>
+                                </div>
+                            </div>
+                            
+                            <div class="row">
+                                <!-- Loop through custom fields -->
+                                <div th:each="field : ${customFields}" class="col-md-6 mb-3">
+                                    <div class="form-group">
+                                        <label th:for="'custom_' + ${field.fieldKey}" 
+                                               th:text="${field.fieldName}">Custom Field</label>
+                                        <span th:if="${field.isRequired}" class="text-danger">*</span>
+                                        
+                                        <!-- Text Input -->
+                                        <div th:if="${field.fieldType == 'TEXT' or field.fieldType == null}">
+                                            <input type="text" 
+                                                   class="form-control" 
+                                                   th:id="'custom_' + ${field.fieldKey}"
+                                                   th:name="'custom_' + ${field.fieldKey}"
+                                                   th:value="${variant.getCustomAttributesMap().get(field.fieldKey)}"
+                                                   th:required="${field.isRequired}">
+                                        </div>
+                                        
+                                        <!-- Number Input -->
+                                        <div th:if="${field.fieldType == 'NUMBER'}">
+                                            <input type="number" 
+                                                   class="form-control" 
+                                                   th:id="'custom_' + ${field.fieldKey}"
+                                                   th:name="'custom_' + ${field.fieldKey}"
+                                                   th:value="${variant.getCustomAttributesMap().get(field.fieldKey)}"
+                                                   th:required="${field.isRequired}">
+                                        </div>
+                                        
+                                        <!-- Select Input -->
+                                        <div th:if="${field.fieldType == 'SELECT'}">
+                                            <select class="form-control" 
+                                                    th:id="'custom_' + ${field.fieldKey}"
+                                                    th:name="'custom_' + ${field.fieldKey}"
+                                                    th:required="${field.isRequired}" style="padding: 7px">
+                                                <option value="">-- Select --</option>
+                                                <option th:each="option : ${field.getOptionsArray()}" 
+                                                        th:value="${option}" 
+                                                        th:text="${option}"
+                                                        th:selected="${variant.getCustomAttributesMap().get(field.fieldKey) == option}">
+                                                    Option
+                                                </option>
+                                            </select>
+                                        </div>
+                                        <small th:if="${field.fieldType == 'SELECT' and field.fieldOptions != null}" 
+                                               class="form-text text-muted">
+                                            Select one of the available options
+                                        </small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="variantImageUrl">Variant Image</label>
+                                    <input type="file" class="form-control-file" id="variantImageUrl" name="image" 
+                                           accept="image/*" onchange="previewImage(this)">
+                                    <small class="form-text text-muted">
+                                        Select an image to display specifically for this variant. 
+                                        <br><strong>Format:</strong> JPG, PNG, GIF
+                                    </small>
+                                    <div id="image-preview" class="mt-2" style="display: none;">
+                                        <img id="preview-img" src="" alt="Preview" 
+                                             style="max-width: 150px; max-height: 100px; border-radius: 4px; border: 1px solid #ddd;">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label>Current Image</label>
+                                    <div class="current-image-preview">
+                                        <img th:if="${variant.displayImageUrl != null}" 
+                                             th:src="@{'/assets/images/product/laptop/' + ${variant.displayImageUrl}}" 
+                                             th:alt="'Hình ảnh ' + ${variant.variantName}"
+                                             class="img-thumbnail"
+                                             style="max-height: 100px; max-width: 150px;"
+                                             onerror="this.src='/assets/images/product/default-product.png'">
+                                        <div th:if="${variant.variantImageUrl != null}" class="text-success mt-2">
+                                            <small><i class="fas fa-star"></i> Variant-specific image</small>
+                                        </div>
+                                        <div th:if="${variant.variantImageUrl == null and variant.displayImageUrl != null}" class="text-warning mt-2">
+                                            <small><i class="fas fa-info-circle"></i> Using the product's default image</small>
+                                        </div>
+                                        <div th:if="${variant.displayImageUrl == null}" class="text-muted">
+                                            <i class="fas fa-image fa-2x"></i>
+                                            <p class="mt-2">No image available</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input" id="isActive" name="isActive" 
+                                       th:checked="${variant.isActive}">
+                                <label class="form-check-label" for="isActive">
+                                    Activate this variant
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="form-actions">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save"></i> Save changes
+                            </button>
+                            <a th:href="@{'/admin/product-variants/' + ${product.productID}}" class="btn btn-secondary">
+                                <i class="fas fa-times"></i> Cancel
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Current Configuration Summary -->
+            <div class="card mb-3">
+                <div class="card-header">
+                    <i class="fas fa-info-circle"></i>
+                    Current Configuration
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <table class="table table-sm">
+                                <tr>
+                                    <td><strong>Variant Name:</strong></td>
+                                    <td th:text="${variant.variantName ?: variant.displayName}">-</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>CPU:</strong></td>
+                                    <td th:text="${variant.cpu}">-</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>RAM:</strong></td>
+                                    <td th:text="${variant.ram}">-</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Storage:</strong></td>
+                                    <td th:text="${variant.storage}">-</td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="col-md-6">
+                            <table class="table table-sm">
+                                <tr>
+                                    <td><strong>GPU:</strong></td>
+                                    <td th:text="${variant.gpu ?: 'Không có'}">-</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Screen:</strong></td>
+                                    <td th:text="${variant.screen ?: 'Không có'}">-</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Current Price:</strong></td>
+                                    <td class="text-danger font-weight-bold" 
+                                        th:text="${#numbers.formatDecimal(variant.price, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'">-</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Stock:</strong></td>
+                                    <td>
+                                        <span th:text="${variant.quantity}">0</span>
+                                        <span th:if="${variant.quantity == 0}" class="badge badge-danger ml-1">Out of Stock</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Image:</strong></td>
+                                    <td>
+                                        <span th:if="${variant.variantImageUrl != null}" class="text-success">
+                                            <i class="fas fa-check-circle"></i> Variant has image
+                                        </span>
+                                        <span th:if="${variant.variantImageUrl == null and variant.displayImageUrl != null}" class="text-warning">
+                                            <i class="fas fa-info-circle"></i> Using shared image
+                                        </span>
+                                        <span th:if="${variant.variantImageUrl == null and variant.displayImageUrl == null}" class="text-muted">
+                                            <i class="fas fa-times-circle"></i> No image available
+                                        </span>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                    
+                    <!-- Custom Fields Information -->
+                    <div th:if="${customFields != null and #lists.size(customFields) > 0}" class="row mt-3">
+                        <div class="col-12">
+                            <h6 class="text-info mb-3">
+                                <i class="fas fa-cogs"></i> Custom Fields Information
+                            </h6>
+                            <div class="custom-fields-current">
+                                <div class="row">
+                                    <div th:each="field : ${customFields}" class="col-md-6 mb-2">
+                                        <div th:if="${variant.getCustomAttributesMap().get(field.fieldKey) != null and !variant.getCustomAttributesMap().get(field.fieldKey).isEmpty()}" 
+                                             class="custom-field-item">
+                                            <small class="text-muted" th:text="${field.fieldName}">Field Name</small>
+                                            <div class="field-value">
+                                                <!-- Display value based on field type -->
+                                                <span th:if="${field.fieldType == 'CHECKBOX'}" 
+                                                      th:text="${variant.getCustomAttributesMap().get(field.fieldKey) == 'true' ? 'Có' : 'Không'}"
+                                                      th:class="${variant.getCustomAttributesMap().get(field.fieldKey) == 'true' ? 'text-success' : 'text-muted'}">
+                                                    Checkbox Value
+                                                </span>
+                                                <span th:if="${field.fieldType != 'CHECKBOX'}" 
+                                                      th:text="${variant.getCustomAttributesMap().get(field.fieldKey)}"
+                                                      class="text-dark font-weight-bold">
+                                                    Field Value
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div th:if="${variant.getCustomAttributesMap().get(field.fieldKey) == null or variant.getCustomAttributesMap().get(field.fieldKey).isEmpty()}" 
+                                             class="custom-field-item">
+                                            <small class="text-muted" th:text="${field.fieldName}">Field Name</small>
+                                            <div class="field-value text-muted">
+                                                <em>No value available</em>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /.container-fluid -->
+
+        <!-- Sticky Footer -->
+        <footer th:replace="~{admin/fragments/footer :: footer}"></footer>
+    </div>
+    <!-- /.content-wrapper -->
+</div>
+<!-- /#wrapper -->
+
+<!-- Scroll to Top Button-->
+<a class="scroll-to-top rounded" href="#page-top">
+    <i class="fas fa-angle-up"></i>
+</a>
+
+<style>
+.product-image-container {
+    text-align: center;
+}
+
+.form-actions {
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px solid #dee2e6;
+}
+
+.info-item {
+    margin-bottom: 8px;
+}
+
+.current-image-preview {
+    text-align: center;
+    padding: 15px;
+    border: 2px dashed #dee2e6;
+    border-radius: 8px;
+    background-color: #f8f9fa;
+}
+
+.current-image-preview img {
+    border-radius: 4px;
+}
+
+.current-image-preview .text-muted {
+    margin: 0;
+}
+
+.current-image-preview i {
+    color: #6c757d;
+}
+
+.current-image-preview .text-success small {
+    font-weight: 500;
+}
+
+.current-image-preview .text-warning small {
+    font-weight: 500;
+}
+
+/* Custom Fields Styles */
+.custom-fields-section {
+    background-color: #f8f9fc;
+    padding: 20px;
+    border-radius: 8px;
+    border: 1px solid #e3e6f0;
+    margin-bottom: 20px;
+}
+
+.custom-fields-section h6 {
+    margin-bottom: 20px;
+    font-size: 1.1rem;
+}
+
+.custom-fields-current .custom-field-item {
+    background-color: #ffffff;
+    padding: 12px;
+    border-radius: 6px;
+    border: 1px solid #e3e6f0;
+    margin-bottom: 8px;
+}
+
+.custom-fields-current .custom-field-item small {
+    display: block;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 4px;
+}
+
+.custom-fields-current .field-value {
+    font-size: 0.95rem;
+    line-height: 1.4;
+}
+
+.custom-fields-section .form-group label {
+    font-weight: 600;
+    color: #5a5c69;
+}
+
+.custom-fields-section .form-control:focus {
+    border-color: #4e73df;
+    box-shadow: 0 0 0 0.2rem rgba(78, 115, 223, 0.25);
+}
+
+.custom-fields-section .form-check-input:focus {
+    box-shadow: 0 0 0 0.2rem rgba(78, 115, 223, 0.25);
+}
+
+.custom-fields-section hr {
+    border-top: 2px solid #4e73df;
+    margin: 15px 0;
+    width: 50px;
+}
+
+#image-preview {
+    text-align: center;
+    padding: 10px;
+    background-color: #f8f9fa;
+    border: 1px dashed #dee2e6;
+    border-radius: 4px;
+}
+</style>
+<script>
+    function previewImage(input) {
+        const file = input.files[0];
+        const preview = document.getElementById('image-preview');
+        const previewImg = document.getElementById('preview-img');
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                previewImg.src = e.target.result;
+                preview.style.display = 'block';
+            };
+            reader.readAsDataURL(file);
+        } else {
+            preview.style.display = 'none';
+        }
+    }
+</script>
+</body>
+</html>

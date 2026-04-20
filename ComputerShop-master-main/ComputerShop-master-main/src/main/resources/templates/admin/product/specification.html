@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{admin/fragments/header :: header}">
+    <title> Specifications</title>
+</head>
+<body id="page-top" class="newsletter-popup-modal">
+<nav th:replace="~{admin/fragments/nav-bar :: nav-bar}"></nav>
+<div id="wrapper">
+    <!-- Sidebar -->
+    <ul th:replace="~{admin/fragments/sidebar :: sidebar}"></ul>
+    <div id="content-wrapper" class="flex-grow-1">
+        <div class="container-fluid">
+            <!-- Breadcrumbs-->
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item">
+                    <a href="/admin/dashboard">Dashboard</a>
+                </li>
+                <li class="breadcrumb-item active">Product Configuration</li>
+            </ol>
+            <!-- Icon Cards-->
+            <div th:replace="~{admin/fragments/icon-cards :: icon-cards}"></div>
+            <!-- Main body information -->
+            <div class="row justify-content-center">
+                <div class="col-md-8 col-lg-6">
+                    <div class="card shadow mb-4">
+                        <div class="card-header bg-primary text-white">
+                            <h4 class="mb-0">Specifications: <span th:text="${product.name}"></span></h4>
+                        </div>
+                        <div class="card-body">
+                            <!-- Success message display -->
+                            <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
+                                <i class="fas fa-check-circle"></i>
+                                <span th:text="${success}"></span>
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                            <!-- Error message display -->
+                            <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+                                <i class="fas fa-exclamation-circle"></i>
+                                <span th:text="${error}"></span>
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                            <form th:action="@{/admin/product/{id}/specification(id=${product.productID})}" th:object="${specification}" method="post">
+                                <div class="form-group mb-3">
+                                    <label for="cpu">CPU</label>
+                                    <textarea type="text" id="cpu" class="form-control" th:field="*{cpu}"></textarea>
+                                </div>
+                                <div class="form-group mb-3">
+                                    <label for="ram">RAM</label>
+                                    <textarea type="text" id="ram" class="form-control" th:field="*{ram}"></textarea>
+                                </div>
+                                <div class="form-group mb-3">
+                                    <label for="ssd">SSD</label>
+                                    <textarea type="text" id="ssd" class="form-control" th:field="*{ssd}"></textarea>
+                                </div>
+                                <div class="form-group mb-3">
+                                    <label for="vga">VGA</label>
+                                    <textarea type="text" id="vga" class="form-control" th:field="*{vga}"></textarea>
+                                </div>
+                                <div class="form-group mb-3">
+                                    <label for="screen">Screen</label>
+                                    <textarea type="text" id="screen" class="form-control" th:field="*{screen}"></textarea>
+                                </div>
+                                <div class="form-group mb-3">
+                                    <label for="weight">Weight</label>
+                                    <input type="number" step="0.01" id="weight" class="form-control" th:field="*{weight}">
+                                </div>
+                                <div class="form-group mb-3">
+                                    <label for="connect">Connectivity Ports</label>
+                                    <textarea type="text" id="connect" class="form-control" th:field="*{connect}"></textarea>
+                                </div>
+                                <div class="form-group mb-3">
+                                    <label for="battery">Battery</label>
+                                    <textarea type="text" id="battery" class="form-control" th:field="*{battery}"></textarea>
+                                </div>
+                                <div class="d-flex justify-content-center gap-3">
+                                    <a th:href="@{/admin/product}" class="btn btn-secondary w-50">
+                                        <i class="fas fa-times"></i> Cancel
+                                    </a>
+                                    <button type="submit" class="btn btn-success w-50">
+                                        <i class="fas fa-save"></i> Save Configuration
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <footer class="mt-auto" th:replace="~{admin/fragments/footer :: footer}"></footer>
+    </div>
+</div>
+</body>
+<!-- Scroll to Top Button-->
+<a class="scroll-to-top rounded" href="#page-top">
+    <i class="fas fa-angle-up"></i>
+</a>
+<!-- Logout Modal-->
+<div th:replace="~{admin/fragments/logout :: logout}"></div>
+</html>

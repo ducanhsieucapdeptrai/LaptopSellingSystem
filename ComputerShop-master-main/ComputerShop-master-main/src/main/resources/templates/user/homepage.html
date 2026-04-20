@@ -1,0 +1,811 @@
+<!doctype html>
+<html class="no-js" lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Computer Shop || Home</title>
+    <!-- Custom CSS cho homepage -->
+    <link rel="stylesheet" th:href="@{/assets/css/cart-custom.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/homepage-custom.css}">
+    <link rel="stylesheet" th:href="@{/assets/css/dropdown-fix.css}">
+</head>
+
+
+<body class="sticky-header">
+
+<!--[if lte IE 9]>
+<p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience and security.</p>
+<![endif]-->
+<a href="#top" class="back-to-top" id="backto-top"><i class="fal fa-arrow-up"></i></a>
+
+<!-- Header -->
+<header class="header axil-header header-style-1">
+    <div th:replace="~{user/fragments/header :: header}"></div>
+</header>
+
+<main class="main-wrapper">
+    <div class="axil-main-slider-area main-slider-style-1">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-5 col-sm-6">
+                    <div class="main-slider-content">
+                        <div class="product-showcase-container">
+                            <div class="product-slide active" id="slide-1" data-sal="slide-up" data-sal-delay="400" data-sal-duration="800">
+                                <span class="subtitle"><i class="fas fa-fire"></i> This Week's Hot Deals</span>
+                                <h1 class="title">ASUS ROG Strix G15 G512</h1>
+                                <div class="product-info">
+                                    <p class="price-original">28,990,000 VND</p>
+                                    <p class="price-sale">24,641,500 VND</p>
+                                    <p class="product-desc">High Performance Gaming Laptop</p>
+                                </div>
+                                <div class="slide-action">
+                                    <div class="shop-btn">
+                                        <a th:href="@{/user/shopping-page}" class="axil-btn btn-bg-white"><i class="fal fa-shopping-cart"></i>Buy Now</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="product-slide" id="slide-2">
+                                <span class="subtitle"><i class="fas fa-fire"></i> Hot Deals This Week</span>
+                                <h1 class="title">MSI Raider GE76</h1>
+                                <div class="product-info">
+                                    <p class="price-original">52,990,000 VNĐ</p>
+                                    <p class="price-sale">37,093,000 VNĐ</p>
+                                    <p class="product-desc">Superior gaming laptop</p>
+                                </div>
+                                <div class="slide-action">
+                                    <div class="shop-btn">
+                                        <a th:href="@{/user/single-product?id=}" class="axil-btn btn-bg-white"><i class="fal fa-shopping-cart"></i>Buy Now</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="product-slide" id="slide-3">
+                                <span class="subtitle"><i class="fas fa-fire"></i> Hot Deals This Week</span>
+                                <h1 class="title">Lenovo Legion 5 Pro</h1>
+                                <div class="product-info">
+                                    <p class="price-original">32,990,000 VNĐ</p>
+                                    <p class="price-sale">28,041,500 VNĐ</p>
+                                    <p class="product-desc">Superior gaming laptop</p>
+                                </div>
+                                <div class="slide-action">
+                                    <div class="shop-btn">
+                                        <a th:href="@{/user/single-product?id=}" class="axil-btn btn-bg-white"><i class="fal fa-shopping-cart"></i>Buy Now</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="product-slide" id="slide-4">
+                                <span class="subtitle"><i class="fas fa-fire"></i> Hot Deals This Week</span>
+                                <h1 class="title">MSI Titan GT77 HX</h1>
+                                <div class="product-info">
+                                    <p class="price-original">119,990,000 VNĐ</p>
+                                    <p class="price-sale">95,992,000 VNĐ</p>
+                                    <p class="product-desc">Superior gaming laptop</p>
+                                </div>
+                                <div class="slide-action">
+                                    <div class="shop-btn">
+                                        <a th:href="@{/user/single-product?id=}" class="axil-btn btn-bg-white"><i class="fal fa-shopping-cart"></i>Buy Now</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-7 col-sm-6">
+                    <div class="main-slider-large-thumb">
+                        <div class="product-image-showcase">
+                            <div class="product-image-slide active" id="image-1" data-sal="slide-up" data-sal-delay="600" data-sal-duration="1500">
+                                <img th:src="@{/assets/images/product/laptop/ASUS ROG Strix G15 G512 IAL011T.jpg}" alt="ASUS ROG Strix G15 G512">
+                                <div class="product-price-badge">
+                                    <span class="text">Save Up To</span>
+                                    <span class="price-amount">15% OFF</span>
+                                </div>
+                            </div>
+                            <div class="product-image-slide" id="image-2" data-sal="slide-up" data-sal-delay="600" data-sal-duration="1500">
+                                <img th:src="@{/assets/images/product/laptop/MSI Raider GE76 12UGS.jpg}" alt="MSI Raider GE76">
+                                <div class="product-price-badge">
+                                    <span class="text">Save Up To</span>
+                                    <span class="price-amount">30% OFF</span>
+                                </div>
+                            </div>
+                            <div class="product-image-slide" id="image-3">
+                                <img th:src="@{/assets/images/product/laptop/Lenovo Legion 5 Pro 16ACH6H.jpg}" alt="Lenovo Legion 5 Pro">
+                                <div class="product-price-badge">
+                                    <span class="text">Save Up To</span>
+                                    <span class="price-amount">15% OFF</span>
+                                </div>
+                            </div>
+                            <div class="product-image-slide" id="image-4">
+                                <img th:src="@{/assets/images/product/laptop/laptop-msi-titan-gt77-cong-ket-noi-phai.webp}" alt="MSI Titan GT77 HX">
+                                <div class="product-price-badge">
+                                    <span class="text">Save Up To</span>
+                                    <span class="price-amount">20% OFF</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Navigation Dots -->
+                        <div class="product-navigation">
+                            <div class="nav-dots">
+                                <button class="nav-dot active" data-slide="1" title="ASUS ROG Strix G15"></button>
+                                <button class="nav-dot" data-slide="2" title="MSI Raider GE76"></button>
+                                <button class="nav-dot" data-slide="3" title="Lenovo Legion 5 Pro"></button>
+                                <button class="nav-dot" data-slide="4" title="MSI Titan GT77 HX"></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <ul class="shape-group">
+            <li class="shape-1"><img th:src="@{/assets/images/others/shape-1.png}" alt="Shape"></li>
+            <li class="shape-2"><img th:src="@{/assets/images/others/shape-2.png}" alt="Shape"></li>
+        </ul>
+    </div>
+
+    <!-- Start Categorie Area  -->
+    <div class="axil-categorie-area bg-color-white axil-section-gapcommon">
+        <div class="container">
+            <div class="section-title-wrapper">
+                <span class="title-highlighter highlighter-secondary"> <i class="far fa-tags"></i> Brands</span>
+                <h2 class="title">Browse By Brand</h2>
+                <p class="subtitle">Discover products from your favorite computer brands</p>
+            </div>
+            <div class="categrie-product-activation slick-layout-wrapper--15 axil-slick-arrow arrow-top-slide"
+                 data-slick-options='{
+                     "slidesToShow": 5,
+                     "slidesToScroll": 1,
+                     "infinite": true,
+                     "arrows": true,
+                     "prevArrow": "<button class=\"prev-arrow\"><i class=\"fal fa-long-arrow-left\"></i></button>",
+                     "nextArrow": "<button class=\"next-arrow\"><i class=\"fal fa-long-arrow-right\"></i></button>",
+                     "responsive": [
+                         {"breakpoint": 1200, "settings": {"slidesToShow": 4}},
+                         {"breakpoint": 992, "settings": {"slidesToShow": 3}},
+                         {"breakpoint": 768, "settings": {"slidesToShow": 2}},
+                         {"breakpoint": 480, "settings": {"slidesToShow": 1}}
+                     ]
+                 }'>
+                <!-- ASUS Brand -->
+                <div class="slick-single-layout">
+                    <div class="categrie-product" data-sal="zoom-out" data-sal-delay="200" data-sal-duration="500">
+                        <a th:href="@{/user/shopping-page(brand=ASUS)}">
+                            <img class="img-fluid brand-logo" 
+                                 th:src="@{/assets/images/brand/AsusTek-black-logo.png}" 
+                                 alt="ASUS">
+                            <h6 class="cat-title">ASUS</h6>
+                        </a>
+                    </div>
+                </div>
+                
+                <!-- MSI Brand -->
+                <div class="slick-single-layout">
+                    <div class="categrie-product" data-sal="zoom-out" data-sal-delay="300" data-sal-duration="500">
+                        <a th:href="@{/user/shopping-page(brand=MSI)}">
+                            <img class="img-fluid brand-logo" 
+                                 th:src="@{/assets/images/brand/png-transparent-msi-logo-horizontal-thumbnail.png}" 
+                                 alt="MSI">
+                            <h6 class="cat-title">MSI</h6>
+                        </a>
+                    </div>
+                </div>
+                
+                <!-- Acer Brand -->
+                <div class="slick-single-layout">
+                    <div class="categrie-product" data-sal="zoom-out" data-sal-delay="400" data-sal-duration="500">
+                        <a th:href="@{/user/shopping-page(brand=Acer)}">
+                            <img class="img-fluid brand-logo" 
+                                 th:src="@{/assets/images/brand/logo-acer-inkythuatso-2-01-27-15-49-45.jpg}" 
+                                 alt="Acer">
+                            <h6 class="cat-title">Acer</h6>
+                        </a>
+                    </div>
+                </div>
+                
+                <!-- Lenovo Brand -->
+                <div class="slick-single-layout">
+                    <div class="categrie-product" data-sal="zoom-out" data-sal-delay="500" data-sal-duration="500">
+                        <a th:href="@{/user/shopping-page(brand=Lenovo)}">
+                            <img class="img-fluid brand-logo" 
+                                 th:src="@{/assets/images/brand/Lenovo_Global_Corporate_Logo.png}" 
+                                 alt="Lenovo">
+                            <h6 class="cat-title">Lenovo</h6>
+                        </a>
+                    </div>
+                </div>
+                
+                <!-- HP Brand -->
+                <div class="slick-single-layout">
+                    <div class="categrie-product" data-sal="zoom-out" data-sal-delay="600" data-sal-duration="500">
+                        <a th:href="@{/user/shopping-page(brand=HP)}">
+                            <img class="img-fluid brand-logo" 
+                                 th:src="@{/assets/images/brand/HP-Logo-2012.png}" 
+                                 alt="HP">
+                            <h6 class="cat-title">HP</h6>
+                        </a>
+                    </div>
+                </div>
+                
+                <!-- Dell Brand -->
+                <div class="slick-single-layout">
+                    <div class="categrie-product" data-sal="zoom-out" data-sal-delay="700" data-sal-duration="500">
+                        <a th:href="@{/user/shopping-page(brand=Dell)}">
+                            <img class="img-fluid brand-logo" 
+                                 th:src="@{/assets/images/brand/dell-old-logo.jpg}" 
+                                 alt="Dell">
+                            <h6 class="cat-title">Dell</h6>
+                        </a>
+                    </div>
+                </div>
+                
+                <!-- Gigabyte Brand -->
+                <div class="slick-single-layout">
+                    <div class="categrie-product" data-sal="zoom-out" data-sal-delay="800" data-sal-duration="500">
+                        <a th:href="@{/user/shopping-page(brand=Gigabyte)}">
+                            <img class="img-fluid brand-logo" 
+                                 th:src="@{/assets/images/brand/Gigabyte_Technology-Logo.wine.png}" 
+                                 alt="Gigabyte">
+                            <h6 class="cat-title">Gigabyte</h6>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- End Categorie Area  -->
+
+
+
+    <!-- Start Expolre Product Area  -->
+    <div class="axil-product-area bg-color-white axil-section-gap">
+        <div class="container">
+            <div class="section-title-wrapper">
+                <span class="title-highlighter highlighter-primary"> <i class="far fa-shopping-basket"></i> Our Products</span>
+                <h2 class="title">Explore Products</h2>
+                <p class="subtitle" th:text="'Total Products: ' + ${totalProducts}">Total Products: 0</p>
+            </div>
+            <div class="explore-product-activation slick-layout-wrapper slick-layout-wrapper--15 axil-slick-arrow arrow-top-slide">
+                <div class="slick-single-layout">
+                    <div class="row row--15">
+                        <!-- Dynamic Featured Products -->
+                        <div class="col-xl-3 col-lg-4 col-sm-6 col-12 mb--30" 
+                             th:each="product, iterStat : ${featuredProducts}" 
+                             th:if="${iterStat.index < 8}">
+                            <div class="axil-product product-style-one">
+                                <div class="thumbnail">
+                                    <a th:href="@{'/user/single-product?id=' + ${product.productID}}">
+                                        <img th:if="${product.imageURL != null}" 
+                                             th:src="@{'/assets/images/product/laptop/' + ${product.imageURL}}" 
+                                             th:alt="${product.name}"
+                                             class="main-img" loading="lazy"
+                                             data-sal="zoom-out" th:attr="data-sal-delay=${200 + iterStat.index * 100}" data-sal-duration="800">
+                                        <img th:unless="${product.imageURL != null}" 
+                                             th:src="@{/assets/images/product/laptop/default.jpg}" 
+                                             alt="Product Image"
+                                             class="main-img" loading="lazy">
+                                    </a>
+                                    <div class="product-hover-action">
+                                        <ul class="cart-action">
+                                            <li class="quickview">
+                                                <a th:href="@{'/user/single-product?id=' + ${product.productID}}" title="Quick View">
+                                                    <i class="far fa-eye"></i>
+                                                </a>
+                                            </li>
+                                            <li class="select-option">
+                                                <a th:href="@{'/cart/add/' + ${product.productID}}" title="Add to Cart">
+                                                    Add to Cart
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="product-content">
+                                    <div class="inner">
+                                        <h5 class="title">
+                                            <a th:href="@{'/user/single-product?id=' + ${product.productID}}" 
+                                               th:text="${product.name}">Product Name</a>
+                                        </h5>
+                                        <div class="product-price-variant">
+                                            <span class="price current-price" 
+                                                  th:text="${#numbers.formatDecimal(product.price, 0, 'COMMA', 0, 'POINT')} + ' VND'">
+                                                $29.99
+                                            </span>
+                                        </div>
+                                        <div class="product-brand" th:if="${product.brand}">
+                                            <small class="text-muted" th:text="'Brand: ' + ${product.brand}">Brand: Unknown</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- End Dynamic Featured Products -->
+                        
+                        <!-- Empty state if no products -->
+                        <div class="col-12" th:if="${#lists.isEmpty(featuredProducts)}">
+                            <div class="text-center py-5">
+                                <h4>No products available</h4>
+                                <p>Please come back later to see new products.</p>
+                                <a th:href="@{/user/shopping-page}" class="axil-btn btn-bg-primary">Browse Store</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- End First Layout -->
+            </div>
+            
+            <!-- View All Products Button -->
+            <div class="row" th:unless="${#lists.isEmpty(featuredProducts)}">
+                <div class="col-lg-12">
+                    <div class="axil-product-area">
+                        <div class="product-area-header">
+                            <div class="text-center mt--50">
+                                <a th:href="@{/user/shopping-page}" class="axil-btn btn-bg-lighter btn-load-more">
+                                    View All Products <i class="fal fa-long-arrow-right"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- End Featured Products Area -->
+
+    <!-- Start Testimonila Area  -->
+    <div class="axil-testimoial-area axil-section-gap bg-vista-white">
+        <div class="container">
+            <div class="section-title-wrapper">
+                <span class="title-highlighter highlighter-secondary"> <i class="fal fa-quote-left"></i>Reviews</span>
+                <h2 class="title">Customer Feedback</h2>
+            </div>
+            <!-- End .section-title -->
+            <div class="testimonial-slick-activation testimonial-style-one-wrapper slick-layout-wrapper--20 axil-slick-arrow arrow-top-slide">
+                <div class="slick-single-layout testimonial-style-one">
+                    <div class="review-speech">
+                        <p>" The website has a very modern interface,
+                            clear layout and easy product search.
+                            Filtering by brand, price,
+                            and configuration works very effectively,
+                            helping me quickly find
+                            the right laptop."</p>
+                    </div>
+                    <div class="media">
+                        <div class="thumbnail" style="width: 10%">
+                            <img src="/assets/images/product/author.jpg" alt="testimonial image">
+                        </div>
+                        <div class="media-body">
+                            <h6 class="title">Nguyen Van N</h6>
+                        </div>
+                    </div>
+                    <!-- End .thumbnail -->
+                </div>
+                <!-- End .slick-single-layout -->
+                <div class="slick-single-layout testimonial-style-one">
+                    <div class="review-speech">
+                        <p>" Each product is described in detail
+                            with clear specifications, along with
+                            reviews from other customers.
+                            This gives me more confidence in my choice
+                            and eliminates the need to search elsewhere. "</p>
+                    </div>
+                    <div class="media">
+                        <div class="thumbnail" style="width: 10%">
+                            <img src="/assets/images/product/author.jpg" alt="testimonial image">
+                        </div>
+                        <div class="media-body">
+                            <h6 class="title">Dương V.Hoàng M</h6>
+                        </div>
+                    </div>
+                    <!-- End .thumbnail -->
+                </div>
+                <!-- End .slick-single-layout -->
+                <div class="slick-single-layout testimonial-style-one">
+                    <div class="review-speech">
+                        <p>" I was very impressed with the website's support team.
+                            When I encountered a problem during the payment process, I received immediate assistance via live chat.
+                            Their enthusiasm and professionalism made me feel very satisfied."</p>
+                    </div>
+                    <div class="media">
+                        <div class="thumbnail" style="width: 10%">
+                            <img src="/assets/images/product/author.jpg" alt="testimonial image">
+                        </div>
+                        <div class="media-body">
+                            <h6 class="title">Nguyễn Quang V</h6>
+                        </div>
+                    </div>
+                    <!-- End .thumbnail -->
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- End Testimonila Area  -->
+
+    <!-- Start New Arrivals Product Area  -->
+    <div class="axil-new-arrivals-product-area bg-color-white axil-section-gap pb--0">
+        <div class="container">
+            <div class="product-area pb--50">
+                                                <div class="section-title-wrapper">
+                    <span class="title-highlighter highlighter-primary"><i class="far fa-shopping-basket"></i>This week</span>
+                    <h2 class="title">New Arrivals</h2>
+                </div>
+                <div class="new-arrivals-product-activation slick-layout-wrapper--30 axil-slick-arrow arrow-top-slide">
+                    <!-- Dynamic New Products from Database -->
+                    <div class="slick-single-layout" th:each="product, iterStat : ${newProducts}">
+                        <div class="axil-product product-style-two">
+                            <div class="thumbnail">
+                                <a th:href="@{'/user/single-product?id=' + ${product.productID}}">
+                                    <img data-sal="zoom-out" th:attr="data-sal-delay=${200 + iterStat.index * 100}" data-sal-duration="500" 
+                                         th:if="${product.imageURL != null}" 
+                                         th:src="@{'/assets/images/product/laptop/' + ${product.imageURL}}" 
+                                         th:alt="${product.name}"
+                                         loading="lazy">
+                                    <img data-sal="zoom-out" th:attr="data-sal-delay=${200 + iterStat.index * 100}" data-sal-duration="500"
+                                         th:unless="${product.imageURL != null}" 
+                                         th:src="@{/assets/images/product/laptop/default.jpg}" 
+                                         alt="Product Image"
+                                         loading="lazy">
+                                </a>
+                                <div class="label-block label-right" th:if="${iterStat.index < 2}">
+                                    <div class="product-badget">NEW</div>
+                                </div>
+                            </div>
+                            <div class="product-content">
+                                <div class="inner">
+                                    <h5 class="title">
+                                        <a th:href="@{'/user/single-product?id=' + ${product.productID}}" 
+                                           th:text="${product.name}">Product Name</a>
+                                    </h5>
+                                    <div class="product-price-variant">
+                                        <span class="price current-price" 
+                                              th:text="${#numbers.formatDecimal(product.price, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'">
+                                            $30
+                                        </span>
+                                    </div>
+                                    <div class="product-brand" th:if="${product.brand}">
+                                        <small class="text-muted" th:text="'Brand: ' + ${product.brand}">Brand: Not specified</small>
+                                    </div>
+                                    <div class="product-hover-action">
+                                        <ul class="cart-action">
+                                            <li class="quickview">
+                                                <a th:href="@{'/user/single-product?id=' + ${product.productID}}" title="Quick View">
+                                                    <i class="far fa-eye"></i>
+                                                </a>
+                                            </li>
+                                            <li class="select-option">
+                                                <a th:href="@{'/cart/add/' + ${product.productID}}" title="Add to Cart">
+                                                    Add to Cart
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- End .slick-single-layout -->
+                    
+                    <!-- Empty state if no new products -->
+                    <div class="col-12 text-center py-5" th:if="${#lists.isEmpty(newProducts)}">
+                        <h4>No new products available</h4>
+                        <p>Please check back later for new arrivals.</p>
+                        <a th:href="@{/user/shopping-page}" class="axil-btn btn-bg-primary">Browse All Products</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- End New Arrivals Product Area  -->
+
+    <!-- Start Most Sold Product Area  -->
+    <div class="axil-most-sold-product axil-section-gap">
+        <div class="container">
+            <div class="product-area pb--50">
+                <div class="section-title-wrapper section-title-center">
+                    <span class="title-highlighter highlighter-primary"><i class="fas fa-star"></i> Best Sellers</span>
+                    <h2 class="title">Hot Products at Computer Shop</h2>
+                    <p class="subtitle">Best-selling computers and accessories loved by customers</p>
+                </div>
+                <div class="row row-cols-xl-2 row-cols-1 row--15">
+                    <!-- Dynamic Most Sold Products from Database -->
+                    <div class="col" th:each="product, iterStat : ${mostSoldProducts}">
+                        <div class="axil-product-list">
+                            <div class="thumbnail">
+                                <a th:href="@{'/user/single-product?id=' + ${product.productID}}">
+                                    <img data-sal="zoom-in" th:attr="data-sal-delay=${100 + iterStat.index * 100}" data-sal-duration="1500" 
+                                         th:if="${product.imageURL != null}" 
+                                         th:src="@{'/assets/images/product/laptop/' + ${product.imageURL}}" 
+                                         th:alt="${product.name}">
+                                    <img data-sal="zoom-in" th:attr="data-sal-delay=${100 + iterStat.index * 100}" data-sal-duration="1500"
+                                         th:unless="${product.imageURL != null}" 
+                                         th:src="@{/assets/images/product/laptop/default.jpg}" 
+                                         alt="Product Image">
+                                </a>
+                                <div class="product-badge" th:if="${iterStat.index < 3}">
+                                    <span class="badge-hot">🔥 HOT</span>
+                                </div>
+                            </div>
+                            <div class="product-content">
+                                <div class="product-rating">
+                                    <span class="rating-icon">
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i th:class="${iterStat.index % 2 == 0 ? 'fas fa-star' : 'fal fa-star'}"></i>
+                                    </span>
+                                    <span class="rating-number">
+                                        <span th:text="${(100 - iterStat.index * 10) + '+'}">100+</span> Reviews
+                                    </span>
+                                </div>
+                                <h6 class="product-title">
+                                    <a th:href="@{'/user/single-product?id=' + ${product.productID}}" 
+                                       th:text="${product.name}">Product Name</a>
+                                </h6>
+                                <div class="product-price-variant">
+                                    <span class="price current-price" 
+                                          th:text="${#numbers.formatDecimal(product.price, 0, 'COMMA', 0, 'POINT')} + ' VNĐ'">
+                                        $29.99
+                                    </span>
+                                </div>
+                                <div class="product-brand" th:if="${product.brand}">
+                                    <small class="text-primary" th:text="'Brand: ' + ${product.brand}">Brand: Not specified</small>
+                                </div>
+                                <div class="stock-info" th:if="${product.quantity != null}">
+                                    <small th:class="${product.quantity <= 5 ? 'text-danger' : 'text-success'}" 
+                                           th:text="${product.quantity <= 5 ? 'Only ' + product.quantity + ' items left!' : 'In Stock'}">
+                                        In Stock
+                                    </small>
+                                </div>
+                                <div class="product-cart">
+                                    <a th:href="@{'/cart/add/' + ${product.productID}}" class="cart-btn" title="Thêm Vào Giỏ">
+                                        <i class="fal fa-shopping-cart"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- End Dynamic Most Sold Products -->
+                    
+                    <!-- Empty state if no hot products -->
+                    <div class="col-12 text-center py-5" th:if="${#lists.isEmpty(mostSoldProducts)}">
+                        <h4>No hot products available</h4>
+                        <p>Come back later to see trending products.</p>
+                        <a th:href="@{/user/shopping-page}" class="axil-btn btn-bg-primary">Browse All Products</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- End Most Sold Product Area  -->
+</main>
+
+<!-- Footer -->
+<div th:replace="~{user/fragments/footer :: footer}"></div>
+
+<!-- Additional fragments -->
+<div th:replace="~{user/fragments/cartreview :: cartreview}"></div>
+
+<!-- Offer Modal Start -->
+<div class="offer-popup-modal" id="offer-popup-modal">
+    <div class="offer-popup-wrap">
+        <div class="card-body">
+            <button class="popup-close"><i class="fas fa-times"></i></button>
+            <div class="content">
+                <div class="section-title-wrapper">
+                    <span class="title-highlighter highlighter-primary"> <i class="far fa-shopping-basket"></i> Don't Miss Out!!</span>
+                    <h3 class="title">Best Sales Offers<br> Grab Them Now</h3>
+                </div>
+                <div class="poster-countdown countdown"></div>
+                <a th:href="@{/user/shopping-page}" class="axil-btn btn-bg-primary">Buy Now <i class="fal fa-long-arrow-right"></i></a>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Offer Modal End -->
+
+<!-- Login Required Modal -->
+<div class="modal fade" id="loginRequiredModal" tabindex="-1" aria-labelledby="loginRequiredModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="loginRequiredModalLabel">
+                    <i class="fas fa-sign-in-alt text-primary"></i>
+                    Login Required
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-center">
+                <div class="mb-3">
+                    <i class="fas fa-shopping-cart fa-3x text-muted mb-3"></i>
+                </div>
+                <h6 class="mb-3">Please log in to add products to your cart</h6>
+                <p class="text-muted">You need an account to shop and track your orders.</p>
+            </div>
+            <div class="modal-footer justify-content-center">
+                <a th:href="@{/auth/login}" class="btn btn-primary">
+                    <i class="fas fa-sign-in-alt"></i>
+                    Log In Now
+                </a>
+                <a th:href="@{/auth/register}" class="btn btn-outline-secondary">
+                    <i class="fas fa-user-plus"></i>
+                    Register Account
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Custom JS cho homepage (không load main.js để tránh xung đột) -->
+<script th:src="@{/assets/js/common-utils.js}"></script>
+<script th:src="@{/assets/js/homepage-slider.js}"></script>
+<!-- Product Navigation with Fade Animation -->
+<script>
+$(document).ready(function() {
+    let currentSlide = 1;
+    const totalSlides = 4;
+    let autoplayInterval;
+    let isAnimating = false;
+    
+    // Initialize product showcase
+    function initProductShowcase() {
+        showSlide(1);
+        startAutoplay();
+    }
+    
+    // Show specific slide with fade animation
+    function showSlide(slideIndex, direction = 'next') {
+        if (isAnimating) return;
+        isAnimating = true;
+        
+        const $currentContentSlide = $('.product-slide.active');
+        const $currentImageSlide = $('.product-image-slide.active');
+        const $newContentSlide = $(`#slide-${slideIndex}`);
+        const $newImageSlide = $(`#image-${slideIndex}`);
+        const $currentDot = $('.nav-dot.active');
+        const $newDot = $(`.nav-dot[data-slide="${slideIndex}"]`);
+        
+        // Fade out current slides
+        $currentContentSlide.fadeOut(600, function() {
+            $currentContentSlide.removeClass('active');
+            // Fade in new content slide
+            $newContentSlide.addClass('active').fadeIn(600, function() {
+                isAnimating = false;
+            });
+        });
+        
+        $currentImageSlide.fadeOut(600, function() {
+            $currentImageSlide.removeClass('active');
+            // Fade in new image slide
+            $newImageSlide.addClass('active').fadeIn(600);
+        });
+        
+        // Update navigation dots
+        $currentDot.removeClass('active');
+        $newDot.addClass('active');
+        
+        currentSlide = slideIndex;
+    }
+    
+    // Navigate to next slide
+    function nextSlide() {
+        const nextIndex = currentSlide >= totalSlides ? 1 : currentSlide + 1;
+        showSlide(nextIndex, 'next');
+    }
+    
+    // Navigate to previous slide
+    function prevSlide() {
+        const prevIndex = currentSlide <= 1 ? totalSlides : currentSlide - 1;
+        showSlide(prevIndex, 'prev');
+    }
+    
+    // Start autoplay
+    function startAutoplay() {
+        autoplayInterval = setInterval(nextSlide, 4000);
+    }
+    
+    // Stop autoplay
+    function stopAutoplay() {
+        clearInterval(autoplayInterval);
+    }
+    
+    // Restart autoplay after manual navigation
+    function restartAutoplay() {
+        stopAutoplay();
+        setTimeout(startAutoplay, 2000);
+    }
+    
+    // Navigation dot click handlers
+    $('.nav-dot').on('click', function() {
+        const slideIndex = parseInt($(this).data('slide'));
+        if (slideIndex !== currentSlide && !isAnimating) {
+            stopAutoplay();
+            showSlide(slideIndex);
+            restartAutoplay();
+        }
+    });
+    
+    // Keyboard navigation
+    $(document).on('keydown', function(e) {
+        if (e.which === 37) { // Left arrow
+            stopAutoplay();
+            prevSlide();
+            restartAutoplay();
+        } else if (e.which === 39) { // Right arrow
+            stopAutoplay();
+            nextSlide();
+            restartAutoplay();
+        }
+
+    });
+    
+    // Pause on hover
+    $('.axil-main-slider-area').on('mouseenter', function() {
+        stopAutoplay();
+    }).on('mouseleave', function() {
+        startAutoplay();
+    });
+    
+    // Initialize the showcase
+    initProductShowcase();
+    
+    // Initialize with first slide visible
+    $('.product-slide').hide();
+    $('.product-image-slide').hide();
+    $('.product-slide.active').show();
+    $('.product-image-slide.active').show();
+});
+</script>
+
+<script>
+// Fix dropdown functionality - Wait for everything to load
+$(window).on('load', function() {
+    setTimeout(function() {
+        console.log('Initializing dropdown functionality...');
+        
+        // Remove any existing event handlers first
+        $('.my-account > a').off('click');
+        
+        // Account dropdown with proper class toggle
+        $('.my-account > a').on('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            const $dropdown = $(this).siblings('.my-account-dropdown');
+            const $myAccount = $(this).parent('.my-account');
+            
+            console.log('Account icon clicked');
+            
+            // Close other dropdowns
+            $('.my-account').not($myAccount).removeClass('open');
+            $('.my-account-dropdown').not($dropdown).removeClass('open');
+            
+            // Toggle current dropdown
+            $myAccount.toggleClass('open');
+            $dropdown.toggleClass('open');
+            
+            console.log('Dropdown toggled, open class:', $dropdown.hasClass('open'));
+        });
+        
+        // Close dropdown when clicking outside
+        $(document).on('click.dropdown', function(e) {
+            if (!$(e.target).closest('.my-account').length) {
+                $('.my-account').removeClass('open');
+                $('.my-account-dropdown').removeClass('open');
+            }
+        });
+        
+        // Prevent dropdown from closing when clicking inside
+        $('.my-account-dropdown').on('click', function(e) {
+            e.stopPropagation();
+        });
+        
+        // Menu dropdown for mobile
+        $('.menu-item-has-children > a').off('click').on('click', function(e) {
+            if (window.innerWidth <= 991) {
+                e.preventDefault();
+                $(this).siblings('.axil-submenu').slideToggle(200);
+            }
+        });
+        
+        console.log('Dropdown functionality initialized');
+    }, 200);
+});
+</script>
+
+</body>
+</html>

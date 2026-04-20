@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{admin/fragments/header :: header}">
+  <title></title>
+</head>
+<body id="page-top">
+
+<nav th:replace="~{admin/fragments/nav-bar :: nav-bar}"></nav>
+
+<div id="wrapper">
+
+  <!-- Sidebar -->
+  <ul th:replace="~{admin/fragments/sidebar :: sidebar}"></ul>
+
+  <div id="content-wrapper">
+    <div class="container-fluid">
+
+      <!-- Breadcrumbs-->
+      <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+          <a href="/admin/dashboard">Home</a>
+        </li>
+        <li class="breadcrumb-item">
+          <a href="/admin/categories">Category Management</a>
+        </li>
+      </ol>
+      <div class="card mb-3">
+        <div class="card-header">
+          <i class="fas fa-table"></i>
+          Category List
+        </div>
+        <div class="card-body">
+          <div class="table-responsive">
+            <table class="table table-bordered" id="dataTable">
+              <thead>
+              <tr>
+                <th>ID</th>
+                <th>Category Name</th>
+                <th>Description</th>
+                <th>Status</th>
+                <th>Action</th>
+              </tr>
+              </thead>
+              <tbody>
+              <tr th:each="category : ${categories}">
+                <td th:text="${category.categoryID}"></td>
+                <td th:text="${category.name}"></td>
+                <td th:text="${category.description}"></td>
+                <td th:if="${category.isActive == true}"><span class="badge btn-success">Active</span></td>
+                <td th:if="${category.isActive != true}"><span class="badge btn-danger">Hidden</span></td>
+                <td>
+                  <a th:href="@{/admin/edit-categories/{id}(id=${category.categoryID})}" class="btn btn-sm btn-primary">
+                    <i class="fas fa-edit"></i>
+                  </a>
+                  <button type="button" class="btn btn-sm btn-info"
+                          onclick="toggleCategoryStatus(this)"
+                          th:data-category-id="${category.categoryID}"
+                          title="Toggle Status">
+                    <i class="fas fa-toggle-on"></i>
+                  </button>
+                </td>
+              </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+    <footer class="mt-auto" th:replace="~{admin/fragments/footer :: footer}"></footer>
+  </div>
+</div>
+<!-- Scroll to Top Button-->
+<a class="scroll-to-top rounded" href="#page-top">
+  <i class="fas fa-angle-up"></i>
+</a>
+<!-- Logout Modal-->
+<div th:replace="~{admin/fragments/logout :: logout}"></div>
+
+<script>
+// Toggle category status function
+function toggleCategoryStatus(button) {
+    const categoryId = button.getAttribute('data-category-id');
+    fetch('/admin/toggle-category-status/' + categoryId, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        }
+    })
+    .then(response => response.text())
+    .then(data => {
+        if (data === 'success') {
+            location.reload();
+        } else {
+            alert('An error occurred!');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('An error occurred!');
+    });
+}
+</script>
+
+</body>
+</html>

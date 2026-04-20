@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment - Computer Shop</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0"><i class="fas fa-credit-card"></i> Order Payment</h4>
+                </div>
+                <div class="card-body p-4">
+                    <div class="row mb-4">
+                        <div class="col-md-12">
+                            <h5>Order Information</h5>
+                            <div class="card bg-light">
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <p><strong>Order Code:</strong> #<span th:text="${orderId}">ORDER_123</span></p>
+                                            <p><strong>Number of items:</strong> <span th:text="${itemCount}">3</span></p>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <p><strong>Total Amount:</strong> <span class="text-success fw-bold" th:text="${totalAmount}">2,500,000 VND</span></p>
+                                            <p><strong>Shipping Fee:</strong> Free</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mb-4">
+                        <div class="col-md-12">
+                            <h5>Payment Method</h5>
+                            <div class="payment-methods">
+                                <div class="card mb-3">
+                                    <div class="card-body">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="paymentMethod" id="vnpay" value="vnpay" checked>
+                                            <label class="form-check-label d-flex align-items-center" for="vnpay">
+                                                <img src="https://vnpay.vn/assets/images/logo-icon/logo-primary.svg" alt="VNPay" height="30" class="me-3">
+                                                <div>
+                                                    <strong>Pay with VNPay</strong>
+                                                    <br><small class="text-muted">QR Code, Internet Banking, E-wallet</small>
+                                                </div>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="card mb-3">
+                                    <div class="card-body">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="paymentMethod" id="cod" value="cod">
+                                            <label class="form-check-label d-flex align-items-center" for="cod">
+                                                <i class="fas fa-money-bill-wave text-success me-3" style="font-size: 30px;"></i>
+                                                <div>
+                                                    <strong>Cash on Delivery (COD)</strong>
+                                                    <br><small class="text-muted">Pay in cash when receiving goods</small>
+                                                </div>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <form id="paymentForm" th:action="@{/payment/vnpay/checkout}" method="post">
+                        <input type="hidden" name="orderId" th:value="${orderId}">
+                        <input type="hidden" name="amount" th:value="${amount}">
+
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="d-grid gap-2">
+                                    <button type="submit" class="btn btn-primary btn-lg" id="payButton">
+                                        <i class="fas fa-lock"></i> Secure Payment
+                                    </button>
+                                    <a href="/cart" class="btn btn-outline-secondary">
+                                        <i class="fas fa-arrow-left"></i> Back to Cart
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+
+                    <div class="row mt-4">
+                        <div class="col-md-12">
+                            <div class="alert alert-info">
+                                <i class="fas fa-shield-alt"></i>
+                                <strong>Security:</strong> Your payment information is encrypted and protected by VNPay.
+                                We do not store your credit card information.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const paymentForm = document.getElementById('paymentForm');
+        const payButton = document.getElementById('payButton');
+        const paymentMethods = document.querySelectorAll('input[name="paymentMethod"]');
+
+        // Handle payment method change
+        paymentMethods.forEach(method => {
+            method.addEventListener('change', function() {
+                if (this.value === 'vnpay') {
+                    paymentForm.action = '/payment/vnpay/checkout';
+                    payButton.innerHTML = '<i class="fas fa-qrcode"></i> Thanh toán VNPay';
+                } else if (this.value === 'cod') {
+                    paymentForm.action = '/payment/cod/checkout';
+                    payButton.innerHTML = '<i class="fas fa-money-bill-wave"></i> Đặt hàng COD';
+                }
+            });
+        });
+
+        // Handle form submission
+        paymentForm.addEventListener('submit', function(e) {
+            const selectedMethod = document.querySelector('input[name="paymentMethod"]:checked').value;
+
+            if (selectedMethod === 'vnpay') {
+                payButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Đang chuyển hướng...';
+                payButton.disabled = true;
+            } else if (selectedMethod === 'cod') {
+                if (!confirm('Bạn có chắc chắn muốn đặt hàng với phương thức thanh toán khi nhận hàng?')) {
+                    e.preventDefault();
+                    return false;
+                }
+            }
+        });
+    });
+</script>
+</body>
+</html> 

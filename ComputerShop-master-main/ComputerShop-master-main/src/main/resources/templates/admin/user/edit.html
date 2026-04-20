@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{admin/fragments/header :: header}">
+    <title>Edit User</title>
+</head>
+<body id="page-top">
+<nav th:replace="~{admin/fragments/nav-bar :: nav-bar}"></nav>
+<div id="wrapper">
+    <div th:replace="~{admin/fragments/sidebar :: sidebar}"></div>
+    <div id="content-wrapper" class="d-flex flex-column">
+        <div id="content">
+            <div class="container-fluid">
+                <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                    <h1 class="h3 mb-0 text-gray-800">Edit User</h1>
+                </div>
+                <ol class="breadcrumb mb-4">
+                    <li class="breadcrumb-item">
+                        <a th:href="@{/admin/dashboard}">Dashboard</a>
+                    </li>
+                    <li class="breadcrumb-item">
+                        <a th:href="@{/admin/user}">User Management</a>
+                    </li>
+                    <li class="breadcrumb-item active">Edit</li>
+                </ol>
+                <div class="row justify-content-center">
+                    <div class="col-xl-8 col-lg-9">
+                        <div class="card shadow mb-4">
+                            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                                <h6 class="m-0">User Information</h6>
+                            </div>
+                            <div class="card-body">
+                                <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+                                    <i class="fas fa-exclamation-circle me-2"></i>
+                                    <span th:text="${error}"></span>
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                </div>
+                                <form th:object="${userUpdateByAdmin}" th:action="@{/admin/edit-user}" method="post">
+                                    <input type="hidden" th:field="*{userId}" />
+                                    <input type="hidden" th:field="*{isAccountLocked}" />
+                                    <!-- Basic Information -->
+                                    <div class="row mb-4">
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label for="username">Login Name <span class="text-danger">*</span></label>
+                                                <input type="text" class="form-control" id="username" th:field="*{username}" readonly>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label for="email">Email <span class="text-danger">*</span></label>
+                                                <input type="email" class="form-control" id="email" th:field="*{email}" readonly>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row mb-4">
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label for="fullName">Full Name <span class="text-danger">*</span></label>
+                                                <input type="text" class="form-control" id="fullName" th:field="*{fullName}" required>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label for="phoneNumber">Phone Number</label>
+                                                <input type="tel" class="form-control" id="phoneNumber" th:field="*{phoneNumber}">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row mb-4">
+                                        <div class="col-md-12">
+                                            <div class="form-group">
+                                                <label for="address">Address</label>
+                                                <input type="text" class="form-control" id="address" th:field="*{address}">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group mb-4">
+                                        <label for="password">New Password</label>
+                                        <input type="password" class="form-control" id="password" name="password"
+                                               placeholder="Leave blank if you do not want to change">
+                                        <small class="form-text text-muted">Only fill in if you want to change password</small>
+                                    </div>
+                                    <div class="form-group mb-4">
+                                        <label>Role <span class="text-danger">*</span></label>
+                                        <div class="row">
+                                            <div class="col-md-3">
+                                                <div class="custom-control custom-radio">
+                                                    <input type="radio" class="custom-control-input"
+                                                           th:field="*{role}" value="Admin"
+                                                           id="roleAdmin">
+                                                    <label class="custom-control-label" for="roleAdmin">
+                                                        <i class="fas fa-user-shield text-warning mr-1"></i>
+                                                        Administrator
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <div class="custom-control custom-radio">
+                                                    <input type="radio" class="custom-control-input"
+                                                           th:field="*{role}" value="Customer"
+                                                           id="roleCustomer">
+                                                    <label class="custom-control-label" for="roleCustomer">
+                                                        <i class="fas fa-user text-info mr-1"></i>
+                                                        Customer
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <div class="custom-control custom-radio">
+                                                    <input type="radio" class="custom-control-input"
+                                                           th:field="*{role}" value="Sales"
+                                                           id="roleSales">
+                                                    <label class="custom-control-label" for="roleSales">
+                                                        <i class="fas fa-shopping-cart text-success mr-1"></i>
+                                                        Sales Staff
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <div class="custom-control custom-radio">
+                                                    <input type="radio" class="custom-control-input"
+                                                           th:field="*{role}" value="Shipper"
+                                                           id="roleShipper">
+                                                    <label class="custom-control-label" for="roleShipper">
+                                                        <i class="fas fa-truck text-primary mr-1"></i>
+                                                        Shipper
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group mb-4">
+                                        <label>Status <span class="text-danger">*</span></label>
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="custom-control custom-radio">
+                                                    <input type="radio" class="custom-control-input"
+                                                           th:field="*{active}" th:value="true"
+                                                           id="statusActive">
+                                                    <label class="custom-control-label" for="statusActive">
+                                                        <i class="fas fa-check-circle text-success mr-1"></i>
+                                                        Activated
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="custom-control custom-radio">
+                                                    <input type="radio" class="custom-control-input"
+                                                           th:field="*{active}" th:value="false"
+                                                           id="statusInactive">
+                                                    <label class="custom-control-label" for="statusInactive">
+                                                        <i class="fas fa-ban text-danger mr-1"></i>
+                                                        Not Yet Activated
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="d-flex justify-content-end gap-2">
+                                        <a th:href="@{/admin/user}" class="btn btn-secondary">
+                                            <i class="fas fa-times mr-1"></i>
+                                            Cancel
+                                        </a>
+                                        <button type="submit" class="btn btn-primary">
+                                            <i class="fas fa-save mr-1"></i>
+                                            Save Changes
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <footer th:replace="~{admin/fragments/footer :: footer}"></footer>
+    </div>
+</div>
+<a class="scroll-to-top rounded" href="#page-top">
+    <i class="fas fa-angle-up"></i>
+</a>
+<div th:replace="~{admin/fragments/logout :: logout}"></div>
+</body>
+</html>

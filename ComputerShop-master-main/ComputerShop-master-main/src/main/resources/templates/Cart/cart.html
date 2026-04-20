@@ -1,0 +1,308 @@
+<!doctype html>
+<html class="no-js" lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Cart - Computer Shop</title>
+    <!-- Cart Page Custom CSS -->
+    <link th:href="@{/assets/css/cart-custom.css}" rel="stylesheet">
+</head>
+<body class="sticky-header">
+    <!-- Back to top start -->
+    <a href="#top" class="back-to-top" id="backto-top"><i class="fal fa-arrow-up"></i></a>
+    <!-- Back to top end -->
+    
+    <!-- Header -->
+    <header class="header axil-header header-style-5">
+        <div th:replace="~{user/fragments/header2 :: header}"></div>
+    </header>
+    
+    <main class="main-wrapper">
+        <!-- Start Cart Area  -->
+        <div class="axil-product-cart-area axil-section-gap">
+            <div class="container">
+                <div class="axil-product-cart-wrap">
+                    <div class="product-table-heading">
+                        <h4 class="title">Your Shopping Cart</h4>
+                        <a th:href="@{/cart/clear}" class="cart-clear">Clear Cart</a>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table axil-product-table axil-cart-table mb--40">
+                            <thead>
+                                <tr>
+                                    <th scope="col" class="product-remove"></th>
+                                    <th scope="col" class="product-info">Product</th>
+                                    <th scope="col" class="product-price">Price</th>
+                                    <th scope="col" class="product-quantity">Quantity</th>
+                                    <th scope="col" class="product-subtotal">Subtotal</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Empty Cart Row -->
+                                <tr th:if="${cartItems == null || cartItems.isEmpty()}">
+                                    <td colspan="5" class="text-center">
+                                        <div class="empty-cart-message">
+                                            <h4>Your cart is empty</h4>
+                                            <p>Start shopping to add items to your cart!</p>
+                                            <a href="/user/shopping-page" class="axil-btn btn-bg-primary">Browse Products</a>
+                                        </div>
+                                    </td>
+                                </tr>
+                                
+                                <!-- Cart Items -->
+                                <tr th:each="item : ${cartItems}" th:if="${item != null && item.product != null}" class="cart-item-row">
+                                    <td class="product-remove">
+                                        <!-- Remove link with variant support -->
+                                        <a th:if="${item.hasVariant()}" 
+                                           th:href="@{/cart/remove/{productId}(productId=${item.product.productID}) + '?variantId=' + ${item.variant.variantId}}" 
+                                           class="remove-btn">
+                                            <i class="fal fa-times"></i>
+                                        </a>
+                                        <a th:unless="${item.hasVariant()}" 
+                                           th:href="@{/cart/remove/{id}(id=${item.product.productID})}" 
+                                           class="remove-btn">
+                                            <i class="fal fa-times"></i>
+                                        </a>
+                                    </td>
+                                    <td class="product-info">
+                                        <div class="product-info-wrapper">
+                                            <div class="product-thumbnail">
+                                                <a th:href="@{'/user/single-product?id=' + ${item.product.productID}}">
+                                                    <!-- Show variant image if available, otherwise product image -->
+                                                    <img th:if="${item.hasVariant() and item.variant.variantImageUrl != null}" 
+                                                         th:src="@{'/assets/images/product/laptop/' + ${item.variant.variantImageUrl}}" 
+                                                         alt="Hình ảnh biến thể sản phẩm">
+                                                    <img th:unless="${item.hasVariant() and item.variant.variantImageUrl != null}" 
+                                                         th:if="${item.product.imageURL != null}"
+                                                         th:src="@{'/assets/images/product/laptop/' + ${item.product.imageURL}}" 
+                                                         alt="Hình ảnh sản phẩm">
+                                                    <img th:unless="${item.product.imageURL != null}" 
+                                                         th:src="@{/assets/images/product/laptop/default.jpg}" 
+                                                         alt="Hình ảnh sản phẩm">
+                                                </a>
+                                            </div>
+                                            <div class="product-details">
+                                                <h6 class="product-title">
+                                                    <a th:href="@{'/user/single-product?id=' + ${item.product.productID}}" 
+                                                       th:text="${item.product.name}">Product Name</a>
+                                                </h6>
+                                                <div class="product-brand" th:if="${item.product.brand != null}">
+                                                    <small th:text="${item.product.brand}">Brand</small>
+                                                </div>
+                                                
+                                                <!-- Variant Information -->
+                                                <div th:if="${item.hasVariant()}" class="variant-info mt-2">
+                                                    <div class="variant-specs">
+                                                        <small class="variant-detail d-block" th:if="${item.variant.cpu != null}">
+                                                            <strong>CPU:</strong> <span th:text="${item.variant.cpu}">CPU</span>
+                                                        </small>
+                                                        <small class="variant-detail d-block" th:if="${item.variant.ram != null}">
+                                                            <strong>RAM:</strong> <span th:text="${item.variant.ram}">RAM</span>
+                                                        </small>
+                                                        <small class="variant-detail d-block" th:if="${item.variant.storage != null}">
+                                                            <strong>Lưu trữ:</strong> <span th:text="${item.variant.storage}">Storage</span>
+                                                        </small>
+                                                        <small class="variant-detail d-block" th:if="${item.variant.gpu != null}">
+                                                            <strong>GPU:</strong> <span th:text="${item.variant.gpu}">GPU</span>
+                                                        </small>
+                                                        <!-- Custom attributes like color -->
+                                                        <small th:if="${item.variant.customAttributesMap != null and item.variant.customAttributesMap.get('color') != null}" 
+                                                               class="variant-detail d-block">
+                                                            <strong>Color:</strong> <span th:text="${item.variant.customAttributesMap.get('color')}">Color</span>
+                                                        </small>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="product-price">
+                                        <div class="price-wrapper">
+                                            <!-- Show variant price if available, otherwise product price -->
+                                            <span th:if="${item.hasVariant()}" class="price-amount" 
+                                                  th:text="${#numbers.formatDecimal(item.variant.price, 0, 'COMMA', 0, 'POINT')}">0</span>
+                                            <span th:unless="${item.hasVariant()}" class="price-amount" 
+                                                  th:text="${#numbers.formatDecimal(item.product.price, 0, 'COMMA', 0, 'POINT')}">0</span>
+                                            <span class="currency-symbol"> VND</span>
+                                        </div>
+                                    </td>
+                                    <td class="product-quantity">
+                                        <div class="quantity-wrapper">
+                                            <!-- Update form with variant support -->
+                                            <form th:if="${item.hasVariant()}"
+                                                  th:action="@{/cart/update/{productId}(productId=${item.product.productID})}" 
+                                                  method="post" class="quantity-form">
+                                                <input type="hidden" name="variantId" th:value="${item.variant.variantId}">
+                                                <div class="quantity-control">
+                                                    <button type="button" class="qty-btn minus">-</button>
+                                                    <input type="number" name="sl" th:value="${item.quantity}" min="1" class="quantity-input">
+                                                    <button type="button" class="qty-btn plus">+</button>
+                                                </div>
+                                                <button type="submit" class="update-btn" style="display: none;">Update</button>
+                                            </form>
+                                            <form th:unless="${item.hasVariant()}"
+                                                  th:action="@{/cart/update/{id}(id=${item.product.productID})}" 
+                                                  method="post" class="quantity-form">
+                                                <div class="quantity-control">
+                                                    <button type="button" class="qty-btn minus">-</button>
+                                                    <input type="number" name="sl" th:value="${item.quantity}" min="1" class="quantity-input">
+                                                    <button type="button" class="qty-btn plus">+</button>
+                                                </div>
+                                                <button type="submit" class="update-btn" style="display: none;">Update</button>
+                                            </form>
+                                        </div>
+                                    </td>
+                                    <td class="product-subtotal">
+                                        <div class="subtotal-wrapper">
+                                            <!-- Show original price crossed out if discount applied -->
+                                            <div th:if="${item.hasDiscount}" class="price-display">
+                                                <span class="original-price text-muted" style="text-decoration: line-through;">
+                                                    <span th:text="${#numbers.formatDecimal(item.originalPrice, 0, 'COMMA', 0, 'POINT')}">0</span> VND
+                                                </span><br>
+                                                <span class="final-price text-success font-weight-bold">
+                                                    <span th:text="${#numbers.formatDecimal(item.finalPrice, 0, 'COMMA', 0, 'POINT')}">0</span> VND
+                                                </span>
+                                            </div>
+                                            <!-- Show normal price if no discount -->
+                                            <div th:unless="${item.hasDiscount}">
+                                                <span class="subtotal-amount" th:text="${#numbers.formatDecimal(item.originalPrice, 0, 'COMMA', 0, 'POINT')}">0</span><span class="currency-symbol"> VND</span>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <!-- Order Summary Section -->
+                    <div class="row" th:if="${cartItems != null && !cartItems.isEmpty()}">
+                        <div class="col-xl-5 col-lg-7 offset-xl-7 offset-lg-5">
+                            <div class="axil-order-summery order-checkout-summery">
+                                <h5 class="title mb--20">Order Summary</h5>
+                                
+                                <!-- Voucher Section -->
+                                <div class="voucher-section mb-3">
+                                    <div th:if="${hasVoucher}" class="applied-voucher">
+                                        <div class="alert alert-success">
+                                            <strong>✓ Voucher Applied: </strong>
+                                            <span th:text="${voucherCode}">VOUCHER20</span>
+                                            <a th:href="@{/cart/remove-voucher}" class="btn btn-sm btn-outline-danger ms-2">Remove</a>
+                                        </div>
+                                    </div>
+                                    
+                                    <div th:unless="${hasVoucher}" class="voucher-form">
+                                        <form th:action="@{/cart/apply-voucher}" method="post">
+                                            <div class="input-group mb-2">
+                                                <input type="text" name="voucherCode" placeholder="Enter voucher code" class="form-control" required>
+                                                <input type="hidden" name="redirect" value="cart">
+                                                <button type="submit" class="btn btn-outline-primary">Apply</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                    
+                                    <!-- Voucher Messages -->
+                                    <div th:if="${voucherError}" class="alert alert-danger alert-sm">
+                                        <span th:text="${voucherError}">Information about the error</span>
+                                    </div>
+                                    <div th:if="${voucherSuccess}" class="alert alert-success alert-sm">
+                                        <span th:text="${voucherSuccess}">Success message</span>
+                                    </div>
+                                </div>
+
+                                <div class="summery-table-wrap">
+                                    <table class="table summery-table mb--30">
+                                        <tr class="order-subtotal">
+                                            <td>Subtotal</td>
+                                            <td th:text="${#numbers.formatDecimal(originalTotal, 0, 'COMMA', 0, 'POINT')} + ' VND'">0 VND</td>
+                                        </tr>
+                                        
+                                        <!-- Discount Row -->
+                                        <tr th:if="${hasVoucher and totalDiscount > 0}" class="order-discount">
+                                            <td>
+                                                <span>Discount</span>
+                                                <small th:if="${voucherCode}" class="text-muted">(<span th:text="${voucherCode}"></span>)</small>
+                                            </td>
+                                            <td class="text-success">-<span th:text="${#numbers.formatDecimal(totalDiscount, 0, 'COMMA', 0, 'POINT')}">0</span> VND</td>
+                                        </tr>
+                                        
+                                        <tr class="order-total">
+                                            <td><strong>Total</strong></td>
+                                            <td class="order-total-amount">
+                                                <strong th:text="${#numbers.formatDecimal(finalTotal, 0, 'COMMA', 0, 'POINT')} + ' VND'">0 VND</strong>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                                <a th:href="@{/cart/checkout}" class="axil-btn btn-bg-primary checkout-btn w-100">Proceed to Checkout</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- End Cart Area  -->
+    </main>
+    
+    <!-- Footer -->
+    <div th:replace="~{user/fragments/footer :: footer}"></div>
+    
+    <!-- Additional fragments -->
+    <div th:replace="~{user/fragments/cartreview :: cartreview}"></div>
+    
+    <!-- Cart Page Scripts -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Handle quantity buttons
+            document.querySelectorAll('.qty-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    const form = this.closest('form');
+                    const input = form.querySelector('.quantity-input');
+                    const currentValue = parseInt(input.value) || 1;
+                    
+                    if (this.classList.contains('minus')) {
+                        if (currentValue > 1) {
+                            input.value = currentValue - 1;
+                        }
+                    } else if (this.classList.contains('plus')) {
+                        input.value = currentValue + 1;
+                    }
+                    
+                    // Auto-submit form after changing quantity
+                    setTimeout(() => {
+                        form.submit();
+                    }, 500);
+                });
+            });
+            
+            // Handle quantity input change
+            document.querySelectorAll('.quantity-input').forEach(input => {
+                input.addEventListener('change', function() {
+                    if (this.value < 1) {
+                        this.value = 1;
+                    }
+                    // Auto-submit form after changing quantity
+                    setTimeout(() => {
+                        this.closest('form').submit();
+                    }, 500);
+                });
+            });
+            
+            // Handle shipping option changes
+            document.querySelectorAll('input[name="shipping"]').forEach(radio => {
+                radio.addEventListener('change', function() {
+                    const subtotal = parseFloat(document.querySelector('.order-subtotal td:last-child').textContent.replace(/[^0-9]/g, ''));
+                    let shippingCost = 0;
+                    
+                    if (this.id === 'radio2') {
+                        shippingCost = 35000;
+                    } else if (this.id === 'radio3') {
+                        shippingCost = 12000;
+                    }
+                    
+                    const total = subtotal + shippingCost;
+                    document.querySelector('.order-total-amount').textContent = new Intl.NumberFormat('vi-VN').format(total) + ' VND';
+                });
+            });
+        });
+    </script>
+</body>
+</html>

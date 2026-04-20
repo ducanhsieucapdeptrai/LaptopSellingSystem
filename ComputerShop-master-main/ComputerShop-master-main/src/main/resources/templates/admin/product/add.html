@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{admin/fragments/header :: header}">
+    <title></title>
+</head>
+<body id="page-top" class="newsletter-popup-modal">
+<nav th:replace="~{admin/fragments/nav-bar :: nav-bar}"></nav>
+<div id="wrapper">
+    <!-- Sidebar -->
+    <ul th:replace="~{admin/fragments/sidebar :: sidebar}"></ul>
+
+    <div id="content-wrapper" class="flex-grow-1">
+        <div class="container-fluid">
+
+            <!-- Breadcrumbs-->
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item">
+                    <a href="/admin/dashboard">Dashboard</a>
+                </li>
+                <li class="breadcrumb-item">
+                    <a href="/admin/product">Product Management</a>
+                </li>
+                <li class="breadcrumb-item active">Create Product</li>
+            </ol>
+            <!-- Main body information -->
+            <div class="row justify-content-center">
+                <div class="col-md-8 col-lg-6">
+                    <div class="card shadow mb-4">
+                        <div class="card-header bg-primary text-white">
+                            <h4 class="mb-0">Add New Product</h4>
+                        </div>
+                        <div class="card-body">
+                            <!-- Error message display -->
+                            <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+                                <i class="fas fa-exclamation-circle"></i>
+                                <span th:text="${error}"></span>
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                            <form th:action="@{/admin/add-product}" th:object="${product}" method="post" enctype="multipart/form-data">
+                                <div class="form-group mb-3">
+                                    <label for="name">Product Name<span class="text-danger">*</span></label>
+                                    <textarea id="name" class="form-control" th:field="*{name}" required></textarea>
+                                </div>
+                                <div class="form-group mb-3">
+                                    <label for="brand">Brand<span class="text-danger">*</span></label>
+                                    <textarea id="brand" class="form-control" th:field="*{brand}" required></textarea>
+                                </div>
+                                <div class="form-group mb-4">
+                                    <label for="description">Description<span class="text-danger">*</span></label>
+                                    <textarea id="description" class="form-control" th:field="*{description}" required></textarea>
+                                </div>
+                                <div class="form-group mb-4">
+                                    <label for="price">Price<span class="text-danger">*</span></label>
+                                    <input type="number" id="price" class="form-control" th:field="*{price}" required>
+                                </div>
+                                <div class="form-group mb-4">
+                                    <label for="quantity">Quantity<span class="text-danger">*</span></label>
+                                    <input type="number" id="quantity" class="form-control" th:field="*{quantity}" required>
+                                </div>
+                                <div class="form-group mb-4">
+                                    <label for="category">Category<span class="text-danger">*</span></label>
+                                    <select id="category" class="form-control" th:field="*{categories.categoryID}" style="padding: 7px" required>
+                                        <option value="" disabled selected>Select Category</option>
+                                        <option th:each="category : ${categories}" th:value="${category.categoryID}"
+                                                th:text="${category.name}"></option>
+                                    </select>
+                                </div>
+                                <div class="form-group mb-4">
+                                    <label for="imageURL">Image<span class="text-danger">*</span></label>
+                                    <input id="imageURL" class="form-control" th:type="file" name="productImage"
+                                       style="padding: 5px"    required>
+                                </div>
+                                <div class="form-group mb-4">
+                                    <label>Status<span class="text-danger">*</span></label>
+                                    <div>
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" th:field="*{isActive}" value="1"
+                                                   id="activeTrue" checked>
+                                            <label class="form-check-label" for="activeTrue">Kích hoạt</label>
+                                        </div>
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" th:field="*{isActive}" value="0"
+                                                   id="activeFalse" checked>
+                                            <label class="form-check-label" for="activeTrue">Ẩn</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <button type="submit" class="btn btn-success w-100">
+                                        <i class="fas fa-save"></i> Add Product
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <footer class="mt-auto" th:replace="~{admin/fragments/footer :: footer}"></footer>
+    </div>
+</div>
+</body>
+
+<!-- Scroll to Top Button-->
+<a class="scroll-to-top rounded" href="#page-top">
+    <i class="fas fa-angle-up"></i>
+</a>
+
+
+<!-- Logout Modal-->
+<div  th:replace="~{admin/fragments/logout :: logout}"></div>
+
+</html>

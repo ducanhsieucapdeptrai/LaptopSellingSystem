@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="en">
+
+<ul class="sidebar navbar-nav" id="accordionSidebar" th:fragment="sidebar" lang="en">
+    <li class="nav-item active" sec:authorize="hasAnyRole('Admin', 'Sales')">
+        <a class="nav-link" th:href="@{/admin/dashboard}">
+            <i class="fas fa-fw fa-tachometer-alt"></i>
+            <span>Home</span>
+        </a>
+    </li>
+    <li class="nav-item" sec:authorize="hasAnyRole('Admin','fSales')">
+        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseCategories"
+           aria-expanded="false" aria-controls="collapseCategories">
+            <i class="fas fa-fw fa-tags"></i>
+            <span>Category Management</span>
+        </a>
+        <div id="collapseCategories" class="collapse" aria-labelledby="headingCategories" data-parent="#accordionSidebar">
+            <div class="collapse-inner">
+                <a class="collapse-item" th:href="@{/admin/categories}" sec:authorize="hasAnyRole('Admin','Sales')">
+                    <i class="fas fa-list mr-2"></i>Category List
+                </a>
+                <a class="collapse-item" th:href="@{add-categories}" sec:authorize="hasAnyRole('Admin')">
+                    <i class="fas fa-plus mr-2"></i>Add Category
+                </a>
+            </div>
+        </div>
+    </li>
+    <li class="nav-item" sec:authorize="hasAnyRole('Admin','Sales')">
+        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseProducts"
+           aria-expanded="false" aria-controls="collapseProducts">
+            <i class="fas fa-fw fa-box"></i>
+            <span>Product Management</span>
+        </a>
+        <div id="collapseProducts" class="collapse" aria-labelledby="headingProducts" data-parent="#accordionSidebar">
+            <div class="collapse-inner">
+                <a class="collapse-item" th:href="@{/admin/product}" sec:authorize="hasAnyRole('Admin','Sales')">
+                    <i class="fas fa-list mr-2"></i>Product List
+                </a>
+                <a class="collapse-item" th:href="@{/admin/add-product}" sec:authorize="hasAnyRole('Admin')">
+                    <i class="fas fa-plus mr-2"></i>Add Product
+                </a>
+            </div>
+        </div>
+    </li>
+    <li class="nav-item" sec:authorize="hasAnyRole('Admin')">
+        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseUsers"
+           aria-expanded="false" aria-controls="collapseUsers">
+            <i class="fas fa-fw fa-users"></i>
+            <span>User Management</span>
+        </a>
+        <div id="collapseUsers" class="collapse" aria-labelledby="headingUsers" data-parent="#accordionSidebar">
+            <div class="collapse-inner">
+                <a class="collapse-item" th:href="@{/admin/user}">
+                    <i class="fas fa-list mr-2"></i>User List
+                </a>
+                <a class="collapse-item" th:href="@{/admin/add-user}">
+                    <i class="fas fa-user-plus mr-2"></i>Add User
+                </a>
+            </div>
+        </div>
+    </li>
+    <li class="nav-item" sec:authorize="hasAnyRole('Admin','Sales')">
+        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseVouchers"
+           aria-expanded="false" aria-controls="collapseVouchers">
+            <i class="fas fa-fw fa-ticket-alt"></i>
+            <span>Voucher Management</span>
+        </a>
+        <div id="collapseVouchers" class="collapse" aria-labelledby="headingVouchers" data-parent="#accordionSidebar">
+            <div class="collapse-inner">
+                <a class="collapse-item" th:href="@{/admin/vouchers}" sec:authorize="hasAnyRole('Admin','Sales')">
+                    <i class="fas fa-list mr-2"></i>Voucher List
+                </a>
+                <a class="collapse-item" th:href="@{/admin/vouchers/add}" sec:authorize="hasAnyRole('Admin')">
+                    <i class="fas fa-plus mr-2"></i>Add Voucher
+                </a>
+            </div>
+        </div>
+    </li>
+    <li class="nav-item" sec:authorize="hasAnyRole('Admin')">
+        <a th:href="@{/admin/product-variants/field-config}" class="nav-link">
+            <i class="fas fa-fw fa-cogs"></i>
+            <span>Manage Custom Fields</span>
+        </a>
+    </li>
+    <li class="nav-item" sec:authorize="hasAnyRole('Admin')">
+        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseNotifications"
+           aria-expanded="false" aria-controls="collapseNotifications">
+            <i class="fas fa-fw fa-bell"></i>
+            <span>Notification Management</span>
+        </a>
+        <div id="collapseNotifications" class="collapse" aria-labelledby="headingNotifications" data-parent="#accordionSidebar">
+            <div class="collapse-inner">
+                <a class="collapse-item" th:href="@{/notifications/admin}" sec:authorize="hasAnyRole('Admin')">
+                    <i class="fas fa-list mr-2"></i>Notification List
+                </a>
+                <a class="collapse-item" th:href="@{/notifications/admin/broadcast}" sec:authorize="hasAnyRole('Admin')">
+                    <i class="fas fa-bullhorn mr-2"></i>Send Broadcast Notification
+                </a>
+            </div>
+        </div>
+    </li>
+    <li class="nav-item" sec:authorize="hasAnyRole('Admin','Sales')">
+        <a class="nav-link" th:href="@{/admin/orders}">
+            <i class="fas fa-fw fa-shopping-cart"></i>
+            <span>Order Management</span>
+        </a>
+    </li>
+
+    <li class="nav-item" sec:authorize="hasRole('Admin')">
+        <a class="nav-link" th:href="@{/shipper/dashboard}">
+            <i class="fas fa-fw fa-truck"></i>
+            <span>Dashboard Shipping</span>
+        </a>
+    </li>
+    <li class="nav-item" sec:authorize="hasRole('Admin')">
+        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseShipperOrders"
+           aria-expanded="false" aria-controls="collapseShipperOrders">
+            <i class="fas fa-fw fa-shipping-fast"></i>
+            <span>Shipping Management</span>
+        </a>
+        <div id="collapseShipperOrders" class="collapse" aria-labelledby="headingShipperOrders" data-parent="#accordionSidebar">
+            <div class="collapse-inner">
+                <a class="collapse-item" th:href="@{/shipper/orders}">
+                    <i class="fas fa-list mr-2"></i>All Order
+                </a>
+                <a class="collapse-item" th:href="@{/shipper/orders?status=PROCESSING}">
+                    <i class="fas fa-clock text-warning mr-2"></i>Processing
+                </a>
+                <a class="collapse-item" th:href="@{/shipper/orders?status=SHIPPED}">
+                    <i class="fas fa-shipping-fast text-info mr-2"></i>Shipping
+                </a>
+                <a class="collapse-item" th:href="@{/shipper/orders?status=DELIVERED}">
+                    <i class="fas fa-check-circle text-success mr-2"></i>Delivered
+                </a>
+            </div>
+        </div>
+    </li>
+    <li class="nav-item" sec:authorize="hasAnyRole('Admin','Sales')">
+        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseWarehouse" aria-expanded="false" aria-controls="collapseWarehouse">
+            <i class="fas fa-warehouse"></i>
+            <span>Warehouse Management</span>
+        </a>
+        <div id="collapseWarehouse" class="collapse" aria-labelledby="headingWarehouse" data-parent="#accordionSidebar">
+            <div class="collapse-inner">
+                <a class="collapse-item" th:href="@{/admin/purchase-orders}">
+                    <i class="fas fa-arrow-down mr-2"></i>Import Stock
+                </a>
+                <a class="collapse-item" th:href="@{/admin/export-orders}">
+                    <i class="fas fa-arrow-up mr-2"></i>Export Stock
+                </a>
+            </div>
+        </div>
+    </li>
+    <!-- Statistics - Toggle statistics -->
+    <li class="nav-item" sec:authorize="hasAnyRole('Admin','Sales')">
+        <a class="nav-link" th:href="@{/admin/dashboard(section='statistics')}" id="statisticsToggle">
+            <i class="fas fa-fw fa-chart-pie"></i>
+            <span>Statistics</span>
+        </a>
+    </li>
+
+    <!-- Reports - Dropdown menu -->
+    <li class="nav-item" sec:authorize="hasAnyRole('Admin','Sales')">
+        <a class="nav-link collapsed" href="#" onclick="toggleReportsMenu(event); return false;">
+            <i class="fas fa-fw fa-chart-line"></i>
+            <span>Reports</span>
+        </a>
+        <div id="collapseReports" class="collapse">
+            <div class="collapse-inner">
+                <h6 class="collapse-header">Report Types:</h6>
+                <a class="collapse-item" th:href="@{/admin/reports/sales}">Sales</a>
+                <a class="collapse-item" th:href="@{/admin/reports/products}">Products</a>
+                <a class="collapse-item" th:href="@{/admin/reports/customers}">Customers</a>
+            </div>
+        </div>
+    </li>
+</ul>
+</html>

@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{admin/fragments/header :: header}">
+    <title>Purchase Order Details</title>
+</head>
+<body>
+<nav th:replace="~{admin/fragments/nav-bar :: nav-bar}"></nav>
+<div id="wrapper">
+    <ul th:replace="~{admin/fragments/sidebar :: sidebar}"></ul>
+    <div id="content-wrapper">
+        <div class="container-fluid">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="/admin/dashboard">Dashboard</a></li>
+                <li class="breadcrumb-item"><a href="/admin/purchase-orders">Purchase Order Management</a></li>
+                <li class="breadcrumb-item active">Purchase Order Details</li>
+            </ol>
+            <div class="card mb-3">
+                <div class="card-header">
+                    <i class="fas fa-info-circle"></i> Purchase Order Information
+                </div>
+                <div class="card-body">
+                    <div><b>Code:</b> <span th:text="${order.id}"></span></div>
+                    <div><b>Import Date:</b> <span th:text="${#temporals.format(order.createdAt, 'dd/MM/yyyy HH:mm')}"></span></div>
+                    <div><b>Total Amount:</b> <span th:text="${order.totalAmount}"></span></div>
+                    <div><b>Paid Amount:</b> <span th:text="${order.paidAmount}"></span></div>
+                    <div><b>Debt Amount:</b> <span th:text="${order.debtAmount}"></span></div>
+                    <div><b>Status:</b> <span th:text="${order.status}"></span></div>
+                </div>
+            </div>
+            <div class="card mb-3">
+                <div class="card-header">
+                    <i class="fas fa-list"></i> List of Imported Products
+                    <a th:href="@{'/admin/purchase-orders/' + ${order.id} + '/add-detail'}" class="btn btn-primary btn-sm float-right">Add Product</a>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered">
+                            <thead>
+                            <tr>
+                                <th>Product Name</th>
+                                <th>Quantity</th>
+                                <th>Import Price</th>
+                                <th>Action</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:each="detail : ${order.details}">
+                                <td th:text="${detail.product.name}"></td>
+                                <td th:text="${detail.quantity}"></td>
+                                <td th:text="${detail.importPrice}"></td>
+                                <td>
+                                    <a th:href="@{'/admin/purchase-orders/detail/' + ${detail.id} + '/edit'}" class="btn btn-warning btn-sm">Edit</a>
+                                    <a th:href="@{'/admin/purchase-orders/detail/' + ${detail.id} + '/delete'}" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to delete this detail?');">Delete</a>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <footer th:replace="~{admin/fragments/footer :: footer}"></footer>
+    </div>
+</div>
+</body>
+</html> 

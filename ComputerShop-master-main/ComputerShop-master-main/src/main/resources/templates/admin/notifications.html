@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{admin/fragments/header :: header}">
+    <title>Thông báo cá nhân</title>
+</head>
+
+<body id="page-top">
+
+<nav th:replace="~{admin/fragments/nav-bar :: nav-bar}"></nav>
+
+<div id="wrapper">
+
+    <!-- Sidebar -->
+    <ul th:replace="~{admin/fragments/sidebar :: sidebar}"></ul>
+
+    <div id="content-wrapper">
+
+        <div class="container-fluid">
+
+            <!-- Breadcrumbs-->
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item">
+                    <a href="/admin/dashboard">Dashboard</a>
+                </li>
+                <li class="breadcrumb-item active">Personal notification</li>
+            </ol>
+                    <!-- Page Heading -->
+                    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                        <h1 class="h3 mb-0 text-gray-800">
+                            <i class="fas fa-bell mr-2"></i>Personal notification
+                        </h1>
+                        <div>
+                            <button class="btn btn-success btn-sm shadow-sm" id="markAllReadBtn"
+                                th:if="${unreadCount > 0}">
+                                <i class="fas fa-check-double fa-sm text-white-50 mr-1"></i>
+                                Mark all as read
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Success/Error Alerts -->
+                    <div id="alertContainer"></div>
+
+                    <!-- Statistics Row -->
+                    <div class="row">
+                        <!-- Total Notifications Card -->
+                        <div class="col-xl-3 col-md-6 mb-4">
+                            <div class="card border-left-primary shadow h-100 py-2">
+                                <div class="card-body">
+                                    <div class="row no-gutters align-items-center">
+                                        <div class="col mr-2">
+                                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                                Total Notifications</div>
+                                            <div class="h5 mb-0 font-weight-bold text-gray-800"
+                                                th:text="${notifications.size()}">0</div>
+                                        </div>
+                                        <div class="col-auto">
+                                            <i class="fas fa-bell fa-2x text-gray-300"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Unread Notifications Card -->
+                        <div class="col-xl-3 col-md-6 mb-4">
+                            <div class="card border-left-warning shadow h-100 py-2">
+                                <div class="card-body">
+                                    <div class="row no-gutters align-items-center">
+                                        <div class="col mr-2">
+                                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                                Unread Notifications</div>
+                                            <div class="h5 mb-0 font-weight-bold text-gray-800"
+                                                th:text="${unreadCount}">0</div>
+                                        </div>
+                                        <div class="col-auto">
+                                            <i class="fas fa-exclamation-circle fa-2x text-gray-300"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Order Notifications Card -->
+                        <div class="col-xl-3 col-md-6 mb-4">
+                            <div class="card border-left-info shadow h-100 py-2">
+                                <div class="card-body">
+                                    <div class="row no-gutters align-items-center">
+                                        <div class="col mr-2">
+                                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                                                Order Notifications</div>
+                                            <div class="h5 mb-0 font-weight-bold text-gray-800"
+                                                th:text="${orderNotifications}">0</div>
+                                        </div>
+                                        <div class="col-auto">
+                                            <i class="fas fa-shopping-cart fa-2x text-gray-300"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- System Notifications Card -->
+                        <div class="col-xl-3 col-md-6 mb-4">
+                            <div class="card border-left-success shadow h-100 py-2">
+                                <div class="card-body">
+                                    <div class="row no-gutters align-items-center">
+                                        <div class="col mr-2">
+                                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                                System Notifications</div>
+                                            <div class="h5 mb-0 font-weight-bold text-gray-800"
+                                                th:text="${systemNotifications}">0</div>
+                                        </div>
+                                        <div class="col-auto">
+                                            <i class="fas fa-cog fa-2x text-gray-300"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Notifications Table -->
+                    <div class="card mb-3">
+                        <div class="card-header">
+                            <i class="fas fa-list"></i> Personal Notifications
+                        </div>
+                        <div class="card-body">
+                            <div th:if="${notifications.empty}" class="text-center py-5">
+                                <i class="fas fa-bell-slash fa-3x text-gray-300 mb-3"></i>
+                                <h5 class="text-gray-600">You have no notifications</h5>
+                                <p class="text-gray-500">Order notifications and system updates tailored specifically for you will
+                                    appear here.</p>
+                            </div>
+
+                            <div th:if="${!notifications.empty}" class="notifications-container">
+                                <div th:each="notification : ${notifications}"
+                                    th:class="'notification-item p-3 mb-3 border-left-4 ' + (${notification.isRead} ? 'border-secondary bg-light' : 'border-primary bg-white')"
+                                    th:data-notification-id="${notification.notificationId}"
+                                    style="border-radius: 0.35rem; transition: all 0.3s ease;">
+                                    <div class="row align-items-center">
+                                        <div class="col-auto">
+                                            <div
+                                                th:class="'notification-icon p-2 rounded-circle ' + (${notification.orderId != null} ? 'bg-info text-white' : 'bg-success text-white')">
+                                                <i
+                                                    th:class="${notification.orderId != null} ? 'fas fa-shopping-cart' : 'fas fa-info-circle'"></i>
+                                            </div>
+                                        </div>
+                                        <div class="col">
+                                            <div class="d-flex justify-content-between align-items-start">
+                                                <div class="flex-grow-1">
+                                                    <p class="mb-1 font-weight-medium"
+                                                        th:text="${notification.message}">Sample Notification</p>
+                                                    <div class="small text-muted">
+                                                        <i class="fas fa-clock mr-1"></i>
+                                                        <span
+                                                            th:text="${#temporals.format(notification.createdAt, 'dd/MM/yyyy HH:mm')}">01/01/2024
+                                                            10:00</span>
+                                                        <span th:if="${!notification.isRead}"
+                                                            class="badge badge-warning ml-2">New</span>
+                                                        <span th:if="${notification.orderId != null}"
+                                                            class="badge badge-info ml-2">
+                                                            <i class="fas fa-shopping-cart mr-1"></i>Order
+                                                        </span>
+                                                        <span
+                                                            th:if="${notification.orderId == null and notification.productId == null}"
+                                                            class="badge badge-success ml-2">
+                                                            <i class="fas fa-cog mr-1"></i>System
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                                <div class="notification-actions">
+                                                    <a th:href="@{'/notifications/admin/detail/' + ${notification.notificationId}}"
+                                                       class="btn btn-sm btn-outline-primary mr-1"
+                                                       title="View Details">
+                                                        <i class="fas fa-eye"></i>
+                                                    </a>
+                                                    <button th:if="${!notification.isRead}"
+                                                        class="btn btn-sm btn-outline-success mark-read-btn"
+                                                        th:data-notification-id="${notification.notificationId}"
+                                                        title="Mark as Read">
+                                                        <i class="fas fa-check"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-footer small text-muted">Last updated: <span th:text="${#dates.format(#dates.createNow(), 'dd/MM/yyyy HH:mm')}"></span></div>
+                    </div>
+
+                </div>
+
+                <footer th:replace="~{admin/fragments/footer :: footer}"></footer>
+            </div>
+        </div>
+        <!-- /#wrapper -->
+
+        <!-- Scroll to Top Button-->
+        <a class="scroll-to-top rounded" href="#page-top">
+            <i class="fas fa-angle-up"></i>
+        </a>
+
+        <!-- Logout Modal-->
+        <div th:replace="~{admin/fragments/logout :: logout}"></div>
+
+        <!-- Custom styles and scripts -->
+        <style>
+
+            .notification-actions {
+                opacity: 0;
+                transition: opacity 0.3s ease;
+                display: flex;
+                gap: 4px;
+            }
+
+            .notification-item:hover .notification-actions {
+                opacity: 1;
+            }
+            
+            .card {
+                transition: all 0.3s;
+            }
+
+            .card:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+            }
+        </style>
+
+        <script>
+            $(document).ready(function () {
+                console.log('🚀 Notifications page loaded');
+
+                setTimeout(function() {
+                    $.get('/notifications/api/unread-count')
+                        .done(function(data) {
+                            // Ngay lập tức gọi function global để update navbar
+                            if (window.updateAdminNotificationBadges && data.success) {
+                                console.log('🔄 Calling global update function with count:', data.unreadCount);
+                                window.updateAdminNotificationBadges(data.unreadCount);
+                            }
+                            
+                            // FORCE DEBUG: Always show badge
+                            console.log('🧪 [DEBUG] Force showing notification badge...');
+                            const debugCount = data.success ? data.unreadCount : 13;
+                            $('#adminNotificationCount').text(debugCount).css({
+                                'display': 'flex !important',
+                                'visibility': 'visible !important',
+                                'opacity': '1 !important',
+                                'background': '#dc3545 !important',
+                                'color': 'white !important'
+                            }).show();
+                        });
+                }, 500);
+                
+                // Đánh dấu notification đã đọc
+                $('.mark-read-btn').click(function () {
+                    const notificationId = $(this).data('notification-id');
+                    markAsRead(notificationId, $(this).closest('.notification-item'));
+                });
+
+                // Đánh dấu tất cả đã đọc
+                $('#markAllReadBtn').click(function () {
+                    markAllAsRead();
+                });
+
+                function markAsRead(notificationId, notificationElement) {
+                    console.log('Marking notification as read:', notificationId);
+                    $.post(`/notifications/mark-read/${notificationId}`)
+                        .done(function (response) {
+                            console.log('Mark read response:', response);
+                            if (response.success) {
+                                notificationElement.removeClass('border-primary bg-white').addClass('border-secondary bg-light');
+                                notificationElement.find('.badge:contains("Mới")').remove();
+                                notificationElement.find('.mark-read-btn').remove();
+
+                                // Cập nhật counter
+                                updateUnreadCount();
+                                
+                                // Reload notification count in navbar - gọi function global
+                                setTimeout(function() {
+                                    console.log('🔄 Calling global function to update navbar...');
+                                    if (window.loadAdminNotificationCount) {
+                                        window.loadAdminNotificationCount();
+                                    } else {
+                                        console.log('❌ window.loadAdminNotificationCount not found');
+                                    }
+                                }, 100);
+
+                                showAlert('Notification has been marked as read.', 'success');
+                            }
+                        })
+                        .fail(function (xhr, status, error) {
+                            console.error('Failed to mark as read:', error);
+                            showAlert('An error occurred while marking the notification as read.', 'danger');
+                        });
+                }
+
+                function markAllAsRead() {
+                    console.log('Marking all notifications as read');
+                    $.post('/notifications/mark-all-read')
+                        .done(function (response) {
+                            console.log('Mark all read response:', response);
+                            if (response.success) {
+                                $('.notification-item').removeClass('border-primary bg-white').addClass('border-secondary bg-light');
+                                $('.badge:contains("Mới")').remove();
+                                $('.mark-read-btn').remove();
+                                $('#markAllReadBtn').hide();
+
+                                // Cập nhật counter trong navbar
+                                updateNavbarNotificationCount();
+                                
+                                // Reload notification count in navbar - gọi function global
+                                setTimeout(function() {
+                                    console.log('🔄 Calling global function to update navbar (mark all)...');
+                                    if (window.loadAdminNotificationCount) {
+                                        window.loadAdminNotificationCount();
+                                    } else {
+                                        console.log('❌ window.loadAdminNotificationCount not found');
+                                    }
+                                }, 100);
+
+                                showAlert('All notifications have been marked as read.', 'success');
+                            }
+                        })
+                        .fail(function (xhr, status, error) {
+                            console.error('Failed to mark all as read:', error);
+                            showAlert('An error occurred while marking all notifications as read.', 'danger');
+                        });
+                }
+
+                function updateUnreadCount() {
+                    const unreadCount = $('.notification-item.border-primary').length;
+                    console.log('Updating unread count to:', unreadCount);
+
+                    // Update the statistics card
+                    $('.h5').eq(1).text(unreadCount);
+
+                    if (unreadCount === 0) {
+                        $('#markAllReadBtn').hide();
+                    }
+                }
+
+                function updateNavbarNotificationCount() {
+                    // Cập nhật notification count trong navbar
+                    $('#adminNotificationCount').hide();
+                    $('.notification-btn').removeClass('has-notifications');
+                }
+
+                function showAlert(message, type) {
+                    const alertClass = type === 'success' ? 'alert-success' : 'alert-danger';
+                    const iconClass = type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle';
+
+                    const alertHtml = `
+                        <div class="alert ${alertClass} alert-dismissible fade show" role="alert">
+                            <i class="fas ${iconClass} mr-2"></i>
+                            ${message}
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                    `;
+                    $('#alertContainer').html(alertHtml);
+
+                    setTimeout(function () {
+                        $('.alert').alert('close');
+                    }, 3000);
+                }
+            });
+        </script>
+</body>
+
+</html>

@@ -1,0 +1,763 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{admin/fragments/header :: header}">
+    <title></title>
+</head>
+
+<body id="page-top">
+
+<nav th:replace="~{admin/fragments/nav-bar :: nav-bar}"></nav>
+
+<div id="wrapper">
+
+    <!-- Sidebar -->
+    <ul th:replace="~{admin/fragments/sidebar :: sidebar}"></ul>
+
+    <div id="content-wrapper">
+
+        <div class="container-fluid">
+
+            <!-- Breadcrumbs-->
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item">
+                    <a href="/admin/dashboard">Dashboard</a>
+                </li>
+                <li class="breadcrumb-item active">Overview Statistics</li>
+            </ol>
+
+            <!-- Icon Cards-->
+            <div th:replace="~{admin/fragments/icon-cards :: icon-cards}"></div>
+
+            <!-- Area Chart Example-->
+            <div class="card mb-3">
+                <div class="card-header">
+                    <i class="fas fa-chart-area"></i> Revenue Overview
+                    <div>
+                        <form method="get" action="/admin/dashboard">
+                            <select name="year" class="form-select form-control" onchange="this.form.submit()" style="width: 150px;">
+                                <option th:each="y : ${years}"
+                                        th:value="${y}"
+                                        th:text="'Year ' + ${y}"
+                                        th:selected="${y} == ${selectedYear}">
+                                </option>
+                            </select>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="card-body">
+                    <canvas id="myAreaChart" width="100%" height="500"></canvas>
+                </div>
+                <div class="card-footer small text-muted">Updated yesterday at 11:59 PM</div>
+            </div>
+
+            <!-- DataTables Example -->
+            <div class="card mb-3">
+                <div class="card-header">
+                    <i class="fas fa-table"></i> Top 5 Products in Stock
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                            <thead>
+                            <tr>
+                                <th>Product Name</th>
+                                <th>Image</th>
+                                <th>Price</th>
+                                <th>Stock Quantity</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:each="product : ${topStockProducts}">
+                                <td th:text="${product.name}"></td>
+                                <td>
+                                    <img th:src="@{'/assets/images/product/laptop/'+${product.name}+'.jpg'}" alt="product image" style="width: 50px; height: auto;">
+                                </td>
+                                <td th:text="${#numbers.formatInteger(product.price, 0, 'POINT')} + ' ₫'"></td>
+                                <td th:text="${product.quantity}"></td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="card-footer small text-muted">Updated yesterday at 11:59 PM</div>
+            </div>
+
+            <!-- DataTables Example -->
+            <div class="card mb-3">
+                <div class="card-header">
+                    <i class="fas fa-table"></i> Top 5 Bestselling Products
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered" id="dataTable2" width="100%" cellspacing="0">
+                            <thead>
+                            <tr>
+                                <th>Product Name</th>
+                                <th>Image</th>
+                                <th>Price</th>
+                                <th>Quantity Sold</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:each="tp : ${topProducts}">
+                                <td th:text="${tp.product.name}"></td>
+                                <td>
+                                    <img th:src="@{'/assets/images/product/laptop/'+${tp.product.imageURL}}" alt="product image" style="width: 50px; height: auto;">
+                                </td>
+                                <td th:text="${#numbers.formatInteger(tp.product.price, 0, 'POINT')} + ' ₫'"></td>
+                                <td th:text="${tp.totalSold}"></td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <!-- DataTables Example -->
+                <div class="card mb-3">
+                    <div class="card-header">
+                        <i class="fas fa-table"></i> Top 5 VIP Customers
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-bordered" id="dataTable3" width="100%" cellspacing="0">
+                                <thead>
+                                <tr>
+                                    <th>Customer Name</th>
+                                    <th>Order Count</th>
+                                    <th>Total Amount</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr th:each="item : ${userStats}">
+                                    <td th:text="${item[1]}"></td>
+                                    <!-- Full Name -->
+                                    <td th:text="${item[2]}"></td>
+                                    <!-- Order Count -->
+                                    <td th:text="${#numbers.formatInteger(item[3], 0, 'POINT')} + ' ₫'"></td>
+                                    <!-- Total Amount -->
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="card-footer small text-muted">Updated yesterday at 11:59 PM</div>
+            </div>
+        </div>
+        <!-- Statistics Section (Hidden by default) -->
+        <div class="container-fluid" id="statisticsSection" style="display: none;">
+            <!-- Page Heading -->
+            <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                <h1 class="h3 mb-0 text-gray-800">
+                    <i class="fas fa-chart-line text-primary"></i> Detailed Dashboard Statistics
+                </h1>
+                <button onclick="hideStatistics()" class="btn btn-secondary btn-sm shadow-sm">
+                    <i class="fas fa-times fa-sm text-white-50"></i> Back to Dashboard
+                </button>
+            </div>
+
+            <!-- Enhanced Stats Cards Row -->
+            <div class="row">
+                <!-- Users Card -->
+                <div class="col-xl-3 col-md-6 mb-4">
+                    <div class="card border-left-primary shadow h-100 py-2">
+                        <div class="card-body">
+                            <div class="row no-gutters align-items-center">
+                                <div class="col mr-2">
+                                    <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                        Total Users
+                                    </div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800" id="statsUserCount">...</div>
+                                </div>
+                                <div class="col-auto">
+                                    <i class="fas fa-users fa-2x text-gray-300"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Products Card -->
+                <div class="col-xl-3 col-md-6 mb-4">
+                    <div class="card border-left-success shadow h-100 py-2">
+                        <div class="card-body">
+                            <div class="row no-gutters align-items-center">
+                                <div class="col mr-2">
+                                    <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                        Total Products
+                                    </div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800" id="statsProductCount">...</div>
+                                </div>
+                                <div class="col-auto">
+                                    <i class="fas fa-box fa-2x text-gray-300"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Orders Card -->
+                <div class="col-xl-3 col-md-6 mb-4">
+                    <div class="card border-left-info shadow h-100 py-2">
+                        <div class="card-body">
+                            <div class="row no-gutters align-items-center">
+                                <div class="col mr-2">
+                                    <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                                        Total Orders
+                                    </div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800" id="statsOrderCount">...</div>
+                                </div>
+                                <div class="col-auto">
+                                    <i class="fas fa-shopping-cart fa-2x text-gray-300"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Revenue Card -->
+                <div class="col-xl-3 col-md-6 mb-4">
+                    <div class="card border-left-warning shadow h-100 py-2">
+                        <div class="card-body">
+                            <div class="row no-gutters align-items-center">
+                                <div class="col mr-2">
+                                    <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                        Total Revenue
+                                    </div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800" id="statsRevenue">...</div>
+                                </div>
+                                <div class="col-auto">
+                                    <i class="fas fa-dollar-sign fa-2x text-gray-300"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Charts Row -->
+            <div class="row">
+                <!-- Revenue Chart -->
+                <div class="col-xl-4 col-lg-4">
+                    <div class="card shadow mb-4">
+                        <div class="card-header py-3">
+                            <h6 class="m-0 font-weight-bold text-primary">
+                                <i class="fas fa-chart-area"></i> Monthly Revenue
+                            </h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="chart-area">
+                                <canvas id="detailedRevenueChart" style="height: 220px;"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Order Count Chart -->
+                <div class="col-xl-4 col-lg-4">
+                    <div class="card shadow mb-4">
+                        <div class="card-header py-3">
+                            <h6 class="m-0 font-weight-bold text-info">
+                                <i class="fas fa-shopping-cart"></i> Monthly Orders
+                            </h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="chart-area">
+                                <canvas id="orderCountChart" style="height: 220px;"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- New Users Chart -->
+                <div class="col-xl-4 col-lg-4">
+                    <div class="card shadow mb-4">
+                        <div class="card-header py-3">
+                            <h6 class="m-0 font-weight-bold text-success">
+                                <i class="fas fa-user-plus"></i> New Customers by Month
+                            </h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="chart-area">
+                                <canvas id="newUsersChart" style="height: 220px;"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Top Products -->
+                <div class="col-xl-4 col-lg-5">
+                    <div class="card shadow mb-4">
+                        <div class="card-header py-3">
+                            <h6 class="m-0 font-weight-bold text-primary">
+                                <i class="fas fa-trophy"></i> Top Bestselling Products
+                            </h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="chart-pie">
+                                <canvas id="topProductsChart" style="height: 220px;"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Additional Stats Row -->
+            <div class="row">
+                <div class="col-xl-4 col-md-6 mb-4">
+                    <div class="card border-left-primary shadow h-100 py-2">
+                        <div class="card-body">
+                            <div class="row no-gutters align-items-center">
+                                <div class="col mr-2">
+                                    <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                        Average Order Value
+                                    </div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800" id="statsAvgOrderValue">...</div>
+                                </div>
+                                <div class="col-auto">
+                                    <i class="fas fa-calculator fa-2x text-gray-300"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xl-4 col-md-6 mb-4">
+                    <div class="card border-left-success shadow h-100 py-2">
+                        <div class="card-body">
+                            <div class="row no-gutters align-items-center">
+                                <div class="col mr-2">
+                                    <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                        Customers Who Purchased
+                                    </div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800" id="statsTotalCustomers">...</div>
+                                </div>
+                                <div class="col-auto">
+                                    <i class="fas fa-user-check fa-2x text-gray-300"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xl-4 col-md-6 mb-4">
+                    <div class="card border-left-info shadow h-100 py-2">
+                        <div class="card-body">
+                            <div class="row no-gutters align-items-center">
+                                <div class="col mr-2">
+                                    <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                                        Conversion Rate
+                                    </div>
+                                    <div class="h5 mb-0 font-weight-bold text-gray-800" id="statsConversionRate">...</div>
+                                </div>
+                                <div class="col-auto">
+                                    <i class="fas fa-percentage fa-2x text-gray-300"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <!-- End Statistics Section -->
+
+        <footer th:replace="~{admin/fragments/footer :: footer}"></footer>
+    </div>
+</div>
+<!-- /#wrapper -->
+
+<!-- Scroll to Top Button-->
+<a class="scroll-to-top rounded" href="#page-top">
+    <i class="fas fa-angle-up"></i>
+</a>
+
+<!-- Logout Modal-->
+<div th:replace="~{admin/fragments/logout :: logout}"></div>
+
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+    // Toggle statistics section
+    function toggleStatistics() {
+        const mainDashboard = document.querySelector('.container-fluid');
+        const statsSection = document.getElementById('statisticsSection');
+
+        if (statsSection && statsSection.style.display === 'none') {
+            // Hide main dashboard, show statistics
+            mainDashboard.style.display = 'none';
+            statsSection.style.display = 'block';
+            loadDetailedStatistics();
+
+            // Update sidebar active state
+            document.getElementById('statisticsToggle').classList.add('active');
+        } else {
+            // Show main dashboard, hide statistics
+            mainDashboard.style.display = 'block';
+            if (statsSection) {
+                statsSection.style.display = 'none';
+            }
+            document.getElementById('statisticsToggle').classList.remove('active');
+        }
+    }
+
+    // Hide statistics and return to dashboard
+    function hideStatistics() {
+        const mainDashboard = document.querySelector('.container-fluid');
+        const statsSection = document.getElementById('statisticsSection');
+
+        mainDashboard.style.display = 'block';
+        if (statsSection) {
+            statsSection.style.display = 'none';
+        }
+        document.getElementById('statisticsToggle').classList.remove('active');
+    }
+
+    // Load detailed statistics data
+    function loadDetailedStatistics() {
+        loadStatistics(); // Use the main loadStatistics function
+    }
+</script>
+
+<!-- Script to draw revenue chart for myAreaChart -->
+<script th:inline="javascript">
+    // Get revenue data from Thymeleaf
+    var monthlyRevenue = /*[[${monthlyRevenue}]]*/ [];
+    var months = ['T1', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'T8', 'T9', 'T10', 'T11', 'T12'];
+
+    document.addEventListener('DOMContentLoaded', function() {
+        var ctx = document.getElementById('myAreaChart');
+        if (ctx && monthlyRevenue.length === 12) {
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: months,
+                    datasets: [{
+                        label: 'Revenue (VND)',
+                        data: monthlyRevenue,
+                        borderColor: 'rgb(75, 192, 192)',
+                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                        tension: 0.1,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) {
+                                    return value.toLocaleString('vi-VN') + ' ₫';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+    });
+</script>
+
+<style>
+
+    .chart-area {
+        position: relative;
+        height: 320px;
+    }
+
+    .card {
+        transition: all 0.3s;
+    }
+
+    .card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+    }
+
+    #statisticsSection {
+        animation: fadeIn 0.3s ease-in;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const params = new URLSearchParams(window.location.search);
+        if (params.get('section') === 'statistics') {
+            toggleStatistics(); // ✅ Call toggle after page loads
+        }
+
+        // Always load statistics if needed (if not manually toggle then should auto load)
+        loadStatistics();
+    });
+
+    // Load statistics data from API
+    function loadStatistics() {
+        console.log('Loading statistics...');
+        fetch('/admin/api/statistics')
+            .then(response => {
+                console.log('API response status:', response.status);
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('Statistics data received:', data);
+                updateStatistics(data);
+                createDetailedChart(data.monthlyRevenue, data.orderCountByMonth, data.newUsersByMonth);
+                createTopProductsChart(data.topProducts);
+            })
+            .catch(error => {
+                console.error('Error loading statistics:', error);
+                showError();
+            });
+    }
+
+    // Update statistics cards
+    function updateStatistics(data) {
+        console.log('Updating statistics with:', data);
+
+        // Update main stats
+        var elUser = document.getElementById('statsUserCount');
+        if (elUser) {
+            if (typeof data.userCount === 'undefined' || data.userCount === null) {
+                elUser.textContent = 'Error';
+            } else {
+                elUser.textContent = data.userCount;
+            }
+        }
+        var elProduct = document.getElementById('statsProductCount');
+        if (elProduct) {
+            if (typeof data.productCount === 'undefined' || data.productCount === null) {
+                elProduct.textContent = 'Error';
+            } else {
+                elProduct.textContent = data.productCount;
+            }
+        }
+        var elOrder = document.getElementById('statsOrderCount');
+        if (elOrder) {
+            if (typeof data.orderCount === 'undefined' || data.orderCount === null) {
+                elOrder.textContent = 'Error';
+            } else {
+                elOrder.textContent = data.orderCount;
+            }
+        }
+        var elRevenue = document.getElementById('statsRevenue');
+        if (elRevenue) {
+            if (typeof data.revenue === 'undefined' || data.revenue === null) {
+                elRevenue.textContent = 'Error';
+            } else {
+                elRevenue.textContent = Number(data.revenue).toLocaleString('en-US') + ' ₫';
+            }
+        }
+    }
+
+    // Show error state
+    function showError() {
+        document.getElementById('statsUserCount').textContent = 'Error';
+        document.getElementById('statsProductCount').textContent = 'Error';
+        document.getElementById('statsOrderCount').textContent = 'Error';
+        document.getElementById('statsRevenue').textContent = 'Error';
+    }
+
+    // Create detailed charts
+    function createDetailedChart(monthlyRevenue, orderCountByMonth, newUsersByMonth) {
+        console.log('Creating charts with data:', {
+            monthlyRevenue,
+            orderCountByMonth,
+            newUsersByMonth
+        });
+
+        const months = ['T1', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'T8', 'T9', 'T10', 'T11', 'T12'];
+
+        // --- Revenue Chart ---
+        const ctxRevenue = document.getElementById('detailedRevenueChart');
+        if (!ctxRevenue) {
+            console.error('Revenue chart canvas not found');
+            return;
+        }
+        if (window.detailedChart) window.detailedChart.destroy();
+        window.detailedChart = new Chart(ctxRevenue.getContext('2d'), {
+            type: 'line',
+            data: {
+                labels: months,
+                datasets: [{
+                    label: 'Revenue (VND)',
+                    data: monthlyRevenue,
+                    borderColor: 'rgb(75, 192, 192)',
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    tension: 0.1,
+                    fill: true
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    title: {
+                        display: true,
+                        text: 'Monthly Income'
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            callback: function(value) {
+                                return value.toLocaleString('en-US') + ' ₫';
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        // --- Orders Chart ---
+        const ctxOrder = document.getElementById('orderCountChart');
+        if (!ctxOrder) {
+            console.error('Orders chart canvas not found');
+            return;
+        }
+        if (window.orderCountChart && typeof window.orderCountChart.destroy === 'function') window.orderCountChart.destroy();
+        window.orderCountChart = new Chart(ctxOrder.getContext('2d'), {
+            type: 'bar',
+            data: {
+                labels: months,
+                datasets: [{
+                    label: 'Number of Orders',
+                    data: orderCountByMonth,
+                    backgroundColor: 'rgba(54, 162, 235, 0.5)',
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    title: {
+                        display: true,
+                        text: 'Monthly Orders'
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+
+        // --- New Users Chart ---
+        const ctxUser = document.getElementById('newUsersChart');
+        if (!ctxUser) {
+            console.error('New users chart canvas not found');
+            return;
+        }
+        if (window.newUsersChart && typeof window.newUsersChart.destroy === 'function') window.newUsersChart.destroy();
+        window.newUsersChart = new Chart(ctxUser.getContext('2d'), {
+            type: 'bar',
+            data: {
+                labels: months,
+                datasets: [{
+                    label: 'New Customers',
+                    data: newUsersByMonth,
+                    backgroundColor: 'rgba(255, 99, 132, 0.5)',
+                    borderColor: 'rgba(255, 99, 132, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    title: {
+                        display: true,
+                        text: 'New Customers by Month'
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    }
+
+    // Create Top Products Pie Chart
+    function createTopProductsChart(products) {
+        console.log('Creating top products chart with:', products);
+        const ctx = document.getElementById('topProductsChart');
+        if (!ctx) {
+            console.error('Top products chart canvas not found');
+            return;
+        }
+        if (!products || products.length === 0) {
+            console.log('No products data available');
+            return;
+        }
+
+        if (window.topProductsChart && typeof window.topProductsChart.destroy === 'function') window.topProductsChart.destroy();
+
+        const labels = products.map(p => p.name);
+        const data = products.map(p => p.totalSold);
+        const colors = [
+            'rgba(255, 99, 132, 0.8)',
+            'rgba(54, 162, 235, 0.8)',
+            'rgba(255, 205, 86, 0.8)',
+            'rgba(75, 192, 192, 0.8)',
+            'rgba(153, 102, 255, 0.8)'
+        ];
+
+        window.topProductsChart = new Chart(ctx.getContext('2d'), {
+            type: 'pie',
+            data: {
+                labels: labels,
+                datasets: [{
+                    data: data,
+                    backgroundColor: colors.slice(0, products.length),
+                    borderWidth: 2,
+                    borderColor: '#fff'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    title: {
+                        display: true,
+                        text: 'Top Bestselling Products'
+                    },
+                    legend: {
+                        position: 'bottom'
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                const product = products[context.dataIndex];
+                                return context.label + ': ' + context.parsed + ' products (' +
+                                    product.totalRevenue.toLocaleString('vi-VN') + ' ₫)';
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    }
+</script>
+
+</body>
+
+</html>

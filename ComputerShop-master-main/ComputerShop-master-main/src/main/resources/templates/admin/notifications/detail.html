@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{admin/fragments/header :: header}">
+    <title>Notification Details</title>
+</head>
+<body id="page-top">
+
+<nav th:replace="~{admin/fragments/nav-bar :: nav-bar}"></nav>
+
+<div id="wrapper">
+    <!-- Sidebar -->
+    <ul th:replace="~{admin/fragments/sidebar :: sidebar}"></ul>
+
+    <div id="content-wrapper" class="min-vh-100 d-flex flex-column">
+        <div class="container-fluid">
+            <!-- Breadcrumbs -->
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item">
+                    <a th:href="@{/admin/dashboard}">Dashboard</a>
+                </li>
+                <li class="breadcrumb-item">
+                    <a th:href="@{/notifications/admin}">Notification Management</a>
+                </li>
+                <li class="breadcrumb-item active">Notification Details</li>
+            </ol>
+
+            <!-- Page Heading -->
+            <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                <h1 class="h3 mb-0 text-gray-800">
+                    <i class="fas fa-bell mr-2"></i>Notification Details
+                </h1>
+                <div>
+                    <a th:href="@{/notifications/admin}" class="btn btn-secondary btn-sm">
+                        <i class="fas fa-arrow-left mr-1"></i>Back to List
+                    </a>
+                </div>
+            </div>
+
+            <!-- Success/Error Messages -->
+            <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
+                <i class="fas fa-check-circle mr-2"></i>
+                <span th:text="${success}"></span>
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+                <i class="fas fa-exclamation-triangle mr-2"></i>
+                <span th:text="${error}"></span>
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+
+            <!-- Notification Detail -->
+            <div class="row">
+                <!-- Main Content -->
+                <div class="col-lg-8">
+                    <div class="card shadow mb-4">
+                        <div class="card-header">
+                            <h6 class="m-0 font-weight-bold text-primary">
+                                <i class="fas fa-info-circle mr-2"></i>Detailed Information
+                            </h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="row mb-3">
+                                <div class="col-sm-3"><strong>Notification ID:</strong></div>
+                                <div class="col-sm-9">
+                                    <code class="text-primary font-weight-bold" th:text="${notification.notificationId}">ID</code>
+                                </div>
+                            </div>
+
+                            <div class="row mb-3">
+                                <div class="col-sm-3"><strong>Recipient:</strong></div>
+                                <div class="col-sm-9">
+                                    <div th:if="${notification.user != null}">
+                                        <strong class="text-dark" th:text="${notification.user.fullName}">User Name</strong><br>
+                                        <small class="text-muted" th:text="${notification.user.email}">email@example.com</small>
+                                    </div>
+                                    <div th:if="${notification.user == null}">
+                                        <small class="text-muted">User does not exist</small>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row mb-3">
+                                <div class="col-sm-3"><strong>Content:</strong></div>
+                                <div class="col-sm-9">
+                                    <div class="bg-light p-3 rounded border" th:text="${notification.message}">
+                                        Notification content...
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row mb-3">
+                                <div class="col-sm-3"><strong>Status:</strong></div>
+                                <div class="col-sm-9">
+                                    <span th:if="${notification.isRead != null and notification.isRead}" class="badge badge-success badge-lg">
+                                        <i class="fas fa-check-circle mr-1"></i>Read
+                                    </span>
+                                    <span th:if="${notification.isRead == null or !notification.isRead}" class="badge badge-warning badge-lg">
+                                        <i class="fas fa-clock mr-1"></i>Unread
+                                    </span>
+                                </div>
+                            </div>
+
+                            <div class="row mb-3">
+                                <div class="col-sm-3"><strong>Created At:</strong></div>
+                                <div class="col-sm-9">
+                                    <span th:text="${#temporals.format(notification.createdAt, 'dd/MM/yyyy HH:mm:ss')}">01/01/2024 10:00:00</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sidebar Info -->
+                <div class="col-lg-4">
+                    <!-- Notification Type -->
+                    <div class="card shadow mb-4">
+                        <div class="card-header">
+                            <h6 class="m-0 font-weight-bold text-primary">
+                                <i class="fas fa-tag mr-2"></i>Classification
+                            </h6>
+                        </div>
+                        <div class="card-body text-center">
+                            <div th:if="${notification.orderId != null}">
+                                <span class="badge badge-primary badge-lg mb-2">
+                                    <i class="fas fa-shopping-cart mr-1"></i>Order Notification
+                                </span>
+                                <p class="text-muted small">Notification related to customer orders</p>
+                            </div>
+                            <div th:if="${notification.orderId == null and notification.productId != null}">
+                                <span class="badge badge-info badge-lg mb-2">
+                                    <i class="fas fa-box mr-1"></i>Product Notification
+                                </span>
+                                <p class="text-muted small">Notification related to products in the system</p>
+                            </div>
+                            <div th:if="${notification.orderId == null and notification.productId == null}">
+                                <span class="badge badge-secondary badge-lg mb-2">
+                                    <i class="fas fa-info-circle mr-1"></i>System Notification
+                                </span>
+                                <p class="text-muted small">General system notification</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Related Information -->
+                    <div th:if="${relatedInfo != null}" class="card shadow mb-4">
+                        <div class="card-header">
+                            <h6 class="m-0 font-weight-bold text-primary">
+                                <i class="fas fa-link mr-2"></i>Related Information
+                            </h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="bg-light p-3 rounded">
+                                <div th:if="${relatedInfo['type'] != null}" class="mb-2">
+                                    <strong>Type:</strong> <span th:text="${relatedInfo['typeDescription']}">Type</span>
+                                </div>
+                                <div th:if="${relatedInfo['orderId'] != null}" class="mb-2">
+                                    <strong>Order ID:</strong> <span th:text="${relatedInfo['orderId']}">Order ID</span>
+                                </div>
+                                <div th:if="${relatedInfo['productId'] != null}" class="mb-2">
+                                    <strong>Product ID:</strong> <span th:text="${relatedInfo['productId']}">Product ID</span>
+                                </div>
+                                <div th:if="${relatedInfo['userInfo'] != null}" class="mb-2">
+                                    <strong>User Information:</strong><br>
+                                    <small>
+                                        Name: <span th:text="${relatedInfo['userInfo']['fullName']}">Name</span><br>
+                                        Email: <span th:text="${relatedInfo['userInfo']['email']}">Email</span><br>
+                                        Role: <span th:text="${relatedInfo['userInfo']['role']}">Role</span>
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Actions -->
+                    <div class="card shadow mb-4">
+                        <div class="card-header">
+                            <h6 class="m-0 font-weight-bold text-primary">
+                                <i class="fas fa-tools mr-2"></i>Actions
+                            </h6>
+                        </div>
+                        <div class="card-body">
+                            <div th:if="${notification.isRead == null or !notification.isRead}" class="mb-3">
+                                <form th:action="@{'/notifications/mark-read/' + ${notification.notificationId}}" method="post">
+                                    <input type="hidden" name="redirectUrl" th:value="@{'/notifications/admin/detail/' + ${notification.notificationId}}">
+                                    <button type="submit" class="btn btn-success btn-block">
+                                        <i class="fas fa-check mr-1"></i>Mark as Read
+                                    </button>
+                                </form>
+                            </div>
+                            <div th:if="${notification.isRead != null and notification.isRead}" class="mb-3">
+                                <button type="button" class="btn btn-outline-success btn-block" disabled>
+                                    <i class="fas fa-check-circle mr-1"></i>Already Read
+                                </button>
+                            </div>
+                            <a th:href="@{/notifications/admin}" class="btn btn-secondary btn-block">
+                                <i class="fas fa-arrow-left mr-1"></i>Back to List
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /.container-fluid -->
+        <footer th:replace="~{admin/fragments/footer :: footer}"></footer>
+    </div>
+    <!-- /.content-wrapper -->
+</div>
+<!-- /#wrapper -->
+
+<!-- Scroll to Top Button -->
+<a class="scroll-to-top rounded" href="#page-top">
+    <i class="fas fa-angle-up"></i>
+</a>
+
+<!-- Logout Modal -->
+<div th:replace="~{admin/fragments/logout :: logout}"></div>
+
+<!-- Bootstrap core JavaScript -->
+<script th:src="@{/assets2/vendor/jquery/jquery.min.js}"></script>
+<script th:src="@{/assets2/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
+<!-- Core plugin JavaScript -->
+<script th:src="@{/assets2/vendor/jquery-easing/jquery.easing.min.js}"></script>
+<!-- Custom scripts for all pages -->
+<script th:src="@{/assets2/js/sb-admin.min.js}"></script>
+
+<style>
+.badge-lg {
+    font-size: 0.9rem;
+    padding: 0.5rem 1rem;
+}
+
+pre {
+    background: #f8f9fc;
+    border: 1px solid #e3e6f0;
+    color: #5a5c69;
+    font-family: 'Courier New', monospace;
+}
+
+.card {
+    border: 0;
+    box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15) !important;
+}
+
+.card-header {
+    background-color: #f8f9fc;
+    border-bottom: 1px solid #e3e6f0;
+}
+</style>
+
+<script>
+$(document).ready(function() {
+    // Auto-dismiss alerts
+    setTimeout(function() {
+        $('.alert').fadeOut('slow');
+    }, 5000);
+});
+</script>
+
+</body>
+</html>

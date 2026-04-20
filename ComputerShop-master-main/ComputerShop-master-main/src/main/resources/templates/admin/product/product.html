@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{admin/fragments/header :: header}">
+    <title></title> 
+</head>
+<body id="page-top">
+<nav th:replace="~{admin/fragments/nav-bar :: nav-bar}"></nav>
+<div id="wrapper">
+    <!-- Sidebar -->
+    <ul th:replace="~{admin/fragments/sidebar :: sidebar}"></ul>
+    <div id="content-wrapper">
+        <div class="container-fluid">
+            <!-- Breadcrumbs-->
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item">
+                    <a href="/admin/dashboard">Products</a>
+                </li>
+                <li class="breadcrumb-item">
+                    <a href="/admin/product">Product Management</a>
+                </li>
+            </ol>
+            <div class="card mb-3">
+                <div class="card-header">
+                    <i class="fas fa-table"></i>
+                    Product List
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered" id="dataTable">
+                            <thead>
+                            <tr>
+                                <th>Product Name</th>
+                                <th>Category Name</th>
+                                <th>Brand Name</th>
+                                <th>Description</th>
+                                <th>Price</th>
+                                <th>Quantity</th>
+                                <th>Status</th>
+                                <th>Created Date</th>
+                                <th>Image</th>
+                                <th>Actions</th>
+                                <th>Configuration</th>
+                                <th>Versions</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:each="products : ${product}">
+                                <td th:text="${products.name}"></td>
+                                <td th:text="${products.categories.name}"></td>
+                                <td th:text="${products.brand}"></td>
+                                <td th:text="${products.description}"></td>
+                                <td th:text="${products.price}"></td>
+                                <td th:text="${products.totalQuantity}"></td>
+                                <td th:if="${products.isActive == true}"><span class="badge btn-success">Active</span></td>
+                                <td th:if="${products.isActive != true}"><span class="badge btn-danger">Inactive</span></td>
+                                <td th:text="${#temporals.format(products.createdAt, 'dd/MM/yyyy HH:mm')}"></td>
+                                <td>
+                                    <img th:src="@{'/assets/images/product/laptop/'+${products.imageURL}}" alt="Product Image" class="img-fluid"
+                                         style="max-width: 100px; max-height: 100px;">
+                                </td>
+                                <td>
+                                    <a th:href="@{/admin/edit-product/{id}(id=${products.productID})}" class="btn btn-sm btn-primary">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <button type="button" class="btn btn-sm btn-info"
+                                            onclick="toggleProductStatus(this)"
+                                            th:data-product-id="${products.productID}"
+                                            title="Bật/Tắt trạng thái">
+                                        <i class="fas fa-toggle-on"></i>
+                                    </button>
+                                </td>
+                                <td>
+                                    <a th:href="@{/admin/product/{id}/specification(id=${products.productID})}" class="btn btn-sm btn-info">
+                                        <i class="fas fa-cogs"></i> Configuration
+                                    </a>
+                                </td>
+                                <td>
+                                    <a th:href="@{/admin/product-variants/{id}(id=${products.productID})}" class="btn btn-sm btn-success">
+                                        <i class="fas fa-list"></i> Versions
+                                    </a>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <footer class="mt-auto" th:replace="~{admin/fragments/footer :: footer}"></footer>
+    </div>
+</div>
+<!-- Scroll to Top Button-->
+<a class="scroll-to-top rounded" href="#page-top">
+    <i class="fas fa-angle-up"></i>
+</a>
+
+<script>
+// Toggle product status function
+function toggleProductStatus(button) {
+    const productId = button.getAttribute('data-product-id');
+    fetch('/admin/toggle-product-status/' + productId, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        }
+    })
+    .then(response => response.text())
+    .then(data => {
+        if (data === 'success') {
+            location.reload();
+        } else {
+            alert('An error occurred!');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('An error occurred!');
+    });
+}
+</script>
+</body>
+</html>

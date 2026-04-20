@@ -1,0 +1,83 @@
+/* Dropdown Fix CSS */
+
+/* Ensure proper z-index and positioning */
+.header-action .my-account {
+    position: relative;
+}
+
+.header-action .my-account .my-account-dropdown {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background: #fff;
+    z-index: -1;
+    opacity: 0;
+    visibility: hidden;
+    min-width: 250px;
+    padding: 20px;
+    border-radius: 4px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    list-style: none;
+    transform: translateY(10px);
+    margin-top: 15px;
+    transition: all 0.3s ease;
+}
+
+/* Open state */
+.header-action .my-account .my-account-dropdown.open,
+.header-action .my-account.open .my-account-dropdown {
+    opacity: 1;
+    visibility: visible;
+    z-index: 999;
+    transform: translateY(0);
+}
+
+/* Prevent clicks on dropdown from bubbling */
+.my-account-dropdown {
+    pointer-events: auto;
+}
+
+.my-account-dropdown * {
+    pointer-events: auto;
+}
+
+/* Mobile responsive */
+@media only screen and (max-width: 479px) {
+    .header-action .my-account .my-account-dropdown {
+        right: -30px;
+        min-width: 220px;
+    }
+}
+
+/* Smooth hover effects */
+.header-action .my-account > a:hover {
+    color: var(--color-primary, #3577f0);
+}
+
+/* Fix dropdown links */
+.header-action .my-account .my-account-dropdown ul {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+}
+
+.header-action .my-account .my-account-dropdown li a {
+    font-size: 16px;
+    border-bottom: 1px solid #eee;
+    padding: 12px 0;
+    display: block;
+    color: #333;
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+.header-action .my-account .my-account-dropdown li:hover > a {
+    color: var(--color-primary, #3577f0);
+}
+
+/* Ensure dropdown stays open when hovering over it */
+.header-action .my-account:hover .my-account-dropdown.open {
+    opacity: 1;
+    visibility: visible;
+    z-index: 999;
+} 

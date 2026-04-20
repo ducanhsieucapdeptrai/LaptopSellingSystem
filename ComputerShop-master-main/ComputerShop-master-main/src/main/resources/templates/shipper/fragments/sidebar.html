@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="en">
+<p sec:authentication="principal.authorities"></p>
+<ul class="sidebar navbar-nav" id="accordionSidebar" th:fragment="sidebar" lang="en">
+
+	<li class="nav-item active" sec:authorize="hasAnyRole('Shipper','Admin')">
+		<a class="nav-link" th:href="@{/shipper/dashboard}">
+			<i class="fas fa-fw fa-tachometer-alt"></i>
+			<span>Dashboard</span>
+		</a>
+	</li>
+
+	<li class="nav-item" sec:authorize="hasAnyRole('Shipper','Admin')">
+		<a class="nav-link" th:href="@{/shipper/orders}">
+			<i class="fas fa-fw fa-list"></i>
+			<span>All Orders</span>
+		</a>
+	</li>
+	<li class="nav-item" sec:authorize="hasAnyRole('Shipper','Admin')">
+		<a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseShipperOrders"
+		   aria-expanded="false" aria-controls="collapseShipperOrders">
+			<i class="fas fa-fw fa-shipping-fast"></i>
+			<span>Manage Shipping</span>
+		</a>
+		<div id="collapseShipperOrders" class="collapse" aria-labelledby="headingShipperOrders"
+		     data-parent="#accordionSidebar">
+			<div class="collapse-inner">
+				<a class="collapse-item" th:href="@{/shipper/orders?status=PROCESSING}">
+					<i class="fas fa-clock text-warning mr-2"></i>Processing
+				</a>
+				<a class="collapse-item" th:href="@{/shipper/orders?status=SHIPPED}">
+					<i class="fas fa-shipping-fast text-info mr-2"></i>Shipping
+				</a>
+				<a class="collapse-item" th:href="@{/shipper/orders?status=DELIVERED}">
+					<i class="fas fa-check-circle text-success mr-2"></i>Delivered
+				</a>
+				<a class="collapse-item" th:href="@{/shipper/orders?status=CANCELLED}">
+					<i class="fas fa-times-circle text-danger mr-2"></i>Cancelled
+				</a>
+			</div>
+		</div>
+	</li>
+</ul>
+</html>
+ 

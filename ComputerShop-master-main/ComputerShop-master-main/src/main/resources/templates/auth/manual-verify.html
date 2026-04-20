@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Manual Account Verification - Computer Shop</title>
+    <link rel="stylesheet" href="/assets/css/vendor/bootstrap.min.css" th:href="@{/assets/css/vendor/bootstrap.min.css}"/>
+    <link rel="stylesheet" href="/assets/css/style.min.css" th:href="@{/assets/css/style.min.css}"/>
+    <link rel="stylesheet" href="/assets/css/login-custom.css" th:href="@{/assets/css/login-custom.css}"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body>
+<div class="axil-login-area">
+    <div class="form-container">
+        <h3>Manual Account Verification</h3>
+
+        <!-- Error and Success Messages -->
+        <div th:if="${error}" class="error" role="alert" th:text="${error}"></div>
+        <div th:if="${message}" class="success text-center" role="alert" th:text="${message}"></div>
+
+        <form th:action="@{/auth/manual-verify}" method="post" th:object="${verifyRequest}" style="width:100%">
+            <div class="input-group">
+                <span class="input-icon"><i class="fas fa-envelope"></i></span>
+                <label for="email" class="form-label" hidden="hidden">Email</label>
+                <input id="email" type="email" class="form-control" placeholder="Enter your email" th:field="*{email}" required>
+                <div class="invalid-feedback" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></div>
+            </div>
+            <div class="input-group">
+                <span class="input-icon"><i class="fas fa-key"></i></span>
+                <label for="verificationCode" class="form-label" hidden="hidden">Verification Code</label>
+                <input id="verificationCode" type="text" class="form-control" placeholder="Enter verification code" th:field="*{verificationCode}" required>
+                <div class="invalid-feedback" th:if="${#fields.hasErrors('verificationCode')}" th:errors="*{verificationCode}"></div>
+            </div>
+            <div class="d-grid gap-2 mt-3">
+                <button type="submit" class="btn btn-primary w-100">
+                    <i class="fas fa-check-circle"></i> Verify
+                </button>
+            </div>
+            <div class="mt-3">
+                <p>Already verified your account? <a th:href="@{/auth/login}">Login Now</a></p>
+            </div>
+        </form>
+    </div>
+</div>
+</body>
+</html>

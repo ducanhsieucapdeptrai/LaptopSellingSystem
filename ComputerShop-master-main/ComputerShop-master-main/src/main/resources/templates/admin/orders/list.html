@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{admin/fragments/header :: header}">
+    <title>Order Management</title>
+</head>
+
+<body id="page-top">
+
+<nav th:replace="~{admin/fragments/nav-bar :: nav-bar}"></nav>
+
+<div id="wrapper">
+
+    <!-- Sidebar -->
+    <ul th:replace="~{admin/fragments/sidebar :: sidebar}"></ul>
+
+    <div id="content-wrapper">
+
+        <div class="container-fluid">
+
+            <!-- Breadcrumbs -->
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item">
+                    <a th:href="@{/admin/dashboard}">Dashboard</a>
+                </li>
+                <li class="breadcrumb-item active">Order Management</li>
+            </ol>
+
+            <!-- Page Heading -->
+            <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                <h1 class="h3 mb-0 text-gray-800">
+                    <i class="fas fa-shopping-cart mr-2"></i>Order Management
+                </h1>
+                <div class="badge badge-info badge-pill">
+                    Total: <span th:text="${totalOrders ?: 0}">0</span> orders
+                </div>
+            </div>
+
+            <!-- Success/Error Messages -->
+            <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
+                <i class="fas fa-check-circle mr-2"></i>
+                <span th:text="${success}"></span>
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+
+            <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+                <i class="fas fa-exclamation-triangle mr-2"></i>
+                <span th:text="${error}"></span>
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+
+            <!-- Filter & Search Card -->
+            <div class="card shadow mb-4">
+                <div class="card-header">
+                    <h6 class="fas fa-table">
+                        <i class="fas fa-filter mr-3"></i>Search & Filter Orders
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <form method="get" th:action="@{/admin/orders}">
+                        <div class="row">
+                            <!-- Search -->
+                            <div class="col-lg-4 col-md-6 mb-3">
+                                <label for="searchInput" class="form-label font-weight-bold">Search:</label>
+                                <input type="text" 
+                                       class="form-control" 
+                                       id="searchInput" 
+                                       name="search" 
+                                       th:value="${searchTerm}"
+                                       placeholder="Order code, customer name, email, phone...">
+                            </div>
+                            
+                            <!-- Status Filter -->
+                            <div class="col-lg-3 col-md-6 mb-3">
+                                <label for="statusFilter" class="form-label font-weight-bold">Status:</label>
+                                <select class="form-control" id="statusFilter" name="status">
+                                    <option value="">-- All Status --</option>
+                                    <option value="PENDING" th:selected="${selectedStatus == 'PENDING'}">⏳ Waiting for Confirmation</option>
+                                    <option value="PAYMENT_PENDING" th:selected="${selectedStatus == 'PAYMENT_PENDING'}">💳 Waiting for Payment</option>
+                                    <option value="CONFIRMED" th:selected="${selectedStatus == 'CONFIRMED'}">✅ Confirmed</option>
+                                    <option value="PROCESSING" th:selected="${selectedStatus == 'PROCESSING'}">🔄 Processing</option>
+                                    <option value="SHIPPED" th:selected="${selectedStatus == 'SHIPPED'}">🚚 Shipping</option>
+                                    <option value="DELIVERED" th:selected="${selectedStatus == 'DELIVERED'}">📦 Delivered</option>
+                                    <option value="CANCELLED" th:selected="${selectedStatus == 'CANCELLED'}">❌ Cancelled</option>
+                                </select>
+                            </div>
+                            
+                            <!-- Sort -->
+                            <div class="col-lg-3 col-md-6 mb-3">
+                                <label for="sortSelect" class="form-label font-weight-bold">Sort:</label>
+                                <select class="form-control" id="sortSelect" name="sort">
+                                    <option value="date_desc" th:selected="${selectedSort == 'date_desc'}">Latest Date</option>
+                                    <option value="date_asc" th:selected="${selectedSort == 'date_asc'}">Oldest Date</option>
+                                    <option value="price_desc" th:selected="${selectedSort == 'price_desc'}">Highest Price</option>
+                                    <option value="price_asc" th:selected="${selectedSort == 'price_asc'}">Lowest Price</option>
+                                    <option value="status" th:selected="${selectedSort == 'status'}">By Status</option>
+                                </select>
+                            </div>
+                            
+                            <!-- Search Buttons -->
+                            <div class="col-lg-2 col-md-6 mb-3 d-flex align-items-end">
+                                <button type="submit" class="btn btn-primary mr-2 flex-fill">
+                                    <i class="fas fa-search mr-1"></i>Search
+                                </button>
+                                <a th:href="@{/admin/orders}" class="btn btn-outline-secondary" title="Clear Filter">
+                                    <i class="fas fa-eraser"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Orders Table -->
+            <div class="card shadow mb-4">
+                <div class="card-header ">
+                    <h6 class="fas fa-table">
+                        <i class="fas fa-list mr-3"></i>Order List
+                    </h6>
+                </div>
+                <div class="card-body">
+                    
+                    <!-- Empty State -->
+                    <div th:if="${orders == null or #lists.isEmpty(orders)}" class="text-center py-5">
+                        <i class="fas fa-inbox fa-4x text-gray-300 mb-3"></i>
+                        <h5 class="text-gray-500">No Orders</h5>
+                        <p class="text-muted">No orders matching the search criteria.</p>
+                        <a th:href="@{/admin/orders}" class="btn btn-outline-primary">
+                            <i class="fas fa-refresh mr-1"></i>View All Orders
+                        </a>
+                    </div>
+
+                    <!-- Orders Table -->
+                    <div th:if="${orders != null and !#lists.isEmpty(orders)}" class="table-responsive">
+                        <table class="table table-bordered table-hover" id="ordersTable" width="100%" cellspacing="0">
+                            <thead class="">
+                                <tr>
+                                    <th class="text-center" style="width: 120px;">Order Code</th>
+                                    <th style="width: 180px;">Customer Info</th>
+                                    <th class="text-center" style="width: 130px;">Order Date</th>
+                                    <th class="text-center" style="width: 120px;">Payment</th>
+                                    <th class="text-center" style="width: 100px;">Voucher</th>
+                                    <th class="text-right" style="width: 120px;">Total Amount</th>
+                                    <th class="text-center" style="width: 100px;">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="order : ${orders}">
+                                    <!-- Order ID -->
+                                    <td class="text-center">
+                                        <code class="text-primary font-weight-bold" 
+                                              th:text="${#strings.length(order.id) > 8 ? #strings.substring(order.id, 0, 8) + '...' : order.id}">
+                                            ORDER123
+                                        </code>
+                                    </td>
+                                    
+                                    <!-- Customer Info -->
+                                    <td>
+                                        <div class="d-flex flex-column">
+                                            <strong class="text-dark mb-1" 
+                                                    th:text="${order.customerName ?: 'N/A'}">
+                                                Customer Name
+                                            </strong>
+                                            <small class="text-muted mb-1" 
+                                                   th:text="${order.customerEmail ?: 'N/A'}">
+                                                email@example.com
+                                            </small>
+                                            <small class="text-info" 
+                                                   th:if="${order.customerPhone}" 
+                                                   th:text="'📞 ' + ${order.customerPhone}">
+                                                📞 0123456789
+                                            </small>
+                                        </div>
+                                    </td>
+                                    
+                                    <!-- Order Date -->
+                                    <td class="text-center">
+                                        <div th:if="${order.orderDate}">
+                                            <div class="font-weight-bold text-dark" 
+                                                 th:text="${#temporals.format(order.orderDate, 'dd/MM/yyyy')}">
+                                                25/12/2023
+                                            </div>
+                                            <small class="text-muted" 
+                                                   th:text="${#temporals.format(order.orderDate, 'HH:mm')}">
+                                                14:30
+                                            </small>
+                                        </div>
+                                        <span th:unless="${order.orderDate}" class="text-muted">N/A</span>
+                                    </td>
+                                    
+                                    <!-- Payment Status -->
+                                    <td class="text-center">
+                                        <div th:if="${order.paymentMethod == 'VNPAY'}">
+                                            <div th:with="paymentStatus=${paymentStatusMap[order.id]}">
+                                                <div th:if="${paymentStatus == 'Paid'}">
+                                                    <span class="badge badge-success">✅ Paid</span>
+                                                    <small class="text-muted d-block">VNPay</small>
+                                                </div>
+                                                <div th:if="${paymentStatus == 'Pending'}">
+                                                    <span class="badge badge-warning">⏳ Waiting for Payment</span>
+                                                    <small class="text-muted d-block">VNPay</small>
+                                                </div>
+                                                <div th:if="${paymentStatus == 'Failed'}">
+                                                    <span class="badge badge-danger">❌ Failed</span>
+                                                    <small class="text-muted d-block">VNPay</small>
+                                                </div>
+                                                <div th:if="${paymentStatus == 'Error'}">
+                                                    <span class="badge badge-danger">⚠️ Error</span>
+                                                    <small class="text-muted d-block">VNPay</small>
+                                                </div>
+                                                <div th:unless="${paymentStatus != null}">
+                                                    <span class="badge badge-secondary">❓ Unknown</span>
+                                                    <small class="text-muted d-block">VNPay</small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div th:if="${order.paymentMethod == 'COD'}">
+                                            <span class="badge badge-info">💵 Cash on Delivery</span>
+                                            <small class="text-muted d-block">COD</small>
+                                        </div>
+                                        <div th:unless="${order.paymentMethod != null}">
+                                            <span class="text-muted small">N/A</span>
+                                        </div>
+                                    </td>
+                                    
+                                    <!-- Voucher Info -->
+                                    <td class="text-center">
+                                        <div th:if="${order.voucherCode != null}">
+                                            <span class="badge badge-warning" th:text="${order.voucherCode}">VOUCHER20</span>
+                                            <div class="small text-success mt-1" th:if="${order.discountAmount > 0}">
+                                                -<span th:text="${#numbers.formatDecimal(order.discountAmount, 0, 'COMMA', 0, 'POINT')}">100,000</span> VND
+                                            </div>
+                                        </div>
+                                        <span th:unless="${order.voucherCode != null}" class="text-muted small">None</span>
+                                    </td>
+                                    
+                                    <!-- Total Amount -->
+                                    <td class="text-right">
+                                        <strong class="text-success" th:if="${order.totalAmount}">
+                                            <span th:text="${#numbers.formatDecimal(order.totalAmount, 0, 'COMMA', 0, 'POINT')}">
+                                                1,500,000
+                                            </span>
+                                            <small class="text-muted d-block">VND</small>
+                                        </strong>
+                                        <span th:unless="${order.totalAmount}" class="text-muted">N/A</span>
+                                    </td>
+                                    
+                                    <!-- Actions -->
+                                    <td class="text-center">
+                                        <div class="btn-group" role="group">
+                                            <a th:href="@{'/admin/orders/' + ${order.id}}" 
+                                               class="btn btn-sm btn-outline-primary" 
+                                               title="View Details">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <!-- /.container-fluid -->
+
+        <!-- Sticky Footer -->
+        <footer th:replace="~{admin/fragments/footer :: footer}"></footer>
+
+    </div>
+    <!-- /.content-wrapper -->
+
+</div>
+<!-- /#wrapper -->
+
+<!-- Scroll to Top Button -->
+<a class="scroll-to-top rounded" href="#page-top">
+    <i class="fas fa-angle-up"></i>
+</a>
+
+<!-- Logout Modal -->
+<div th:replace="~{admin/fragments/logout :: logout}"></div>
+
+<!-- Bootstrap core JavaScript -->
+<script th:src="@{/assets2/vendor/jquery/jquery.min.js}"></script>
+<script th:src="@{/assets2/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
+
+<!-- Core plugin JavaScript -->
+<script th:src="@{/assets2/vendor/jquery-easing/jquery.easing.min.js}"></script>
+
+<!-- Custom scripts for all pages -->
+<script th:src="@{/assets2/js/sb-admin.min.js}"></script>
+
+<!-- Custom CSS for better dropdown display -->
+<style>
+/* Fix dropdown option display */
+#statusFilter, #sortSelect, .form-control {
+    font-size: 14px;
+    padding: 8px 12px;
+}
+
+#statusFilter {
+    min-width: 180px;
+}
+
+#sortSelect {
+    min-width: 160px;
+}
+
+#searchInput {
+    min-width: 250px;
+}
+
+#statusFilter option, #sortSelect option {
+    padding: 6px 12px;
+    font-size: 14px;
+    line-height: 1.4;
+    white-space: nowrap;
+    overflow: visible;
+}
+
+/* Better form control styling */
+.form-control {
+    min-height: 38px;
+    border: 1px solid #d1d3e2;
+}
+
+.form-control:focus {
+    border-color: #5a5c69;
+    box-shadow: 0 0 0 0.2rem rgba(90, 92, 105, 0.25);
+}
+
+/* Better button spacing */
+.btn {
+    min-height: 38px;
+    line-height: 1.4;
+}
+
+/* Voucher styling */
+.badge-warning {
+    background-color: #f6c23e;
+    color: #1a1a1a;
+    font-weight: 600;
+    font-size: 0.75rem;
+}
+
+.voucher-discount {
+    font-size: 0.7rem;
+    margin-top: 2px;
+}
+
+</style>
+
+<!-- Page level custom scripts -->
+<script>
+$(document).ready(function() {
+    
+    // Auto-dismiss alerts after 5 seconds
+    setTimeout(function() {
+        $('.alert').fadeOut('slow');
+    }, 5000);
+    
+    // Clear search input shortcut
+    $('#searchInput').on('keyup', function(e) {
+        if (e.key === 'Escape') {
+            $(this).val('');
+        }
+    });
+    
+    // Quick search on Enter
+    $('#searchInput').on('keypress', function(e) {
+        if (e.which === 13) {
+            $(this).closest('form').submit();
+        }
+    });
+});
+</script>
+
+</body>
+
+</html>

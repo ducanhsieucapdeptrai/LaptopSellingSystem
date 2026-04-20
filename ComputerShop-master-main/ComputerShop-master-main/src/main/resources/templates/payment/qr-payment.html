@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VNPay Payment - Computer Shop</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+</head>
+<body class="bg-light">
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-10">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white text-center">
+                    <h4 class="mb-0"><i class="fab fa-vnpay"></i> VNPay Payment</h4>
+                </div>
+                <div class="card-body p-4">
+                    <!-- Payment Status -->
+                    <div id="payment-status" class="text-center mb-4">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Generating QR code...</span>
+                        </div>
+                        <p class="mt-2">Initializing payment...</p>
+                    </div>
+
+                    <div class="row">
+                        <!-- QR Code Section -->
+                        <div class="col-md-6">
+                            <div class="qr-section text-center">
+                                <h5 class="mb-3">
+                                    <i class="fas fa-qrcode"></i> Scan QR Code to Pay
+                                </h5>
+
+                                <div id="qr-code-container" class="mb-3" style="display: none;">
+                                    <canvas id="qr-canvas" class="border border-primary"></canvas>
+                                </div>
+
+                                <div id="qr-loading" class="mb-3">
+                                    <div class="spinner-border text-primary" role="status">
+                                        <span class="visually-hidden">Generating QR code...</span>
+                                    </div>
+                                    <p class="mt-2">Generating QR code...</p>
+                                    <button type="button" class="btn btn-outline-primary btn-sm mt-2" onclick="refreshQRCode()">
+                                        <i class="fas fa-refresh"></i> Refresh QR
+                                    </button>
+                                </div>
+
+                                <div id="payment-instructions" class="alert alert-info" style="display: none;">
+                                    <h6><i class="fas fa-mobile-alt"></i> Payment Instructions:</h6>
+                                    <ol class="text-start">
+                                        <li>Open your banking app or e-wallet</li>
+                                        <li>Select QR code scanning feature</li>
+                                        <li>Scan the QR code shown on screen</li>
+                                        <li>Verify information and complete payment</li>
+                                    </ol>
+                                </div>
+
+                                <div id="manual-payment-section" style="display: none;">
+                                    <a id="vnpay-manual-link" href="#" class="btn btn-primary btn-lg" target="_blank">
+                                        <i class="fas fa-external-link-alt"></i> Pay via Web
+                                    </a>
+                                    <p class="text-muted mt-2 small">Click here if you cannot scan the QR code</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Order Information -->
+                        <div class="col-md-6">
+                            <div class="order-info">
+                                <h5 class="mb-3">
+                                    <i class="fas fa-shopping-cart"></i> Order Information
+                                </h5>
+
+                                <div class="card bg-light">
+                                    <div class="card-body">
+                                        <div class="row mb-2">
+                                            <div class="col-6"><strong>Order Code:</strong></div>
+                                            <div class="col-6 text-end">
+                                                <span class="text-primary" th:text="${orderId}">#ORDER_ID</span>
+                                            </div>
+                                        </div>
+                                        <div class="row mb-2">
+                                            <div class="col-6"><strong>Recipient:</strong></div>
+                                            <div class="col-6 text-end" th:text="${fullName}">Recipient Name</div>
+                                        </div>
+                                        <div class="row mb-2">
+                                            <div class="col-6"><strong>Phone:</strong></div>
+                                            <div class="col-6 text-end" th:text="${phone}">Phone Number</div>
+                                        </div>
+                                        <div class="row mb-2">
+                                            <div class="col-6"><strong>Address:</strong></div>
+                                            <div class="col-6 text-end" th:text="${address}">Address</div>
+                                        </div>
+                                        <hr>
+                                        <div class="row">
+                                            <div class="col-6"><strong>Total Amount:</strong></div>
+                                            <div class="col-6 text-end">
+                                                <strong class="text-success" th:text="${#numbers.formatDecimal(totalAmount, 0, 'COMMA', 0, 'POINT')} + ' VND'">0 VND</strong>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="payment-timer mt-3 text-center">
+                                    <div class="alert alert-warning">
+                                        <i class="fas fa-clock"></i>
+                                        <strong>Time remaining:</strong>
+                                        <span id="countdown-timer" class="fw-bold">15:00</span>
+                                    </div>
+                                </div>
+
+                                <div id="status-updates" class="mt-3">
+                                    <div class="alert alert-info">
+                                        <i class="fas fa-info-circle"></i>
+                                        <span id="status-message">Awaiting payment...</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mt-4">
+                        <div class="col-12 text-center">
+                            <button id="refresh-qr" class="btn btn-outline-primary me-2" onclick="refreshQRCode()">
+                                <i class="fas fa-sync-alt"></i> Refresh QR
+                            </button>
+                            <a href="/cart/checkout" class="btn btn-outline-secondary">
+                                <i class="fas fa-arrow-left"></i> Back to Checkout
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script th:inline="javascript">
+    // Variables from Thymeleaf
+    const vnpayUrl = /*[[${vnpayUrl}]]*/ '';
+    const orderId = /*[[${orderId}]]*/ '';
+
+    let paymentCheckInterval;
+    let countdownInterval;
+    let timeLeft = 15 * 60; // 15 minutes in seconds
+
+    // Initialize page
+    document.addEventListener('DOMContentLoaded', function() {
+        generateQRCode();
+        startPaymentPolling();
+        startCountdown();
+    });
+
+    // Generate QR Code with timeout
+    function generateQRCode() {
+        console.log('🚀 Starting QR generation...');
+        console.log('VNPay URL:', vnpayUrl);
+        
+        if (!vnpayUrl || vnpayUrl === '') {
+            showError('URL thanh toán không hợp lệ. Vui lòng thử lại.');
+            return;
+        }
+
+        // Set timeout for QR generation
+        const qrTimeout = setTimeout(() => {
+            showError('Tạo mã QR quá lâu. Vui lòng thử lại hoặc thanh toán trực tiếp.');
+            // Show manual payment as fallback
+            document.getElementById('manual-payment-section').style.display = 'block';
+            document.getElementById('vnpay-manual-link').href = vnpayUrl;
+        }, 10000); // 10 second timeout
+
+        const canvas = document.getElementById('qr-canvas');
+        QRCode.toCanvas(canvas, vnpayUrl, {
+            width: 250,
+            height: 250,
+            margin: 2,
+            color: {
+                dark: '#000000',
+                light: '#FFFFFF'
+            }
+        }, function (error) {
+            clearTimeout(qrTimeout); // Clear timeout
+            
+            if (error) {
+                console.error('❌ QR Code generation error:', error);
+                showError('Không thể tạo mã QR. Sử dụng thanh toán trực tiếp.');
+                // Show manual payment as fallback
+                document.getElementById('manual-payment-section').style.display = 'block';
+                document.getElementById('vnpay-manual-link').href = vnpayUrl;
+            } else {
+                console.log('✅ QR Code generated successfully');
+                // Show QR code and hide loading
+                document.getElementById('qr-loading').style.display = 'none';
+                document.getElementById('qr-code-container').style.display = 'block';
+                document.getElementById('payment-instructions').style.display = 'block';
+                document.getElementById('manual-payment-section').style.display = 'block';
+
+                // Set manual payment link
+                document.getElementById('vnpay-manual-link').href = vnpayUrl;
+
+                // Update status
+                updatePaymentStatus('info', 'Quét mã QR hoặc nhấn "Thanh toán trực tiếp" để tiếp tục');
+                
+                // Update main status
+                document.getElementById('payment-status').innerHTML = `
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle"></i> Đang chờ thanh toán...
+                    </div>
+                `;
+            }
+        });
+    }
+
+    // Refresh QR Code
+    function refreshQRCode() {
+        document.getElementById('qr-code-container').style.display = 'none';
+        document.getElementById('qr-loading').style.display = 'block';
+        setTimeout(generateQRCode, 1000);
+    }
+
+    // Start payment polling with optimized intervals
+    function startPaymentPolling() {
+        console.log('🔄 Starting payment polling...');
+        let pollCount = 0;
+        
+        paymentCheckInterval = setInterval(() => {
+            pollCount++;
+            checkPaymentStatus(pollCount);
+        }, 5000); // Check every 5 seconds (reduced from 3)
+    }
+
+    // Check payment status via AJAX with timeout
+    function checkPaymentStatus(pollCount) {
+        console.log(`🔍 Checking payment status (attempt ${pollCount})...`);
+        
+        // Create timeout for fetch request
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 8000); // 8 second timeout
+        
+        fetch(`/payment/vnpay/check-status/${orderId}`, {
+            signal: controller.signal
+        })
+            .then(response => {
+                clearTimeout(timeoutId);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('📊 Payment status response:', data);
+                if (data.success) {
+                    if (data.status === 'Paid') {
+                        console.log('✅ Payment successful!');
+                        clearInterval(paymentCheckInterval);
+                        clearInterval(countdownInterval);
+                        showPaymentSuccess(data);
+                    } else if (data.status === 'Failed') {
+                        console.log('❌ Payment failed!');
+                        clearInterval(paymentCheckInterval);
+                        clearInterval(countdownInterval);
+                        showPaymentFailed();
+                    }
+                    // Continue polling for PENDING status
+                } else {
+                    console.log('⚠️ Unsuccessful response:', data);
+                }
+            })
+            .catch(error => {
+                clearTimeout(timeoutId);
+                console.error('❌ Error checking payment status:', error);
+                
+                // If too many consecutive errors, show fallback message
+                if (pollCount > 10) {
+                    updatePaymentStatus('warning', 'Mất kết nối. Vui lòng kiểm tra lại sau hoặc liên hệ hỗ trợ.');
+                }
+            });
+    }
+
+    // Start countdown timer
+    function startCountdown() {
+        countdownInterval = setInterval(() => {
+            timeLeft--;
+
+            const minutes = Math.floor(timeLeft / 60);
+            const seconds = timeLeft % 60;
+            const timeString = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+
+            document.getElementById('countdown-timer').textContent = timeString;
+
+            if (timeLeft <= 0) {
+                clearInterval(countdownInterval);
+                clearInterval(paymentCheckInterval);
+                showPaymentTimeout();
+            }
+        }, 1000);
+    }
+
+    // Update payment status message
+    function updatePaymentStatus(type, message) {
+        const statusElement = document.getElementById('status-updates');
+        const alertClass = type === 'success' ? 'alert-success' :
+            type === 'error' ? 'alert-danger' : 'alert-info';
+
+        statusElement.innerHTML = `
+                <div class="alert ${alertClass}">
+                    <i class="fas fa-info-circle"></i>
+                    <span id="status-message">${message}</span>
+                </div>
+            `;
+    }
+
+    // Show payment success
+    function showPaymentSuccess(data) {
+        updatePaymentStatus('success', 'Thanh toán thành công! Đang chuyển hướng...');
+        setTimeout(() => {
+            window.location.href = `/payment/vnpay-payment-return?vnp_TransactionStatus=00&vnp_OrderInfo=${orderId}&vnp_TransactionNo=${data.transactionId || 'N/A'}&vnp_PayDate=${new Date().toISOString().replace(/[^\d]/g, '').slice(0, 14)}&vnp_Amount=${/*[[${totalAmount}]]*/ '0'}00`;
+        }, 2000);
+    }
+
+    // Show payment failed
+    function showPaymentFailed() {
+        updatePaymentStatus('error', 'Thanh toán thất bại. Vui lòng thử lại.');
+        setTimeout(() => {
+            window.location.href = '/payment/vnpay-payment-return?vnp_TransactionStatus=01';
+        }, 3000);
+    }
+
+    // Show payment timeout
+    function showPaymentTimeout() {
+        updatePaymentStatus('error', 'Hết thời gian thanh toán. Vui lòng thử lại.');
+        setTimeout(() => {
+            window.location.href = '/cart/checkout';
+        }, 3000);
+    }
+
+    // Show error
+    function showError(message) {
+        updatePaymentStatus('error', message);
+        document.getElementById('qr-loading').style.display = 'none';
+    }
+
+    // Clean up intervals when page unloads
+    window.addEventListener('beforeunload', function() {
+        if (paymentCheckInterval) clearInterval(paymentCheckInterval);
+        if (countdownInterval) clearInterval(countdownInterval);
+    });
+</script>
+</body>
+</html> 

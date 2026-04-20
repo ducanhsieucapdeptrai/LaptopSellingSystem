@@ -1,0 +1,275 @@
+<div th:fragment="footer">
+    <footer>
+        <div class="container my-auto">
+            <div class="copyright text-center my-auto">
+                <span>Copyright © ComputerShop Website 2026</span>
+            </div>
+        </div>
+        <script th:src="@{/assets2/vendor/jquery/jquery.min.js}"></script>
+        <script th:src="@{/assets2/vendor/bootstrap/js/bootstrap.bundle.min.js}"></script>
+
+        <!-- Core plugin JavaScript-->
+        <script th:src="@{/assets2/vendor/jquery-easing/jquery.easing.min.js}"></script>
+
+        <!-- Page level plugin JavaScript-->
+        <script th:src="@{/assets2/vendor/chart.js/Chart.min.js}"></script>
+        <script th:src="@{/assets2/vendor/datatables/jquery.dataTables.js}"></script>
+        <script th:src="@{/assets2/vendor/datatables/dataTables.bootstrap4.js}"></script>
+
+        <!-- Custom scripts for all pages-->
+        <script th:src="@{/assets2/js/sb-admin.min.js}"></script>
+        <script th:src="@{/assets2/js/colReorder-bootstrap4-min.js}"></script>
+        <script th:src="@{/assets2/js/colReorder-dataTables-min.js}"></script>
+        
+        <!-- Demo scripts for this page-->
+        <!-- <script th:src="@{/assets2/js/demo/datatables-demo.js}"></script> -->
+        <script>
+            $(document).ready(function() {
+                $('.table').DataTable();
+            });
+        </script>
+        <script th:src="@{/assets2/js/demo/chart-area-demo.js}"></script>
+        <script th:src="@{/assets2/js/colReorder-dataTables-min.js}"></script>
+        <script th:src="@{/assets2/js/colReorder-bootstrap4-min.js}"></script>
+
+    <!-- Sidebar Collapse JavaScript -->
+    <script>
+    $(document).ready(function() {
+        console.log('Sidebar script loaded');
+
+        // Sidebar collapse handling
+        $('.sidebar .nav-link[data-toggle="collapse"]').on('click', function(e) {
+            e.preventDefault();
+            console.log('Sidebar collapse clicked');
+
+            const $this = $(this);
+            const target = $this.attr('data-target');
+            const $target = $(target);
+
+            console.log('Target:', target);
+
+            // Toggle collapsed class
+            $this.toggleClass('collapsed');
+
+            // Toggle collapse
+            $target.collapse('toggle');
+
+            // Close other open collapses
+            $('.sidebar .collapse').not($target).collapse('hide');
+            $('.sidebar .nav-link[data-toggle="collapse"]').not($this).addClass('collapsed');
+        });
+
+        // Test if Bootstrap collapse is available
+        if (typeof $.fn.collapse === 'undefined') {
+            console.error('Bootstrap collapse plugin not loaded!');
+        } else {
+            console.log('Bootstrap collapse plugin loaded');
+        }
+
+        // Ensure toggleStatistics is available immediately
+        if (typeof window.toggleStatistics === 'undefined') {
+            console.log('Creating immediate toggleStatistics function');
+            window.toggleStatistics = function() {
+                console.log('Immediate toggleStatistics called');
+                alert('Thống kê function đã được gọi! Đang tải...');
+
+                // Try to find panel
+                let panel = document.getElementById('statisticsPanel');
+                if (!panel) {
+                    console.log('Panel not found, creating simple one');
+                    // Create a simple panel for testing
+                    panel = document.createElement('div');
+                    panel.id = 'statisticsPanel';
+                    panel.style.cssText = `
+                        position: fixed;
+                        top: 0;
+                        left: 0;
+                        width: 100%;
+                        height: 100%;
+                        background: rgba(0,0,0,0.5);
+                        z-index: 9999;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                    `;
+                    panel.innerHTML = `
+                        <div style="background: white; padding: 20px; border-radius: 10px; max-width: 500px;">
+                            <h3>Thống kê tổng quan</h3>
+                            <p>Đang tải dữ liệu...</p>
+                            <button onclick="document.getElementById('statisticsPanel').remove()">Đóng</button>
+                        </div>
+                    `;
+                    document.body.appendChild(panel);
+                } else {
+                    panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
+                }
+            };
+        }
+
+        // Simple statistics function
+        window.showStatistics = function() {
+            console.log('showStatistics called');
+
+            // Create simple popup
+            let popup = document.getElementById('statsPopup');
+            if (popup) {
+                popup.remove();
+            }
+
+            popup = document.createElement('div');
+            popup.id = 'statsPopup';
+            popup.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0,0,0,0.5);
+                z-index: 9999;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            `;
+
+            popup.innerHTML = `
+                <div style="background: white; padding: 30px; border-radius: 10px; max-width: 800px; width: 90%; max-height: 80vh; overflow-y: auto;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                        <h3><i class="fas fa-chart-pie"></i> Thống kê tổng quan</h3>
+                        <button onclick="document.getElementById('statsPopup').remove()" style="background: #dc3545; color: white; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer;">
+                            <i class="fas fa-times"></i> Đóng
+                        </button>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 20px;">
+                        <div style="background: #4e73df; color: white; padding: 20px; border-radius: 10px; text-align: center;">
+                            <h4>Người dùng</h4>
+                            <h2 id="userCount">...</h2>
+                        </div>
+                        <div style="background: #1cc88a; color: white; padding: 20px; border-radius: 10px; text-align: center;">
+                            <h4>Sản phẩm</h4>
+                            <h2 id="productCount">...</h2>
+                        </div>
+                        <div style="background: #36b9cc; color: white; padding: 20px; border-radius: 10px; text-align: center;">
+                            <h4>Đơn hàng</h4>
+                            <h2 id="orderCount">...</h2>
+                        </div>
+                        <div style="background: #f6c23e; color: white; padding: 20px; border-radius: 10px; text-align: center;">
+                            <h4>Doanh thu</h4>
+                            <h2 id="revenue">...</h2>
+                        </div>
+                    </div>
+
+                    <div style="background: #f8f9fc; padding: 20px; border-radius: 10px;">
+                        <h5>Top sản phẩm bán chạy:</h5>
+                        <div id="topProducts">Đang tải...</div>
+                    </div>
+                </div>
+            `;
+
+            document.body.appendChild(popup);
+
+            // Load data
+            loadStatsData();
+        };
+
+        function loadStatsData() {
+            fetch('/admin/api/statistics')
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('userCount').textContent = data.userCount || 0;
+                    document.getElementById('productCount').textContent = data.productCount || 0;
+                    document.getElementById('orderCount').textContent = data.orderCount || 0;
+                    document.getElementById('revenue').textContent = formatCurrency(data.revenue || 0);
+
+                    let topProductsHtml = '<ul>';
+                    (data.topProducts || []).forEach(product => {
+                        topProductsHtml += `<li>${product.name}: ${product.totalSold} đã bán</li>`;
+                    });
+                    topProductsHtml += '</ul>';
+                    document.getElementById('topProducts').innerHTML = topProductsHtml;
+                })
+                .catch(error => {
+                    console.error('Error loading stats:', error);
+                    document.getElementById('userCount').textContent = 'Lỗi';
+                    document.getElementById('productCount').textContent = 'Lỗi';
+                    document.getElementById('orderCount').textContent = 'Lỗi';
+                    document.getElementById('revenue').textContent = 'Lỗi';
+                });
+        }
+
+        function formatCurrency(amount) {
+            return new Intl.NumberFormat('vi-VN').format(amount) + ' ₫';
+        }
+    });
+
+    // Global functions
+    window.toggleReportsMenu = function(event) {
+        const menu = document.getElementById('collapseReports');
+        // Lấy link đúng khi gọi từ onclick hoặc từ sự kiện
+        const link = (event && event.target) ? event.target.closest('.nav-link') : document.querySelector('.nav-link[onclick*="toggleReportsMenu"]');
+        if (!menu || !link) return;
+        if (menu.classList.contains('show')) {
+            menu.classList.remove('show');
+            link.classList.add('collapsed');
+        } else {
+            // Đóng các menu khác trước
+            document.querySelectorAll('.sidebar .collapse.show').forEach(function(openMenu) {
+                openMenu.classList.remove('show');
+            });
+            document.querySelectorAll('.sidebar .nav-link').forEach(function(navLink) {
+                navLink.classList.add('collapsed');
+            });
+            // Mở menu này
+            menu.classList.add('show');
+            link.classList.remove('collapsed');
+        }
+    };
+
+    // Global statistics function - fallback if not loaded from fragment
+    window.toggleStatistics = window.toggleStatistics || function() {
+        console.log('Global toggleStatistics called');
+
+        // Try to load statistics panel dynamically if not present
+        const panel = document.getElementById('statisticsPanel');
+        if (!panel) {
+            console.warn('Statistics panel not found. Loading dynamically...');
+            loadStatisticsPanel();
+            return;
+        }
+
+        if (panel.style.display === 'none' || panel.style.display === '') {
+            panel.style.display = 'block';
+            // Try to load data if function exists
+            if (typeof loadStatisticsData === 'function') {
+                loadStatisticsData();
+            }
+        } else {
+            panel.style.display = 'none';
+        }
+    };
+
+    // Function to dynamically load statistics panel
+    function loadStatisticsPanel() {
+        fetch('/admin/api/statistics/panel')
+            .then(response => response.text())
+            .then(html => {
+                document.body.insertAdjacentHTML('beforeend', html);
+                // Load Chart.js if not already loaded
+                if (typeof Chart === 'undefined') {
+                    const script = document.createElement('script');
+                    script.src = 'https://cdn.jsdelivr.net/npm/chart.js';
+                    document.head.appendChild(script);
+                }
+                // Try to toggle again
+                setTimeout(() => toggleStatistics(), 100);
+            })
+            .catch(error => {
+                console.error('Error loading statistics panel:', error);
+                alert('Không thể tải trang thống kê. Vui lòng thử lại.');
+            });
+    }
+    </script>
+
+</footer>
+    </footer>
+</div>

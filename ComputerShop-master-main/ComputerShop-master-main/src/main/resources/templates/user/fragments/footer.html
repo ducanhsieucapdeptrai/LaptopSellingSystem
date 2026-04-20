@@ -1,0 +1,129 @@
+<div th:fragment="footer">
+    <div class="service-area" style="margin-top: 25px">
+        <div class="container">
+            <div class="row row-cols-xl-4 row-cols-sm-2 row-cols-1 row--20">
+                <div class="col">
+                    <div class="service-box service-style-2">
+                        <div class="icon">
+                            <img th:src="@{/assets/images/icons/service1.png}" alt="Service">
+                        </div>
+                        <div class="content">
+                            <h6 class="title">Fast & Safe Shipping</h6>
+                            <p>Nationwide Shipping.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="service-box service-style-2">
+                        <div class="icon">
+                            <img th:src="@{/assets/images/icons/service2.png}" alt="Service">
+                        </div>
+                        <div class="content">
+                            <h6 class="title">100% Refund</h6>
+                            <p>Within 10 days.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="service-box service-style-2">
+                        <div class="icon">
+                            <img th:src="@{/assets/images/icons/service3.png}" alt="Service">
+                        </div>
+                        <div class="content">
+                            <h6 class="title">Exchange & Return Policy</h6>
+                            <p>Within 24 hours.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="service-box service-style-2">
+                        <div class="icon">
+                            <img th:src="@{/assets/images/icons/service4.png}" alt="Service">
+                        </div>
+                        <div class="content">
+                            <h6 class="title">Professional Support</h6>
+                            <p>Support 24/7.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+<footer class="axil-footer-area footer-style-2">
+    <div class="footer-top separator-top">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-6 col-sm-6">
+                    <div class="axil-footer-widget">
+                        <h5 class="widget-title">Contact</h5>
+                        <div class="inner">
+                            <p>FPT Software Academy Hoa Lac, Vietnam</p>
+                            <ul class="support-list-item">
+                                <li><a href="mailto:contact@example.com"><i class="fal fa-envelope-open"></i> contact@example.com</a></li>
+                                <li><a href="tel:(+84)123456789"><i class="fal fa-phone-alt"></i> (+84) 123 456 789</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6 col-sm-6">
+                    <div class="axil-footer-widget">
+                        <h5 class="widget-title">Account</h5>
+                        <div class="inner">
+                            <ul>
+                                <li><a th:href="@{/user/user-profile}">My Account</a></li>
+                                <li><a th:href="@{/auth/register}">Sign Up</a></li>
+                                <li><a th:href="@{/auth/login}">Log In</a></li>
+                                <li><a th:href="@{/cart/view}">Cart</a></li>
+                                <li><a th:href="@{/user/shopping-page}">Shop</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="copyright-area copyright-default separator-top">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-xl-4">
+                </div>
+                <div class="col-xl-4 col-lg-12">
+                    <div class="copyright-left d-flex flex-wrap justify-content-center">
+                        <ul class="quick-link">
+                            <li>© 2026. Copyright belongs to <a target="_blank" href="#">CoreHub</a>.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script th:src="@{/assets/js/vendor/modernizr.min.js}"></script>
+    <!-- jQuery JS -->
+    <script th:src="@{/assets/js/vendor/jquery.js}"></script>
+    <!-- Bootstrap JS -->
+    <script th:src="@{/assets/js/vendor/popper.min.js}"></script>
+    <script th:src="@{/assets/js/vendor/bootstrap.min.js}"></script>
+    <script th:src="@{/assets/js/vendor/slick.min.js}"></script>
+    <script th:src="@{/assets/js/vendor/js.cookie.js}"></script>
+    <script th:src="@{/assets/js/vendor/jquery-ui.min.js}"></script>
+    <script th:src="@{/assets/js/vendor/jquery.ui.touch-punch.min.js}"></script>
+    <script th:src="@{/assets/js/vendor/jquery.countdown.min.js}"></script>
+    <script th:src="@{/assets/js/vendor/sal.js}"></script>
+    <script th:src="@{/assets/js/vendor/jquery.magnific-popup.min.js}"></script>
+    <script th:src="@{/assets/js/vendor/imagesloaded.pkgd.min.js}"></script>
+    <script th:src="@{/assets/js/vendor/isotope.pkgd.min.js}"></script>
+    <script th:src="@{/assets/js/vendor/counterup.js}"></script>
+    <script th:src="@{/assets/js/vendor/waypoints.min.js}"></script>
+
+    <!-- Main JS -->
+    <script th:src="@{/assets/js/main.js}"></script>
+    <!-- Shopping Enhancements Script -->
+    <script th:src="@{/assets/js/shopping-enhancement.js}"></script>
+    <script th:src="@{/assets/js/cart-animation.js}"></script>
+    <!-- Custom Pagination Script -->
+    <script th:src="@{/assets/js/pagination.js}"></script>
+    <!-- Custom Pagination CSS -->
+    <link th:href="@{/assets/css/pagination.css}" rel="stylesheet">
+    <link th:href="@{/assets/css/cart-animation.css}" rel="stylesheet">
+</footer>
+</div>

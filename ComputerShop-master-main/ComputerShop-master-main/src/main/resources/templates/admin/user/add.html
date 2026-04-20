@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{admin/fragments/header :: header}">
+	<title></title>
+</head>
+
+<body id="page-top" class="newsletter-popup-modal">
+<nav th:replace="~{admin/fragments/nav-bar :: nav-bar}"></nav>
+<div id="wrapper">
+	<!-- Sidebar -->
+	<ul th:replace="~{admin/fragments/sidebar :: sidebar}"></ul>
+
+	<div id="content-wrapper" class="flex-grow-1">
+		<div class="container-fluid">
+			<!-- Breadcrumbs-->
+			<ol class="breadcrumb">
+				<li class="breadcrumb-item">
+					<a th:href="@{/admin/dashboard}">Dashboard</a>
+				</li>
+				<li class="breadcrumb-item">
+					<a th:href="@{/admin/user}">User Management</a>
+				</li>
+				<li class="breadcrumb-item active">Add User</li>
+			</ol>
+			<!-- Main body information -->
+			<div class="row justify-content-center">
+				<div class="col-md-8 col-lg-6">
+					<div class="card shadow mb-4">
+						<div class="card-header bg-primary text-white">
+							<h4 class="mb-0">Add New User</h4>
+						</div>
+						<div class="card-body">
+							<!-- Display general error message -->
+							<div th:if="${error}" class="alert alert-danger alert-dismissible fade show"
+							     role="alert">
+								<i class="fas fa-exclamation-circle me-2"></i>
+								<span th:text="${error}"></span>
+								<button type="button" class="btn-close" data-bs-dismiss="alert"
+								        aria-label="Close"></button>
+							</div>
+
+							<form th:action="@{/admin/add-user}" th:object="${userCreateByAdmin}" method="post"
+							      enctype="multipart/form-data" class="needs-validation" novalidate>
+							<!-- Display validation errors for each field -->
+								<div th:if="${#fields.hasErrors()}" class="alert alert-danger">
+									<ul>
+										<li th:each="err : ${#fields.errors()}" th:text="${err}"></li>
+									</ul>
+								</div>
+								<div class="form-group mb-3">
+								<label for="fullName">Full Name<span class="text-danger">*</span></label>
+									<input type="text" id="fullName" class="form-control" th:field="*{fullName}"
+									       required>
+									<div class="invalid-feedback d-block" th:if="${#fields.hasErrors('fullName')}"
+									     th:errors="*{fullName}"></div>
+								</div>
+								<div class="form-group mb-3">
+									<label for="email">Email<span class="text-danger">*</span></label>
+									<input type="email" id="email" class="form-control" th:field="*{email}"
+									       required>
+									<div class="invalid-feedback d-block" th:if="${#fields.hasErrors('email')}"
+									     th:errors="*{email}"></div>
+								</div>
+								<div class="form-group mb-3">
+								<label for="username">Login Name<span class="text-danger">*</span></label>
+									<input type="text" id="username" class="form-control" th:field="*{username}"
+									       required>
+									<div class="invalid-feedback d-block" th:if="${#fields.hasErrors('username')}"
+									     th:errors="*{username}"></div>
+								</div>
+								<div class="form-group mb-3">
+								<label for="password">Password<span class="text-danger">*</span></label>
+									<input type="password" id="password" class="form-control" th:field="*{password}"
+									       required>
+									<div class="invalid-feedback d-block" th:if="${#fields.hasErrors('password')}"
+									     th:errors="*{password}"></div>
+								</div>
+								<div class="form-group mb-3">
+								<label for="phoneNumber">Phone Number<span class="text-danger">*</span></label>
+									<input type="tel" id="phoneNumber" class="form-control"
+									       th:field="*{phoneNumber}" required>
+									<div class="invalid-feedback d-block"
+									     th:if="${#fields.hasErrors('phoneNumber')}" th:errors="*{phoneNumber}">
+									</div>
+								</div>
+								<div class="form-group mb-3">
+								<label for="address">Address<span class="text-danger">*</span></label>
+									<input type="text" id="address" class="form-control" th:field="*{address}"
+									       required>
+									<div class="invalid-feedback d-block" th:if="${#fields.hasErrors('address')}"
+									     th:errors="*{address}"></div>
+								</div>
+								<div class="form-group mb-4">
+								<label>Role<span class="text-danger">*</span></label>
+									<div>
+										<div class="form-check form-check-inline">
+											<input class="form-check-input" type="radio" th:field="*{role}" value="Admin" id="roleAdmin">
+											<label class="form-check-label" for="roleAdmin">Administrator</label>
+										</div>
+										<div class="form-check form-check-inline">
+											<input class="form-check-input" type="radio" th:field="*{role}" value="Customer" id="roleCustomer">
+											<label class="form-check-label" for="roleCustomer">Customer</label>
+										</div>
+										<div class="form-check form-check-inline">
+											<input class="form-check-input" type="radio" th:field="*{role}" value="Sales" id="roleSales">
+											<label class="form-check-label" for="roleSales">Sales Staff</label>
+										</div>
+										<div class="form-check form-check-inline">
+											<input class="form-check-input" type="radio" th:field="*{role}" value="Shipper" id="roleShipper">
+											<label class="form-check-label" for="roleShipper">Shipper</label>
+										</div>
+									</div>
+									<div class="invalid-feedback d-block" th:if="${#fields.hasErrors('role')}"
+									     th:errors="*{role}"></div>
+								</div>
+								<div class="form-group mb-4">
+								<label>Status<span class="text-danger">*</span></label>
+									<div>
+										<div class="form-check form-check-inline">
+											<input class="form-check-input" type="radio" th:field="*{active}"
+											       value="true" id="activeTrue" checked>
+											<label class="form-check-label" for="activeTrue">Activated</label>
+										</div>
+										<div class="form-check form-check-inline">
+											<input class="form-check-input" type="radio" th:field="*{active}"
+											       value="false" id="activeFalse">
+											<label class="form-check-label" for="activeFalse">Not Yet Activated</label>
+										</div>
+									</div>
+									<div class="invalid-feedback d-block" th:if="${#fields.hasErrors('active')}"
+									     th:errors="*{active}"></div>
+								</div>
+
+								<div>
+									<button type="submit" class="btn btn-success w-100">
+										<i class="fas fa-save"></i> Add Account
+									</button>
+								</div>
+							</form>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<footer class="mt-auto" th:replace="~{admin/fragments/footer :: footer}"></footer>
+	</div>
+</div>
+
+<!-- Scroll to Top Button-->
+<a class="scroll-to-top rounded" href="#page-top">
+	<i class="fas fa-angle-up"></i>
+</a>
+
+<!-- Logout Modal-->
+<div th:replace="~{admin/fragments/logout :: logout}"></div>
+</body>
+</html>

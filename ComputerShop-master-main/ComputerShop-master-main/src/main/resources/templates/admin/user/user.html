@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{admin/fragments/header :: header}">
+    <title></title>
+</head>
+
+<body id="page-top">
+
+<nav th:replace="~{admin/fragments/nav-bar :: nav-bar}"></nav>
+
+<div id="wrapper">
+
+    <!-- Sidebar -->
+    <ul th:replace="~{admin/fragments/sidebar :: sidebar}"></ul>
+
+    <div id="content-wrapper">
+        <div class="container-fluid">
+
+            <!-- Breadcrumbs-->
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item">
+                    <a href="#">Dashboard</a>
+                </li>
+                <li class="breadcrumb-item active">Overview</li>
+            </ol>
+
+            <!-- Main body information -->
+            <!-- Categories Table -->
+            <div class="card mb-3">
+                <div class="card-header">
+                    <i class="fas fa-table"></i>
+                    User List
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-hover align-middle text-center" id = "dataTable">
+                            <thead class="table-light">
+                            <tr>
+                                <th>Username</th>
+                                <th>Full Name</th>
+                                <th>Email</th>
+                                <th>Phone Number</th>
+                                <th>Role</th>
+                                <th>Activation Status</th>
+                                <th>Account Lock Status</th>
+                                <th>Created Date</th>
+                                <th>Actions</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:each="users : ${user}">
+                                <td th:text="${users.username}"></td>
+                                <td th:text="${users.fullName}"></td>
+                                <td th:text="${users.email}"></td>
+                                <td th:text="${users.phoneNumber}"></td>
+                                <td th:text="${users.role.displayName}"></td>
+                                <td>
+                                    <span th:if="${users.isActive == true}" class="badge btn-success">Activated</span>
+                                    <span th:if="${users.isActive != true}" class="badge btn-secondary">Not Activated</span>
+                                </td>
+                                <td>
+                                    <span th:if="${users.isAccountLocked == true}" class="badge btn-danger">Locked</span>
+                                    <span th:if="${users.isAccountLocked != true}" class="badge btn-success">Active</span>
+                                </td>
+                                <td th:text="${#temporals.format(users.createdAt, 'dd/MM/yyyy HH:mm')}"></td>
+                                <td>
+                                    <a th:href="@{/admin/edit-user/{id}(id=${users.userId})}" class="btn btn-sm btn-primary" title="Edit">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <button type="button" 
+                                            th:class="${users.isAccountLocked} ? 'btn btn-sm btn-success' : 'btn btn-sm btn-danger'"
+                                            onclick="toggleUserStatus(this)"
+                                            th:data-user-id="${users.userId}"
+                                            th:title="${users.isAccountLocked} ? 'Unlock Account' : 'Lock Account'">
+                                        <i th:class="${users.isAccountLocked} ? 'fas fa-unlock' : 'fas fa-lock'"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <footer class="mt-auto" th:replace="~{admin/fragments/footer :: footer}"></footer>
+    </div>
+</div>
+
+
+<!-- Scroll to Top Button-->
+<a class="scroll-to-top rounded" href="#page-top">
+    <i class="fas fa-angle-up"></i>
+</a>
+
+<!-- Logout Modal-->
+<div th:replace="~{admin/fragments/logout :: logout}"></div>
+
+<script>
+// Toggle user lock status function
+function toggleUserStatus(button) {
+    const userId = button.getAttribute('data-user-id');
+    
+    if (!confirm('Are you sure you want to lock / unlock this account?')) {
+        return;
+    }
+    
+    fetch('/admin/toggle-user-status/' + userId, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        }
+    })
+    .then(response => response.text())
+    .then(data => {
+        if (data === 'success') {
+            location.reload();
+        } else {
+            alert('An error occurred while changing the account lock status!');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('An error occurred while changing the account lock status!');
+    });
+}
+</script>
+</body>
+</html>

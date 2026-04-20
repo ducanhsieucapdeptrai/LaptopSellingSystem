@@ -1,0 +1,186 @@
+/* Shipping Calculator Styles */
+#shipping-info {
+    margin-top: 15px;
+    margin-bottom: 15px;
+}
+
+#shipping-info .alert {
+    border-radius: 8px;
+    border: 1px solid #d1ecf1;
+    background-color: #d1ecf1;
+    color: #0c5460;
+}
+
+#shipping-info .alert h6 {
+    margin-bottom: 10px;
+    font-weight: 600;
+    color: #0c5460;
+}
+
+#shipping-info .alert p {
+    margin-bottom: 5px;
+    font-size: 14px;
+}
+
+#shipping-info .alert p:last-child {
+    margin-bottom: 0;
+}
+
+.shipping-fee {
+    font-size: 12px;
+    font-weight: 500;
+    color: #6c757d !important;
+}
+
+.shipping-fee.free {
+    color: #28a745 !important;
+}
+
+.shipping-fee.paid {
+    color: #dc3545 !important;
+}
+
+.input-group label {
+    font-size: 14px;
+    font-weight: 500;
+    margin-bottom: 5px;
+    cursor: pointer;
+}
+
+.input-group label small {
+    display: block;
+    font-weight: 400;
+    font-size: 12px;
+    margin-top: 2px;
+}
+
+.order-shipping-fee td {
+    font-weight: 500;
+    color: #495057;
+}
+
+.order-shipping-fee td:last-child {
+    text-align: right;
+    color: #dc3545;
+}
+
+/* Loading animation */
+.shipping-loading {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    border: 2px solid #f3f3f3;
+    border-top: 2px solid #007bff;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-right: 5px;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Distance display styling */
+#distance-display {
+    font-weight: 600;
+    color: #007bff;
+}
+
+#delivery-time {
+    font-weight: 600;
+    color: #28a745;
+}
+
+/* Enhanced input styling for address fields */
+#full-address-autocomplete, #address, #district, #ward, #city, #province {
+    transition: border-color 0.3s ease;
+}
+
+#full-address-autocomplete:focus, #address:focus, #district:focus, #ward:focus, #city:focus, #province:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+/* Autocomplete field styling */
+#full-address-autocomplete {
+    border: 2px solid #e3f2fd;
+    background-color: #f8f9fa;
+    font-weight: 500;
+}
+
+#full-address-autocomplete:focus {
+    background-color: #fff;
+    border-color: #2196f3;
+}
+
+/* Address form section */
+.address-section {
+    background-color: #f8f9fa;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+}
+
+.address-section h6 {
+    color: #495057;
+    margin-bottom: 15px;
+    font-weight: 600;
+}
+
+/* Google Places autocomplete dropdown styling */
+.pac-container {
+    border-radius: 8px;
+    border: 1px solid #dee2e6;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    font-family: inherit;
+}
+
+.pac-item {
+    padding: 10px 15px;
+    border-bottom: 1px solid #f1f3f4;
+    cursor: pointer;
+}
+
+.pac-item:hover {
+    background-color: #f8f9fa;
+}
+
+.pac-item-selected {
+    background-color: #e3f2fd;
+}
+
+/* Form validation feedback */
+.form-group.has-error input {
+    border-color: #dc3545;
+}
+
+.form-group.has-success input {
+    border-color: #28a745;
+}
+
+/* Success message styling */
+.shipping-success {
+    color: #28a745;
+    font-weight: 500;
+}
+
+.shipping-error {
+    color: #dc3545;
+    font-weight: 500;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    #shipping-info .alert p {
+        font-size: 13px;
+    }
+    
+    .shipping-fee {
+        font-size: 11px;
+    }
+    
+    .input-group label {
+        font-size: 13px;
+    }
+} 
