@@ -45,6 +45,8 @@ class ShoppingEnhancements {
         let sortedProducts = [...products]; // Create a copy to avoid mutation
         
         switch (sortType) {
+            case 'name-asc':
+            case 'Sort by Name A-Z':
             case 'Sort by name A-Z':
                 sortedProducts.sort((a, b) => {
                     try {
@@ -57,6 +59,8 @@ class ShoppingEnhancements {
                 });
                 break;
                 
+            case 'name-desc':
+            case 'Sort by Name Z-A':
             case 'Sort by name Z-A':
                 sortedProducts.sort((a, b) => {
                     try {
@@ -69,6 +73,8 @@ class ShoppingEnhancements {
                 });
                 break;
                 
+            case 'price-asc':
+            case 'Sort by Price: Low to High':
             case 'Sort by price ascending':
                 sortedProducts.sort((a, b) => {
                     try {
@@ -81,6 +87,8 @@ class ShoppingEnhancements {
                 });
                 break;
                 
+            case 'price-desc':
+            case 'Sort by Price: High to Low':
             case 'Sort by price descending':
                 sortedProducts.sort((a, b) => {
                     try {
