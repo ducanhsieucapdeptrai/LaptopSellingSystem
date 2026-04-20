@@ -6,6 +6,43 @@
     <link rel="stylesheet" th:href="@{/assets/css/cart-custom.css}">
     <link rel="stylesheet" th:href="@{/assets/css/homepage-custom.css}">
     <link rel="stylesheet" th:href="@{/assets/css/dropdown-fix.css}">
+    <style>
+        /* Keep all homepage product thumbnails visually consistent */
+        .uniform-product-image {
+            width: 100%;
+            height: 280px;
+            object-fit: cover;
+            object-position: center;
+            border-radius: 8px;
+        }
+
+        /* New Arrivals: force square images, no rounded corners */
+        .new-arrival-image {
+            width: 280px;
+            height: 280px;
+            object-fit: cover;
+            object-position: center;
+            border-radius: 0 !important;
+            display: block;
+            margin: 0 auto;
+            transition: transform 0.25s ease;
+        }
+
+        .new-arrival-thumb-wrapper {
+            position: relative;
+            width: 280px;
+            margin: 0 auto;
+            overflow: hidden;
+        }
+
+        .new-arrival-link {
+            display: block;
+        }
+
+        .new-arrival-link:hover .new-arrival-image {
+            transform: scale(1.04);
+        }
+    </style>
 </head>
 
 
@@ -273,12 +310,12 @@
                                         <img th:if="${product.imageURL != null}" 
                                              th:src="@{'/assets/images/product/laptop/' + ${product.imageURL}}" 
                                              th:alt="${product.name}"
-                                             class="main-img" loading="lazy"
+                                             class="main-img uniform-product-image" loading="lazy"
                                              data-sal="zoom-out" th:attr="data-sal-delay=${200 + iterStat.index * 100}" data-sal-duration="800">
                                         <img th:unless="${product.imageURL != null}" 
                                              th:src="@{/assets/images/product/laptop/default.jpg}" 
                                              alt="Product Image"
-                                             class="main-img" loading="lazy">
+                                             class="main-img uniform-product-image" loading="lazy">
                                     </a>
                                     <div class="product-hover-action">
                                         <ul class="cart-action">
@@ -428,18 +465,18 @@
                     <!-- Dynamic New Products from Database -->
                     <div class="slick-single-layout" th:each="product, iterStat : ${newProducts}">
                         <div class="axil-product product-style-two">
-                            <div class="thumbnail">
-                                <a th:href="@{'/user/single-product?id=' + ${product.productID}}">
-                                    <img data-sal="zoom-out" th:attr="data-sal-delay=${200 + iterStat.index * 100}" data-sal-duration="500" 
-                                         th:if="${product.imageURL != null}" 
-                                         th:src="@{'/assets/images/product/laptop/' + ${product.imageURL}}" 
-                                         th:alt="${product.name}"
-                                         loading="lazy">
+                            <div class="new-arrival-thumb-wrapper">
+                                <a th:href="@{'/user/single-product?id=' + ${product.productID}}" class="new-arrival-link">
                                     <img data-sal="zoom-out" th:attr="data-sal-delay=${200 + iterStat.index * 100}" data-sal-duration="500"
-                                         th:unless="${product.imageURL != null}" 
-                                         th:src="@{/assets/images/product/laptop/default.jpg}" 
+                                         th:if="${product.imageURL != null and !#strings.isEmpty(product.imageURL)}"
+                                         th:src="@{'/assets/images/product/laptop/' + ${product.imageURL}}"
+                                         th:alt="${product.name}"
+                                         class="new-arrival-image" loading="lazy">
+                                    <img data-sal="zoom-out" th:attr="data-sal-delay=${200 + iterStat.index * 100}" data-sal-duration="500"
+                                         th:unless="${product.imageURL != null and !#strings.isEmpty(product.imageURL)}"
+                                         th:src="@{/assets/images/product/laptop/default.jpg}"
                                          alt="Product Image"
-                                         loading="lazy">
+                                         class="new-arrival-image" loading="lazy">
                                 </a>
                                 <div class="label-block label-right" th:if="${iterStat.index < 2}">
                                     <div class="product-badget">NEW</div>
@@ -510,11 +547,11 @@
                                     <img data-sal="zoom-in" th:attr="data-sal-delay=${100 + iterStat.index * 100}" data-sal-duration="1500" 
                                          th:if="${product.imageURL != null}" 
                                          th:src="@{'/assets/images/product/laptop/' + ${product.imageURL}}" 
-                                         th:alt="${product.name}">
+                                         th:alt="${product.name}" class="uniform-product-image">
                                     <img data-sal="zoom-in" th:attr="data-sal-delay=${100 + iterStat.index * 100}" data-sal-duration="1500"
                                          th:unless="${product.imageURL != null}" 
                                          th:src="@{/assets/images/product/laptop/default.jpg}" 
-                                         alt="Product Image">
+                                         alt="Product Image" class="uniform-product-image">
                                 </a>
                                 <div class="product-badge" th:if="${iterStat.index < 3}">
                                     <span class="badge-hot">🔥 HOT</span>
