@@ -91,8 +91,7 @@ public class ProductController {
         if (productService.existsByName(product.getName())) {
             return handleInvalidProduct(product, file, model, "Product already exists.", null, false);
         }
-        this.storageService.store(file);
-        String fileName = file.getOriginalFilename();
+        String fileName = this.storageService.store(file);
         product.setImageURL(fileName);
         if (Boolean.TRUE.equals(this.productService.create(product))) {
             return PRODUCT_VIEW2;
@@ -128,8 +127,7 @@ public class ProductController {
             fileName = existingProduct.getImageURL();
             product.setImageURL(fileName);
         } else {
-            this.storageService.store(file);
-            fileName = file.getOriginalFilename();
+            fileName = this.storageService.store(file);
             product.setImageURL(fileName);
         }
 

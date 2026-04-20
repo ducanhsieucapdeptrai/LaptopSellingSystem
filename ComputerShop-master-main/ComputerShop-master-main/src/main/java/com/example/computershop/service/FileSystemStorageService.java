@@ -19,7 +19,7 @@ public class FileSystemStorageService implements StorageService {
     private final Path location;
     
     public FileSystemStorageService() {
-        this.location = Paths.get("src/main/resources/static/assets/images/product/laptop");
+        this.location = resolveProductImageDir();
     }
     
     @Override
@@ -28,6 +28,9 @@ public class FileSystemStorageService implements StorageService {
             if (file.isEmpty()) {
                 throw new RuntimeException("Failed to store empty file.");
             }
+
+            // Ensure storage directory exists before writing file
+            Files.createDirectories(this.location);
             
             // Tạo tên file unique để tránh conflict
             String originalFilename = file.getOriginalFilename();
@@ -94,5 +97,21 @@ public class FileSystemStorageService implements StorageService {
             delete(oldFileName);
         }
         return newFileName;
+    }
+
+    private Path resolveProductImageDir() {
+        Path nestedStaticDir = Paths.get("ComputerShop-master-main", "ComputerShop-master-main",
+                "src", "main", "resources", "static", "assets", "images", "product", "laptop");
+        if (Files.exists(nestedStaticDir.getParent())) {
+            return nestedStaticDir.toAbsolutePath().normalize();
+        }
+
+        Path directStaticDir = Paths.get("src", "main", "resources", "static", "assets", "images", "product", "laptop");
+        if (Files.exists(directStaticDir.getParent())) {
+            return directStaticDir.toAbsolutePath().normalize();
+        }
+
+        // Final fallback: still return module-relative path, but nested path is always preferred
+        return nestedStaticDir.toAbsolutePath().normalize();
     }
 }
