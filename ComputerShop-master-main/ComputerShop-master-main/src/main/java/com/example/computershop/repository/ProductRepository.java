@@ -36,6 +36,9 @@ public interface ProductRepository extends JpaRepository<Products, String> {
     @Query("SELECT p FROM Products p LEFT JOIN FETCH p.categories WHERE p.isActive = true")
     List<Products> findAllActiveForHomepage();
 
+    @Query("SELECT p FROM Products p LEFT JOIN FETCH p.categories WHERE p.isActive = true ORDER BY p.createdAt DESC")
+    List<Products> findNewestActiveForHomepage(Pageable pageable);
+
     @Query("SELECT p FROM Products p ORDER BY p.quantity DESC")
     List<Products> findTop5ProductsByStock(Pageable pageable);
 

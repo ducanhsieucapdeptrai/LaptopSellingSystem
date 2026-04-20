@@ -50,16 +50,8 @@ public class HomeController {
                 .limit(4)
                 .collect(Collectors.toList());
 
-            // Get new products (sorted by creation date, newest first, limit to 6)
-            List<Products> newProducts = allProducts.stream()
-                .sorted((p1, p2) -> {
-                    if (p1.getCreatedAt() == null && p2.getCreatedAt() == null) return 0;
-                    if (p1.getCreatedAt() == null) return 1;
-                    if (p2.getCreatedAt() == null) return -1;
-                    return p2.getCreatedAt().compareTo(p1.getCreatedAt()); // Newest first
-                })
-                .limit(6)
-                .collect(Collectors.toList());
+            // Get new products directly from DB ordered by createdAt DESC
+            List<Products> newProducts = productService.getNewestActiveForHomepage(6);
 
             // Get most sold/hot products (simulate popularity based on low stock = high demand)
             List<Products> mostSoldProducts = allProducts.stream()

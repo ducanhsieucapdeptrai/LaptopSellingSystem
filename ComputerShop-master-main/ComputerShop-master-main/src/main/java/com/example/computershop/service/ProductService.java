@@ -39,6 +39,10 @@ public class ProductService {
     public List<Products> getAllActiveForHomepage() {
         return this.repo.findAllActiveForHomepage();
     }
+
+    public List<Products> getNewestActiveForHomepage(int limit) {
+        return this.repo.findNewestActiveForHomepage(PageRequest.of(0, limit));
+    }
     
     // Optimized method when specifications are needed
     @Cacheable(value = "activeProducts")
