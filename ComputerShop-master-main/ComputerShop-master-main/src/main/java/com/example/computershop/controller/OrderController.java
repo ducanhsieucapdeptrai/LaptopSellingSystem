@@ -193,9 +193,8 @@ public class OrderController {
     }
 
     private List<Order> sortOrders(List<Order> orders, String sortBy) {
-        switch (sortBy) {
-            case "date_asc":
-                return orders.stream()
+        return switch (sortBy) {
+            case "date_asc" -> orders.stream()
                     .sorted((o1, o2) -> {
                         if (o1.getOrderDate() == null && o2.getOrderDate() == null) return 0;
                         if (o1.getOrderDate() == null) return 1;
@@ -203,9 +202,7 @@ public class OrderController {
                         return o1.getOrderDate().compareTo(o2.getOrderDate());
                     })
                     .collect(Collectors.toList());
-
-            case "date_desc":
-                return orders.stream()
+            case "date_desc" -> orders.stream()
                     .sorted((o1, o2) -> {
                         if (o1.getOrderDate() == null && o2.getOrderDate() == null) return 0;
                         if (o1.getOrderDate() == null) return 1;
@@ -213,36 +210,29 @@ public class OrderController {
                         return o2.getOrderDate().compareTo(o1.getOrderDate());
                     })
                     .collect(Collectors.toList());
-
-            case "price_asc":
-                return orders.stream()
+            case "price_asc" -> orders.stream()
                     .sorted((o1, o2) -> {
                         Long amount1 = o1.getTotalAmount() != null ? o1.getTotalAmount() : 0L;
                         Long amount2 = o2.getTotalAmount() != null ? o2.getTotalAmount() : 0L;
                         return amount1.compareTo(amount2);
                     })
                     .collect(Collectors.toList());
-
-            case "price_desc":
-                return orders.stream()
+            case "price_desc" -> orders.stream()
                     .sorted((o1, o2) -> {
                         Long amount1 = o1.getTotalAmount() != null ? o1.getTotalAmount() : 0L;
                         Long amount2 = o2.getTotalAmount() != null ? o2.getTotalAmount() : 0L;
                         return amount2.compareTo(amount1);
                     })
                     .collect(Collectors.toList());
-
-            case "status":
-                return orders.stream()
+            case "status" -> orders.stream()
                     .sorted((o1, o2) -> {
                         String status1 = o1.getStatus() != null ? o1.getStatus() : "";
                         String status2 = o2.getStatus() != null ? o2.getStatus() : "";
                         return status1.compareTo(status2);
                     })
                     .collect(Collectors.toList());
-                default:
-                    return List.of();
-        }
+            default -> List.of();
+        };
     }
 
     private Map<String, String> getPaymentStatusMap(List<Order> orders) {
@@ -278,26 +268,17 @@ public class OrderController {
     private String getStatusDisplayName(String status) {
         if (status == null) return "Unspecified";
 
-        switch (status) {
-            case "PENDING":
-                return "⏳ Pending";
-            case "PAYMENT_PENDING":
-                return "💳 Payment Pending";
-            case "CONFIRMED":   
-                return "✅ Confirmed";
-            case "PROCESSING":
-                return "🔄 Processing";
-            case "SHIPPED":
-                return "🚚 Shipping";
-            case "DELIVERED":
-                return "📦 Delivered";
-            case "USER_CONFIRMED":
-                return "✅ Received by Customer";
-            case "CANCELLED":
-                return "❌ Cancelled";
-            default:
-                return "❓ Unspecified";
-        }
+        return switch (status) {
+            case "PENDING" -> "⏳ Pending";
+            case "PAYMENT_PENDING" -> "💳 Payment Pending";
+            case "CONFIRMED" -> "✅ Confirmed";
+            case "PROCESSING" -> "🔄 Processing";
+            case "SHIPPED" -> "🚚 Shipping";
+            case "DELIVERED" -> "📦 Delivered";
+            case "USER_CONFIRMED" -> "✅ Received by Customer";
+            case "CANCELLED" -> "❌ Cancelled";
+            default -> "❓ Unspecified";
+        };
     }
 
 } 

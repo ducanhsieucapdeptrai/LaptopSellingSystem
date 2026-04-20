@@ -109,7 +109,7 @@ public class UserProfileController {
                 
             } else if ("change-password".equals(action)) {
                 // Validate password confirmation
-                if (!passwordRequest.isPasswordConfirmed()) {
+                if (passwordRequest.isPasswordConfirmed()) {
                     redirectAttributes.addFlashAttribute("error", "Password confirmation does not match!");
                     return "redirect:/user/user-profile";
                 }

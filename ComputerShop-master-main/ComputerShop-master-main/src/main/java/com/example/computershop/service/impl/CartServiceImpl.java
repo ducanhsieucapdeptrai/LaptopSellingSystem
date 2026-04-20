@@ -215,7 +215,7 @@ public class CartServiceImpl implements CartService {
                 cartItemOpt = cartRepository.findByUserAndProductAndVariantIsNull(user, product);
             }
 
-            if (!cartItemOpt.isPresent()) {
+            if (cartItemOpt.isEmpty()) {
                 return createErrorResponse("Product not in cart", HttpStatus.NOT_FOUND.value());
             }
 
@@ -318,7 +318,7 @@ public class CartServiceImpl implements CartService {
 
     
             Optional<Voucher> voucherOpt = voucherService.getValidVoucherByCode(voucherCode.trim());
-            if (!voucherOpt.isPresent()) {
+            if (voucherOpt.isEmpty()) {
                 return createErrorResponse("Voucher code not found or expired", HttpStatus.NOT_FOUND.value());
             }
             
@@ -682,7 +682,7 @@ public class CartServiceImpl implements CartService {
 
             // Validate voucher
             Optional<Voucher> voucherOpt = voucherService.getValidVoucherByCode(voucherCode);
-            if (!voucherOpt.isPresent()) {
+            if (voucherOpt.isEmpty()) {
                 return "error:Voucher code is not valid or expired";
             }
 
@@ -807,7 +807,6 @@ public class CartServiceImpl implements CartService {
         } catch (Exception e) {
             // If update fails, just log and continue - don't break voucher application
             System.err.println("Failed to update voucher usage tracking: " + e.getMessage());
-            e.printStackTrace();
         }
     }
     

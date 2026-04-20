@@ -19,6 +19,6 @@ public class PasswordChangeRequest {
     
     // Helper method to validate password confirmation
     public boolean isPasswordConfirmed() {
-        return newPassword != null && newPassword.equals(confirmPassword);
+        return newPassword == null || !newPassword.equals(confirmPassword);
     }
 } 

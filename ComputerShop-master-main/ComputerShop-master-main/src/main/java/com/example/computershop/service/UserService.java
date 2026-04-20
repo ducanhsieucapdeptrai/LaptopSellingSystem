@@ -286,7 +286,7 @@ public class UserService {
             }
 
             // Check password confirmation
-            if (!request.isPasswordConfirmed()) {
+            if (request.isPasswordConfirmed()) {
                 return "Password confirmation does not match";
             }
 
@@ -342,23 +342,6 @@ public class UserService {
         } catch (Exception e) {
             log.error("Error updating user avatar", e);
             return "Error updating user avatar";
-        }
-    }
-
-    public String getDisplayAvatarUrl(User user) {
-        // Priority: Custom upload > OAuth2 > Default
-        if (user.getImage() != null && !user.getImage().isEmpty()) {
-            return "/uploads/avatars/" + user.getImage();
-        } else {
-            return "/assets/images/product/author1.png";
-        }
-    }
-
-    public String getAvatarSource(User user) {
-        if (user.getImage() != null && !user.getImage().isEmpty()) {
-            return "custom";
-        } else {
-            return "default";
         }
     }
 
