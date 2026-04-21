@@ -40,8 +40,8 @@
                         <div class="thumbnail">
                             <img th:src="${user.image != null && !user.image.isEmpty()} ?
                                 @{'/uploads/avatars/' + ${user.image}} : 
-                                @{/assets/images/product/author1.png}" alt="User Avatar" class="rounded-circle"
-                                 style="width: 60px; height: 60px; object-fit: cover;">
+                                @{/assets/images/product/author1.png}" alt="User Avatar"
+                                 class="rounded-circle profile-header-avatar">
                         </div>
                         <div class="media-body">
                             <h5 class="title mb-0">Hello <span th:text="${user.fullName}"></span>!</h5>
@@ -246,8 +246,7 @@
                                         <img th:src="${user.image != null && !user.image.isEmpty()} ?
                                                         @{'/uploads/avatars/' + ${user.image}} :
                                                         @{/assets/images/product/author1.png}" alt="Avatar"
-                                             class="rounded-circle"
-                                             style="width: 150px; height: 150px; object-fit: cover; border: 2px solid #ddd;">
+                                             class="rounded-circle profile-main-avatar">
                                     </div>
 
                                     <!-- Upload form -->
@@ -929,6 +928,34 @@ la                            ${product.hasReviewed ?
 
 <!-- Review Modal Styles -->
 <style>
+    .profile-header-avatar {
+        width: 128px;
+        height: 128px;
+        object-fit: cover;
+        border: 4px solid #fff;
+        box-shadow: 0 14px 30px rgba(0, 0, 0, 0.14);
+    }
+
+    .profile-main-avatar {
+        width: 240px;
+        height: 240px;
+        object-fit: cover;
+        border: 4px solid #ddd;
+        box-shadow: 0 16px 34px rgba(0, 0, 0, 0.14);
+    }
+
+    @media only screen and (max-width: 767px) {
+        .profile-header-avatar {
+            width: 96px;
+            height: 96px;
+        }
+
+        .profile-main-avatar {
+            width: 180px;
+            height: 180px;
+        }
+    }
+
     .star-rating-input {
         display: inline-flex;
         font-size: 2rem;

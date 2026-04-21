@@ -77,12 +77,12 @@
             </div>
         </div>
     </li>
-    <li class="nav-item" sec:authorize="hasAnyRole('Admin')">
-        <a th:href="@{/admin/product-variants/field-config}" class="nav-link">
-            <i class="fas fa-fw fa-cogs"></i>
-            <span>Manage Custom Fields</span>
-        </a>
-    </li>
+<!--    <li class="nav-item" sec:authorize="hasAnyRole('Admin')">-->
+<!--        <a th:href="@{/admin/product-variants/field-config}" class="nav-link">-->
+<!--            <i class="fas fa-fw fa-cogs"></i>-->
+<!--            <span>Manage Custom Fields</span>-->
+<!--        </a>-->
+<!--    </li>-->
     <li class="nav-item" sec:authorize="hasAnyRole('Admin')">
         <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseNotifications"
            aria-expanded="false" aria-controls="collapseNotifications">
@@ -136,22 +136,22 @@
             </div>
         </div>
     </li>
-    <li class="nav-item" sec:authorize="hasAnyRole('Admin','Sales')">
-        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseWarehouse" aria-expanded="false" aria-controls="collapseWarehouse">
-            <i class="fas fa-warehouse"></i>
-            <span>Warehouse Management</span>
-        </a>
-        <div id="collapseWarehouse" class="collapse" aria-labelledby="headingWarehouse" data-parent="#accordionSidebar">
-            <div class="collapse-inner">
-                <a class="collapse-item" th:href="@{/admin/purchase-orders}">
-                    <i class="fas fa-arrow-down mr-2"></i>Import Stock
-                </a>
-                <a class="collapse-item" th:href="@{/admin/export-orders}">
-                    <i class="fas fa-arrow-up mr-2"></i>Export Stock
-                </a>
-            </div>
-        </div>
-    </li>
+<!--    <li class="nav-item" sec:authorize="hasAnyRole('Admin','Sales')">-->
+<!--        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseWarehouse" aria-expanded="false" aria-controls="collapseWarehouse">-->
+<!--            <i class="fas fa-warehouse"></i>-->
+<!--            <span>Warehouse Management</span>-->
+<!--        </a>-->
+<!--&lt;!&ndash;        <div id="collapseWarehouse" class="collapse" aria-labelledby="headingWarehouse" data-parent="#accordionSidebar">&ndash;&gt;-->
+<!--&lt;!&ndash;            <div class="collapse-inner">&ndash;&gt;-->
+<!--&lt;!&ndash;                <a class="collapse-item" th:href="@{/admin/purchase-orders}">&ndash;&gt;-->
+<!--&lt;!&ndash;                    <i class="fas fa-arrow-down mr-2"></i>Import Stock&ndash;&gt;-->
+<!--&lt;!&ndash;                </a>&ndash;&gt;-->
+<!--&lt;!&ndash;                <a class="collapse-item" th:href="@{/admin/export-orders}">&ndash;&gt;-->
+<!--&lt;!&ndash;                    <i class="fas fa-arrow-up mr-2"></i>Export Stock&ndash;&gt;-->
+<!--&lt;!&ndash;                </a>&ndash;&gt;-->
+<!--&lt;!&ndash;            </div>&ndash;&gt;-->
+<!--&lt;!&ndash;        </div>&ndash;&gt;-->
+<!--    </li>-->
     <!-- Statistics - Toggle statistics -->
     <li class="nav-item" sec:authorize="hasAnyRole('Admin','Sales')">
         <a class="nav-link" th:href="@{/admin/dashboard(section='statistics')}" id="statisticsToggle">
